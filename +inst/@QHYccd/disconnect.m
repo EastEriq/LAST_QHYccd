@@ -5,7 +5,7 @@ function success=disconnect(QC)
     % don't try co lose an invalid camhandle, it would crash matlab
     if ~isempty(QC.camhandle)
         % check this status, which may fail
-        success=CloseQHYCCD(QC.camhandle);
+        success=(CloseQHYCCD(QC.camhandle)==0);
     else
         success=true;
     end

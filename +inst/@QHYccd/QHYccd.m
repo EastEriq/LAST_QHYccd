@@ -99,6 +99,8 @@ classdef QHYccd < handle
                 QC.report('Failed to close camera\n')
             end
             
+            QHYCCDQuit % this is undocumented BUT IT PREVENTS CRASHES!
+            
             % clear QC.pImg
             
             % but:

@@ -5,19 +5,15 @@ function success=connect(QC,cameranum)
     %  cameranum: int, number of the camera to open (as enumerated by the SDK)
     %     May be omitted. In that case the last camera is referred to
 
-    QC.lastError='';
-    
     num=ScanQHYCCD;
     QC.report(sprintf('%d QHY cameras found\n',num));
 
     if ~exist('cameranum','var')
-        QC.cameranum=num; % and thus open the last camera
+        cameranum=num; % and thus open the last camera
                          % (TODO, if possible, the first not
                          %  already open)
-    else
-        QC.cameranum=cameranum;
     end
-    [ret,QC.CameraName]=GetQHYCCDId(max(min(QC.cameranum,num)-1,0));
+    [ret,QC.CameraName]=GetQHYCCDId(max(min(cameranum,num)-1,0));
 
     if ret, return; end
 
@@ -74,8 +70,8 @@ function success=connect(QC,cameranum)
 
     success = (ret1==0 & ret2==0 & ret3==0);
     
-    % TODO perhaps improve granularity of this report
-    QC.setLastError(success,'something went wrong when initializing the camera');
+    if ~success
+        QC.lastError='
 
     % put here also some plausible parameter settings which are
     %  not likely to be changed

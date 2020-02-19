@@ -7,6 +7,6 @@ function abort(QC)
     %  exist. This to suppress warnings if this function is called twice,
     %  or when acquisition hasn't been started at all
 
-    QC.deallocate_image_buffer(QC)
+    deallocate_image_buffer(QC)
 
 end

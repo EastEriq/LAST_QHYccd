@@ -28,15 +28,12 @@ classdef QHYccd < handle
     end
     
     % Enrico, discretional
-    properties(GetAccess = public, SetAccess = private)
+    properties(GetAccess = public, SetAccess = private, Hidden)
         physical_size=struct('chipw',[],'chiph',[],'pixelw',[],'pixelh',[],...
                              'nx',[],'ny',[]);
         effective_area=struct('x1Eff',[],'y1Eff',[],'sxEff',[],'syEff',[]);
         overscan_area=struct('x1Over',[],'y1Over',[],'sxOver',[],'syOver',[]);
         readModesList=struct('name',[],'resx',[],'resy',[]);
-    end
-    
-    properties(GetAccess = public, SetAccess = private, Hidden)
         progressive_frame = 0; % image of a sequence already available
     end
     
@@ -105,17 +102,50 @@ classdef QHYccd < handle
             
             % but:
             % don't release the SDK, other QC objects may be using it
-            % ReleaseQHYCCDResource
+            % Besides, releasing prevents reopening
+            % ReleaseQHYCCDResource;
             
             % nor unload the library,
             %  which at least with libqhyccd 6.0.5 even crashes Matlab
-            %  with multiple errors traced into libpthread.so
+            %  with multiple errors traced into libpthread.so (unless
+            %  QHYCCDQuit is called before)
             % unloadlibrary('libqhyccd')
         end
         
     end
     
     methods %getters and setters
+        
+        function set.ExpTime(QC,ExpTime)
+            % ExpTime in seconds
+            QC.report(sprintf('setting exposure time to %f sec.\n',ExpTime))
+            success=...
+                (SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE,ExpTime*1e6)==0);
+            QC.setLastError(success,'could not set exposure time')
+        end
+        
+        function ExpTime=get.ExpTime(QC)
+            % ExpTime in seconds
+            ExpTime=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE)/1e6;
+            % if QC.verbose, fprintf('Exposure time is %f sec.\n',ExpTime); end
+            success=(ExpTime~=1e6*hex2dec('FFFFFFFF'));            
+            QC.setLastError(success,'could not get exposure time')
+        end
+
+        function set.Gain(QC,Gain)
+            % for an explanation of gain & offset vs. dynamics, see
+            %  https://www.qhyccd.com/bbs/index.php?topic=6281.msg32546#msg32546
+            %  https://www.qhyccd.com/bbs/index.php?topic=6309.msg32704#msg32704
+            success=(SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_GAIN,Gain)==0);          
+            QC.setLastError(success,'could not set gain')
+        end
+        
+        function Gain=get.Gain(QC)
+            Gain=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_GAIN);
+            % check whether err=double(FFFFFFFF)...
+            success=(Gain>0 & Gain<2e6);
+            QC.setLastError(success,'could not get gain')
+        end
         
         % ROI - assuming that this is what the SDK calls "Resolution"
         function set.ROI(QC,roi)

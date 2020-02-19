@@ -108,7 +108,8 @@ function success=connect(QC,cameranum)
         % this is problematic in color mode
         SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CAM_IGNOREOVERSCAN_INTERFACE,1);
         QC.ROI=[QC.effective_area.x1Eff,QC.effective_area.y1Eff,...
-                QC.effective_area.sxEff,QC.effective_area.syEff];
+                QC.effective_area.x1Eff+QC.effective_area.sxEff,...
+                QC.effective_area.y1Eff+QC.effective_area.syEff];
     end
 
 end

@@ -2,9 +2,6 @@ classdef QHYccd < handle
  
     properties
         cameranum
-    end
-    
-    properties(Dependent = true)
         % read/write properties, settings of the camera, for which
         %  hardware query is involved.
         %  We use getters/setters, even though instantiation
@@ -12,15 +9,18 @@ classdef QHYccd < handle
         %   of the camera require that camhandle is obtained first.
         %  Values set here as default won't likely be passed to the camera
         %   when the object is created
+        binning=[1,1]; % beware - SDK does not provide a getter for it, go figure
+        ExpTime=10;
+        Gain=2;
+    end
+    
+    properties(Dependent = true)
         CamStatus
         CoolingStatus
         Temperature
-        ExpTime
-        Gain
-        BinningX
-        BinningY
         ROI % beware - SDK does not provide a getter for it, go figure
         ReadMode
+        offset
     end
     
     properties(GetAccess = public, SetAccess = private)
@@ -40,7 +40,6 @@ classdef QHYccd < handle
     % settings which have not been prescribed by the API,
     % but for which I have already made the code
     properties(Hidden)
-        offset
         color
         bitDepth
     end
@@ -116,6 +115,19 @@ classdef QHYccd < handle
     
     methods %getters and setters
         
+        function set.Temperature(QC,Temp)
+            % set the target sensor temperature in Celsius
+            success=ControlQHYCCDTemp(QC.camhandle,Temp);
+            QC.setLastError(success,'could not set temperature')
+       end
+        
+        function Temp=get.Temperature(QC)
+            Temp=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CAM_CHIPTEMPERATURESENSOR_INTERFACE);
+            % I guess that error is Temp=FFFFFFFF, check
+            success = (Temp>-100 & Temp<100);
+            QC.setLastError(success,'could not get temperature')
+        end
+        
         function set.ExpTime(QC,ExpTime)
             % ExpTime in seconds
             QC.report(sprintf('setting exposure time to %f sec.\n',ExpTime))
@@ -184,10 +196,34 @@ classdef QHYccd < handle
             % Offset seems to be a sort of bias, black level
             offset=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET);
             % check whether err=double(FFFFFFFF)...
-            success=(offset>0 & offset<2e6);
+            success=(offset>=0 & offset<2e6);
             QC.setLastError(success,'could not get offset')
         end
         
+        function set.ReadMode(QC,readMode)
+            success=(SetQHYCCDReadMode(QC.camhandle,readMode)==0);
+            QC.report(sprintf('Invalid read mode! Legal is %d:%d\n',0,...
+                    numel(QC.readModesList)-1));
+            QC.setLastError(success,'could not set the read mode')
+        end
+        
+        function currentReadMode=get.ReadMode(QC)
+            [ret,currentReadMode]=GetQHYCCDReadMode(QC.camhandle);
+            success= ret==0 & (currentReadMode>0 & currentReadMode<2e6);
+            QC.setLastError(success,'could not get the read mode')
+        end
+        
+        function set.binning(QC,binning)
+            % default is 1x1
+            % for the QHY367, 1x1 and 2x2 seem to work; NxN with N>2 gives error,
+            %  NxM gives no error, but all are uneffective and fall back to 1x1
+            success= (SetQHYCCDBinMode(QC.camhandle,binning(1),binning(2))==0);
+            QC.setLastError(success,'could not set the read mode')
+        end
+        
+        % The SDK doesn't provide a function for getting the current
+        %  binning, go figure
+
         function set.color(QC,ColorMode)
             % default has to be bw
              success=(SetQHYCCDDebayerOnOff(QC.camhandle,ColorMode)==0);

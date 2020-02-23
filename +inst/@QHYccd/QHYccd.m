@@ -13,7 +13,11 @@ classdef QHYccd < handle
         ExpTime=10;
         Gain=2;
     end
-    
+
+    properties(Transient)
+        lastImage
+    end
+        
     properties(Dependent = true)
         Temperature
         ROI % beware - SDK does not provide a getter for it, go figure

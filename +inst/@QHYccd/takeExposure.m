@@ -33,8 +33,10 @@ function takeExposure(QC,expTime)
                 QC.t_exposure_started=NaN;
                 QC.lastExpTime=NaN;
                 QC.CamStatus='unknown';
+                QC.deallocate_image_buffer
             end
         otherwise
+            QC.deallocate_image_buffer
             QC.lastError='camera not ready to start exposure';
     end
 

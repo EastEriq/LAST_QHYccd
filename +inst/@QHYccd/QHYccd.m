@@ -117,9 +117,16 @@ classdef QHYccd < handle
     
     methods %getters and setters
         
+        function status=get.CamStatus(QC)
+            % forget about getting any info about what the camera is doing
+            %  directly fom it. At best we could try to implement some
+            %  bookkeeping via class internal state variables. 
+            status='unknown';
+        end
+        
         function set.Temperature(QC,Temp)
             % set the target sensor temperature in Celsius
-            % We assume thaw we are working with newer cameras
+            % We assume that we are working with newer cameras
             %  which can be controlled directly in temperature. Older
             %  cameras are said to have to be controlled in PWM. Support for
             %  both would imply IsQHYCCDControlAvaliable() for

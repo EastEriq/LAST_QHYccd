@@ -1,11 +1,11 @@
 function abort(QC)
-% Cleaning up after taking a sequence of images
+% call both stopping functions, how could we know
+% in which acquisition mode we are?
 
+% stopping single image exposure
+    CancelQHYCCDExposingAndReadout(QC.camhandle)
+% stopping live mode
     StopQHYCCDLive(QC.camhandle);
-
-    % delete objects, release pImg, but check first that they
-    %  exist. This to suppress warnings if this function is called twice,
-    %  or when acquisition hasn't been started at all
 
     deallocate_image_buffer(QC)
 

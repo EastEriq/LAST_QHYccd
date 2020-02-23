@@ -15,7 +15,6 @@ classdef QHYccd < handle
     end
     
     properties(Dependent = true)
-        CamStatus
         Temperature
         ROI % beware - SDK does not provide a getter for it, go figure
         ReadMode
@@ -24,6 +23,7 @@ classdef QHYccd < handle
     
     properties(GetAccess = public, SetAccess = private)
         CameraName
+        CamStatus='unknown';
         CoolingStatus
    end
     
@@ -34,6 +34,8 @@ classdef QHYccd < handle
         effective_area=struct('x1Eff',[],'y1Eff',[],'sxEff',[],'syEff',[]);
         overscan_area=struct('x1Over',[],'y1Over',[],'sxOver',[],'syOver',[]);
         readModesList=struct('name',[],'resx',[],'resy',[]);
+        t_exposure_started=NaN;
+        lastExpTime=NaN;
         progressive_frame = 0; % image of a sequence already available
     end
     
@@ -121,7 +123,13 @@ classdef QHYccd < handle
             % forget about getting any info about what the camera is doing
             %  directly fom it. At best we could try to implement some
             %  bookkeeping via class internal state variables. 
-            status='unknown';
+            switch QC.CamStatus
+                case 'exposing'
+                    if (now-QC.t_exposure_started)*24*3600 > QC.lastExpTime
+                       QC.CamStatus='reading'; % means, ready to read
+                    end
+            end
+            status=QC.CamStatus;
         end
         
         function set.Temperature(QC,Temp)

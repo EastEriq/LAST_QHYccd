@@ -3,10 +3,12 @@ function abort(QC)
 % in which acquisition mode we are?
 
 % stopping single image exposure
-    CancelQHYCCDExposingAndReadout(QC.camhandle)
+    CancelQHYCCDExposingAndReadout(QC.camhandle);
 % stopping live mode
     StopQHYCCDLive(QC.camhandle);
 
     deallocate_image_buffer(QC)
 
+    QC.CamStatus='idle';
+    
 end

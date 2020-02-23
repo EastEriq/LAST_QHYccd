@@ -115,4 +115,6 @@ function success=connect(QC,cameranum)
                 QC.effective_area.y1Eff+QC.effective_area.syEff];
     end
 
+    QC.CamStatus='idle'; % whishful, if we got till here.
+    
 end

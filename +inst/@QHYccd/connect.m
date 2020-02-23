@@ -19,7 +19,10 @@ function success=connect(QC,cameranum)
     end
     [ret,QC.CameraName]=GetQHYCCDId(max(min(QC.cameranum,num)-1,0));
 
-    if ret, return; end
+    if ret
+        QC.lastError='could not even get one camera id';
+        return;
+    end
 
     QC.camhandle=OpenQHYCCD(QC.CameraName);
     QC.report(sprintf('Opened camera "%s"\n',QC.CameraName));

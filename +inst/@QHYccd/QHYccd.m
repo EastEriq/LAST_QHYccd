@@ -16,7 +16,6 @@ classdef QHYccd < handle
     
     properties(Dependent = true)
         CamStatus
-        CoolingStatus
         Temperature
         ROI % beware - SDK does not provide a getter for it, go figure
         ReadMode
@@ -25,7 +24,8 @@ classdef QHYccd < handle
     
     properties(GetAccess = public, SetAccess = private)
         CameraName
-    end
+        CoolingStatus
+   end
     
     % Enrico, discretional
     properties(GetAccess = public, SetAccess = private, Hidden)
@@ -107,7 +107,9 @@ classdef QHYccd < handle
             % nor unload the library,
             %  which at least with libqhyccd 6.0.5 even crashes Matlab
             %  with multiple errors traced into libpthread.so (unless
-            %  QHYCCDQuit is called before)
+            %  QHYCCDQuit is called before).
+            % On the other side, unloadlibrary is the last resort for
+            %  recovering usb communication or camera errors. 
             % unloadlibrary('libqhyccd')
         end
         
@@ -117,15 +119,41 @@ classdef QHYccd < handle
         
         function set.Temperature(QC,Temp)
             % set the target sensor temperature in Celsius
-            success=ControlQHYCCDTemp(QC.camhandle,Temp);
+            % We assume thaw we are working with newer cameras
+            %  which can be controlled directly in temperature. Older
+            %  cameras are said to have to be controlled in PWM. Support for
+            %  both would imply IsQHYCCDControlAvaliable() for
+            %  CONTROL_MANULPWM rather than CONTROL_COOLER,
+            %  then setting them. Moreover, it seems that for older
+            %  cameras PWM had to be set again and again to keep cooling...
+            % Alternatively, this:
+            % success=ControlQHYCCDTemp(QC.camhandle,Temp);
+            success=SetQHYCCDParam(QC.camhandle,...
+                inst.qhyccdControl.CONTROL_COOLER,Temp)==0;
             QC.setLastError(success,'could not set temperature')
-       end
+        end
         
         function Temp=get.Temperature(QC)
             Temp=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CAM_CHIPTEMPERATURESENSOR_INTERFACE);
             % I guess that error is Temp=FFFFFFFF, check
             success = (Temp>-100 & Temp<100);
             QC.setLastError(success,'could not get temperature')
+        end
+        
+        function status=get.CoolingStatus(QC)
+            % get the current cooling status, by checking the current PWM
+            % applied to the cooler.
+            pwm=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_CURPWM);
+%            QC.report(sprintf('current cooler PWM %.1f%%%%\n',pwm/2.55))
+%            temp=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_COOLER);
+%            QC.report(sprintf('current target T %.1f°C\n',temp))
+            if pwm==0
+                status='off';
+            elseif pwm<=255
+                status='on';
+            else
+                status='unknown';
+            end
         end
         
         function set.ExpTime(QC,ExpTime)

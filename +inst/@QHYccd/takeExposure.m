@@ -17,11 +17,11 @@ function takeExposure(QC,expTime)
 
             ret=ExpQHYCCDSingleFrame(QC.camhandle);
             if ret==hex2dec('2001') % "QHYCCD_READ_DIRECTLY". No idea but
-                %   it is like that in the demoes
+                                    %   it is like that in the demoes
                 pause(0.1)
             end
 
-            success=(ret~=hex2dec('FFFF'));
+            success=(ret~=hex2dec('FFFFFFFF'));
 
             QC.setLastError(success,'could not start single exposure');
 

@@ -173,7 +173,7 @@ classdef QHYccd < handle
         
         function set.ExpTime(QC,ExpTime)
             % ExpTime in seconds
-            QC.report(sprintf('setting exposure time to %f sec.\n',ExpTime))
+            %QC.report(sprintf('setting exposure time to %f sec.\n',ExpTime))
             success=...
                 (SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE,ExpTime*1e6)==0);
             QC.setLastError(success,'could not set exposure time')

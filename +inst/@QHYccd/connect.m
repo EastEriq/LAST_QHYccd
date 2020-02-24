@@ -114,6 +114,9 @@ function success=connect(QC,cameranum)
                 QC.effective_area.x1Eff+QC.effective_area.sxEff,...
                 QC.effective_area.y1Eff+QC.effective_area.syEff];
     end
+    
+    % set default values, perhaps differentiating camera models
+    QC.default_values
 
     QC.CamStatus='idle'; % whishful, if we got till here.
     

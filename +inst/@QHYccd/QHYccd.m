@@ -11,7 +11,7 @@ classdef QHYccd < handle
         %   when the object is created
         binning=[1,1]; % beware - SDK does not provide a getter for it, go figure
         ExpTime=10;
-        Gain=2;
+        Gain=0;
     end
 
     properties(Transient)
@@ -29,6 +29,8 @@ classdef QHYccd < handle
         CameraName
         CamStatus='unknown';
         CoolingStatus
+        time_start=[];
+        time_end=[];
    end
     
     % Enrico, discretional
@@ -38,10 +40,9 @@ classdef QHYccd < handle
         effective_area=struct('x1Eff',[],'y1Eff',[],'sxEff',[],'syEff',[]);
         overscan_area=struct('x1Over',[],'y1Over',[],'sxOver',[],'syOver',[]);
         readModesList=struct('name',[],'resx',[],'resy',[]);
-        t_exposure_started=[];
-        t_readout=[];
         lastExpTime=NaN;
         progressive_frame = 0; % image of a sequence already available
+        time_start_delta % uncertainty, after-before calling exposure start
     end
     
     % settings which have not been prescribed by the API,
@@ -130,7 +131,7 @@ classdef QHYccd < handle
             %  bookkeeping via class internal state variables. 
             switch QC.CamStatus
                 case 'exposing'
-                    if (now-QC.t_exposure_started)*24*3600 > QC.lastExpTime
+                    if (now-QC.time_start)*24*3600 > QC.lastExpTime
                        QC.CamStatus='reading'; % means, ready to read
                     end
             end

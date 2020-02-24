@@ -112,13 +112,19 @@ classdef QHYccd < handle
             % Besides, releasing prevents reopening
             % ReleaseQHYCCDResource;
             
-            % nor unload the library,
-            %  which at least with libqhyccd 6.0.5 even crashes Matlab
+            % unload the library,
+            %  This, at least with libqhyccd 6.0.5 even crashes Matlab
             %  with multiple errors traced into libpthread.so (unless
             %  QHYCCDQuit is called before).
             % On the other side, unloadlibrary is the last resort for
-            %  recovering usb communication or camera errors. 
-            % unloadlibrary('libqhyccd')
+            %  recovering usb communication or camera errors, and for
+            %  allowing future reconnections to the cameras
+            try
+                % if another instantiation is still using the library, this
+                % will fail
+                unloadlibrary('libqhyccd')
+            catch
+            end
         end
         
     end

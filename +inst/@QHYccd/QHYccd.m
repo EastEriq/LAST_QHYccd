@@ -38,7 +38,8 @@ classdef QHYccd < handle
         effective_area=struct('x1Eff',[],'y1Eff',[],'sxEff',[],'syEff',[]);
         overscan_area=struct('x1Over',[],'y1Over',[],'sxOver',[],'syOver',[]);
         readModesList=struct('name',[],'resx',[],'resy',[]);
-        t_exposure_started=NaN;
+        t_exposure_started=[];
+        t_readout=[];
         lastExpTime=NaN;
         progressive_frame = 0; % image of a sequence already available
     end

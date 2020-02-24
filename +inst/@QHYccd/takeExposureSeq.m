@@ -21,7 +21,7 @@ function imgs=takeExposureSeq(QC,num,expTime)
     %  for economy of writing, since this is a placeholder
 
     for i=1:num
-        takeExposure(QC,expTime)
+        startExposure(QC,expTime)
         
         if ~isempty(QC.lastError)
             return

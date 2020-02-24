@@ -8,10 +8,10 @@ function img=collectExposure(QC)
                 GetQHYCCDSingleFrame(QC.camhandle,QC.pImg);
 
             if ret==0
-                t_readout=now;
+                QC.t_readout=now;
                 QC.progressive_frame=1;
             else
-                t_readout=[];
+                QC.t_readout=[];
             end
 
             img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
@@ -28,5 +28,7 @@ function img=collectExposure(QC)
             QC.lastError='no image to read because exposure not started';
             img=[];
     end
+    
+    QC.lastImage=img;
 
 end

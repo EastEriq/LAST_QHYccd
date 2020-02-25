@@ -98,7 +98,7 @@ function success=connect(QC,cameranum)
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,3);
 
     % from https://www.qhyccd.com/bbs/index.php?topic=6861
-    %  this is said to affect speed, annd accepting 0,1,2
+    %  this is said to affect speed, and accepting 0,1,2
     % The SDK manual says:
     %  USB transfer speed,but part of cameras not support
     %  this function.

@@ -76,6 +76,11 @@ classdef QHYccd < handle
                      fullfile(classpath,'headers/qhyccd_matlab.h'));
             end
 
+            % undocumented functions, suppress or enable stdout trace of
+            %  calls
+            EnableQHYCCDMessage(true)
+            SetQHYCCDLogLevel(10)
+            
             % this can be called harmlessly multiple times?
             InitQHYCCDResource;
             

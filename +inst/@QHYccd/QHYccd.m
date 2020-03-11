@@ -127,6 +127,7 @@ classdef QHYccd < handle
             try
                 % if another instantiation is still using the library, this
                 % will fail
+                pause(1)
                 unloadlibrary('libqhyccd')
             catch
             end

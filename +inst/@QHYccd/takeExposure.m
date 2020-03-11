@@ -10,7 +10,7 @@ function takeExposure(QC,expTime)
         % one available till a new is there?
         QC.lastImage=[];
         
-        QC.startExposure(expTime)
+        QC.startExposure(QC.ExpTime)
         
         collector=timer('Name','ImageCollector',...
             'ExecutionMode','SingleShot','BusyMode','Queue',...

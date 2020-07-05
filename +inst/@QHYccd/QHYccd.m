@@ -72,8 +72,23 @@ classdef QHYccd < handle
             % Load the library if needed (this is global?)           
             if ~libisloaded('libqhyccd')
                 classpath=fileparts(mfilename('fullpath'));
-                loadlibrary('libqhyccd',...
-                     fullfile(classpath,'headers/qhyccd_matlab.h'));
+                % Quick and ugly patch to cope alternatively with:
+                %  -- James Fidell packaging of the library, v6.0.x
+                % or
+                %  -- QHY original installer of LINUX_X64_qhyccd_V20200219_0
+                % the two differ for location and content of the include files,
+                %  and therefore I use temporarily two patched versions of
+                %  the main include file qhyccd.h
+                if exist('/usr/lib/x86_64-linux-gnu/libqhyccd.so.6','file')
+                    loadlibrary('libqhyccd',...
+                        fullfile(classpath,'headers/qhyccd_matlab.h'));
+                elseif exist('/usr/local/lib/libqhyccd.so.20','file')
+                    loadlibrary('libqhyccd',...
+                        fullfile(classpath,'headers/qhyccd2020_matlab.h'));%,...
+                        %'includepath','/usr/local/include');
+                else
+                    error('these QHY installations change all the time; what shall I do?')
+                end
             end
 
             % undocumented functions, suppress or enable stdout trace of

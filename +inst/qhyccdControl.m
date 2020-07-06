@@ -61,6 +61,7 @@ classdef qhyccdControl < uint16
         CAM_LIVEVIDEOMODE (58),
         CAM_IS_COLOR (59),
         hasHardwareFrameCounter (60),
-        CONTROL_MAX_ID (61)
+        CONTROL_MAX_ID (61),
+        CAM_HUMIDITY (62)
     end
 end

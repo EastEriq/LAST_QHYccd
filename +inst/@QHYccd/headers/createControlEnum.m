@@ -1,7 +1,17 @@
 % quick & dirty parsing script to parse the qhyccdstruct.h
 %  file and generate a matlab enumeration
-fid1=fopen('/usr/include/qhyccd/qhyccdstruct.h');
+% Run from this directory
+if exist('/usr/lib/x86_64-linux-gnu/libqhyccd.so.6','file')
+    % file locations style James Fidell package
+    fid1=fopen('/usr/include/qhyccd/qhyccdstruct.h');
+elseif exist('/usr/local/lib/libqhyccd.so.20','file')
+    % file locations style QHY original install.h
+    fid1=fopen('/usr/local/include/qhyccdstruct.h');
+else
+    error('these QHY installations change all the time; what shall I do?')
+end
 fid2=fopen('../../qhyccdControl.m','w');
+
 
 l=''; controlblock=false; inum=-1;
 while ischar(l)
@@ -20,7 +30,7 @@ while ischar(l)
             fprintf(fid2,'        %s (%d)',controlword,inum);
         end
     end
-    if strfind(l,'typedef enum CONTROL_ID')
+    if strfind(l,'enum CONTROL_ID') % v.6.0.x has "typedef enum CONTROL_ID" here
         controlblock=true;
         fgetl(fid1); % skip {
         fprintf(fid2,'classdef qhyccdControl < uint16\n    enumeration\n');

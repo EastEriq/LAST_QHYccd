@@ -13,11 +13,11 @@ classdef QHYccd < handle
         ExpTime=10;
         Gain=0;
     end
-
+    
     properties(Transient)
         lastImage
     end
-        
+
     properties(Dependent = true)
         Temperature
         ROI % beware - SDK does not provide a getter for it, go figure
@@ -29,6 +29,7 @@ classdef QHYccd < handle
         CameraName
         CamStatus='unknown';
         CoolingStatus
+        CoolingPercentage
         time_start=[];
         time_end=[];
    end
@@ -187,6 +188,11 @@ classdef QHYccd < handle
             else
                 status='unknown';
             end
+        end
+        
+        function Percentage=get.CoolingPercentage(QC)
+            % Get the current cooling percentage
+            Percentage=round(GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_CURPWM)./255.*1000)./10;
         end
         
         function set.ExpTime(QC,ExpTime)

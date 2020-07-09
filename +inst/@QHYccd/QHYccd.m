@@ -85,7 +85,8 @@ classdef QHYccd < handle
                         fullfile(classpath,'headers/qhyccd_matlab.h'));
                 elseif exist('/usr/local/lib/libqhyccd.so.20','file')
                     loadlibrary('libqhyccd',...
-                        fullfile(classpath,'headers/qhyccd2020_matlab.h'));%,...
+                        fullfile(classpath,'headers/qhyccd2020_matlab.h'),...
+                        'addheader',fullfile(classpath,'headers/qhyccdstruct_matlab.h'));%,...
                         %'includepath','/usr/local/include');
                 else
                     error('these QHY installations change all the time; what shall I do?')
@@ -284,8 +285,10 @@ classdef QHYccd < handle
         
         function set.ReadMode(QC,readMode)
             success=(SetQHYCCDReadMode(QC.camhandle,readMode)==0);
-            QC.report(sprintf('Invalid read mode! Legal is %d:%d\n',0,...
+            if ~success
+                QC.report(sprintf('Invalid read mode! Legal is %d:%d\n',0,...
                     numel(QC.readModesList)-1));
+            end
             QC.setLastError(success,'could not set the read mode')
         end
         

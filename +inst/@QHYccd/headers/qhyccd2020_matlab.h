@@ -1,14 +1,13 @@
 
 #include "qhyccderr.h"
 #include "qhyccdcamdef.h"
-#include "qhyccdstruct.h"
+#include "qhyccdstruct_matlab.h"
 #include "stdint.h"
 #include "config.h"
 
-// these are not anymore correctly defined as empty inside qhyccdstruct.h
-#define EXPORTFUNC
-#define EXPORTC
+// somehow this needs to be explicitely defined now
 #define CONTROL_ID uint16_t
+
 
 #if defined (_WIN32)
 #include "cyapi.h"
@@ -730,7 +729,7 @@ EXPORTC uint32_t STDCALL GetQHYCCDBeforeOpenParam(
   QHYCamMinMaxStepValue *p,
   CONTROL_ID controlId);
 
-EXPORTC uint32_t STDCALL GetQHYCCDBeforeOpenReadMode(QHYCamReadModeInfo *p);
+//EXPORTC uint32_t STDCALL GetQHYCCDBeforeOpenReadMode(QHYCamReadModeInfo *p);
 
 
 EXPORTC uint32_t STDCALL  SetQHYCCDBurstModeStartEnd(

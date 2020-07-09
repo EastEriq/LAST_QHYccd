@@ -15,7 +15,7 @@ Experiences and attempts while installing QHY software
  is somehow commented). What comes closest to a "manual" is
  [this set of forum posts](https://www.qhyccd.com//bbs/index.php?topic=5903.0) (one post - one function). Ridicolous.
 
-+ ETA: [An SDK manual](https://www.qhyccd.com/bbs/index.php?action=dlattach;topic=6776.0;attach=9793)
++ **ETA:** [An SDK manual](https://www.qhyccd.com/bbs/index.php?action=dlattach;topic=6776.0;attach=9793)
   appeared 30/5/2019.
 
 + The publication state of a low level API of raw USB commands to QHY cameras is unclear.
@@ -28,7 +28,12 @@ used
  [V4.0.12 a.k.a. LINUX_qhyccd_V20190122_0](http://www.qhyccd.com/file/repository/latestSoftAndDirver/SDK/V6.0.1/LINUX_qhyccd_V20190927_0.tgz), and in 10/2019 [V6.0.1 a.k.a. LINUX_qhyccd_V20190927_0](http://www.qhyccd.com/file/repository/latestSoftAndDirver/SDK/V6.0.1/LINUX_qhyccd_V20190927_0.tgz) and [V6.0.4 a.k.a. LINUX_qhyccd_V20191023_0](http://www.qhyccd.com/file/repository/latestSoftAndDirver/SDK/V6.0.4/LINUX_qhyccd_V20191023_0.tgz).
 The [version of the SDK on github](https://github.com/qhyccd-lzr/QHYCCD_Linux_New) is completely out of date.
 
++ **ETA:** in 2020 the semver coincides with the date, it is in the form `yy.mm.dd`. 
+
 + I reccommend the installation from the debian packages put together by James Fidell over the original ones provided by QHY, [see below](#OctoberAddendum).
+
++ But all together, maybe not: we might not want to count on an additional party, James Fidell for maintaining.
+ After all, as of 2/2020, the QHY packages include an `install.sh`, `uninstall.sh` and  a `distclean.h` script.
 
 
 Making that work:
@@ -159,3 +164,10 @@ single c++ program which gets built as mex, not a way to interface directly with
 + `libqhyccd.so` now declares its dependency on `libusb-1.0`, so  starting Matlab with `LD_PRELOAD=...` is no more necessary.
 
 + the calls are now very verbose on `stdout`, it seems as if debugging symbols have not been squelched in the release.
+
+### July 2020 addendum:
+
+The [openastroproject/Downlooads](https://www.openastroproject.org/downloads/) page keeps updated versions of
+`libqhyccd` and `libqhyccd-firmware`, but not of `libqhyccd-dev`. Probably James would create it upon request,
+but it may be better to skip an intermediary. It would be possible to create the packages with 
+[James's scripts](https://github.com/openastroproject/libqhyccd-pkg), though, as lonk as he keeps chasing against QHY updates.

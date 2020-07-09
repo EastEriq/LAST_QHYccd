@@ -1,7 +1,7 @@
 
 #include "qhyccderr.h"
 #include "qhyccdcamdef.h"
-#include "qhyccdstruct_matlab.h"
+#include "qhyccdstruct_20-2-19_matlab.h"
 #include "stdint.h"
 #include "config.h"
 

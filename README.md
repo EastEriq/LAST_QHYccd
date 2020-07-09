@@ -1,6 +1,8 @@
 # LAST_QHYccd
 
-LAST hardware driver for QHY cameras
+LAST hardware driver for QHY cameras.
+
+One needs to install the QHY SDK first. See the ramblings in [the dedicated file](InstallingQHYsdk.md).
 
 See the project where all this started from: [QHYccd-Matlab](https://github.com/EastEriq/QHYccd-matlab).
 

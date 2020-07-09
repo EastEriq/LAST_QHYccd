@@ -1,6 +1,9 @@
 Experiences and attempts while installing QHY software
 ======================================================
 
+One would think that the SDK could be downloaded from the [QHY downloads page](https://www.qhyccd.com/download.html). Wrong! One can try from [this one (prepub?)](https://www.qhyccd.com/html/prepub/log_en.html#!log_en.md) or
+from [this one (test version?)](https://www.qhyccd.com/html/test_version/).
+
 + QHY has an [user forum](https://www.qhyccd.com/bbs/index.php) with a lot of information
  and semiconstant company support. It took me a bit to register
  on it and start pestering, because of registration captcha idiosyncracies. Note that there are also complaints on

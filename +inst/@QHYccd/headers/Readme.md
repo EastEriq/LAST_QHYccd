@@ -1,12 +1,12 @@
 # Modifications made to the original headers so that they work with Matlab: #
 
-Currently working with V20200219_0, QHY SDK, but leaving temporarily in support for v6.0.5 as installed from James Fidell's packages.
+Currently working with sdk_linux64_20.06.26, but leaving temporarily in support for V20200219_0 (QHY) and v6.0.5 as installed from James Fidell's packages.
 
 ## Versions of 2020:
 
 The stock headers of the SDK are installed in `/usr/local/include`.
 
-### `qhyccd.h` --> `qhyccd2020_matlab.h`:
+### `qhyccd.h` --> `qhyccd_20-X-Y_matlab.h`:
 
 - defined `CONTROL_ID` as `uint16_t` (no idea why it wasn't necessary earlier)
 - commented `SetQHYCCDLogFunction`; it is probably not usable by matlab becauses it uses function handles
@@ -15,7 +15,7 @@ The stock headers of the SDK are installed in `/usr/local/include`.
   structure `QHYCamReadModeInfo`
 - commented prototype `SetQHYCCDCallBack`, which is probably not usable by matlab becauses it uses function handles
 
-### `qhyccdstruct.h` --> `qhyccdstruct_matlab.h`:
+### `qhyccdstruct.h` --> `qhyccdstruct_20-X-Y_matlab.h`:
 
 - claused the nonempty #definitions of `EXPORTFUNC` and `EXPORTC` only for C++, like in James Fidell's version
 

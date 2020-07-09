@@ -30,6 +30,8 @@ classdef QHYccd < handle
         CamStatus='unknown';
         CoolingStatus
         CoolingPercentage
+        % Humidity  % probably not always supported, and units unknown
+        % Pressure  % Ditto
         time_start=[];
         time_end=[];
    end
@@ -83,11 +85,14 @@ classdef QHYccd < handle
                 if exist('/usr/lib/x86_64-linux-gnu/libqhyccd.so.6','file')
                     loadlibrary('libqhyccd',...
                         fullfile(classpath,'headers/qhyccd_matlab.h'));
-                elseif exist('/usr/local/lib/libqhyccd.so.20','file')
+                elseif exist('/usr/local/lib/libqhyccd.so.20.2.19','file')
                     loadlibrary('libqhyccd',...
-                        fullfile(classpath,'headers/qhyccd2020_matlab.h'),...
-                        'addheader',fullfile(classpath,'headers/qhyccdstruct_matlab.h'));%,...
-                        %'includepath','/usr/local/include');
+                        fullfile(classpath,'headers/qhyccd_20-2-19_matlab.h'),...
+                        'addheader',fullfile(classpath,'headers/qhyccdstruct_20-2-19_matlab.h'));
+                elseif exist('/usr/local/lib/libqhyccd.so.20.6.26','file')
+                    loadlibrary('libqhyccd',...
+                        fullfile(classpath,'headers/qhyccd_20-6-26_matlab.h'),...
+                        'addheader',fullfile(classpath,'headers/qhyccdstruct_20-6-26_matlab.h'));
                 else
                     error('these QHY installations change all the time; what shall I do?')
                 end
@@ -189,6 +194,16 @@ classdef QHYccd < handle
             success = (Temp>-100 & Temp<100);
             QC.setLastError(success,'could not get temperature')
         end
+        
+%         function humidity=get.Humidity(QC)
+%             humidity=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CAM_HUMIDITY);
+%             % units and behavior in case of error or nonexistent control unknown
+%         end
+%         
+%         function pressure=get.Pressure(QC)
+%             pressure=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CAM_PRESSURE);
+%             % units and behavior in case of error or nonexistent control unknown
+%         end
         
         function status=get.CoolingStatus(QC)
             % get the current cooling status, by checking the current PWM

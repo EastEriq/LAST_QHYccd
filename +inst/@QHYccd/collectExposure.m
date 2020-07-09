@@ -18,7 +18,7 @@ function img=collectExposure(QC)
 
             QC.deallocate_image_buffer
 
-            QC.setLastError(ret==0,'could retrieve exposure from camera');
+            QC.setLastError(ret==0,'could not retrieve exposure from camera');
             if ret==0
                 QC.CamStatus='idle';
             else

@@ -20,4 +20,5 @@ See the project where all this started from: [QHYccd-Matlab](https://github.com/
   **Dynamic range**  for the three read modes, and **Linearity test**
    ([see also](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=23&id=273)),
    **Relative spectral sensitivity** (see also
-    [measurement of the absolute QE](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=23&id=261))
+    [measurement of the absolute QE](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=23&id=261) 
+    and [Random noise optimize](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=23&id=281))

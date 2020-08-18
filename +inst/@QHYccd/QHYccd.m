@@ -29,7 +29,7 @@ classdef QHYccd < handle
         CameraName
         CamStatus='unknown';
         CoolingStatus
-        CoolingPercentage
+        CoolingPower
         % Humidity  % probably not always supported, and units unknown
         % Pressure  % Ditto
         time_start=[];
@@ -107,12 +107,15 @@ classdef QHYccd < handle
             InitQHYCCDResource;
             
             % the constructor tries also to open the camera
-            if exist('cameranum','var')
-                connect(QC,cameranum);
-            else
-                connect(QC);
-            end
-        end
+            
+% Comment this in order to connect not in the constructor phase.
+% This MIGHT help solving retriving data problem. Jul 15. DP
+%             if exist('cameranum','var')
+%                 connect(QC,cameranum);
+%             else
+%                 connect(QC);
+%             end
+         end
         
         % Destructor
         function delete(QC)
@@ -221,9 +224,9 @@ classdef QHYccd < handle
             end
         end
         
-        function Percentage=get.CoolingPercentage(QC)
+        function CoolingPower=get.CoolingPower(QC)
             % Get the current cooling percentage
-            Percentage=round(GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_CURPWM)./255.*1000)./10;
+            CoolingPower=round(GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_CURPWM)./255.*1000)./10;
         end
         
         function set.ExpTime(QC,ExpTime)
@@ -253,7 +256,7 @@ classdef QHYccd < handle
         function Gain=get.Gain(QC)
             Gain=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_GAIN);
             % check whether err=double(FFFFFFFF)...
-            success=(Gain>0 & Gain<2e6);
+            success=(Gain>=0 & Gain<2e6);
             QC.setLastError(success,'could not get gain')
         end
         

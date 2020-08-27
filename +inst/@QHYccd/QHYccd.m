@@ -70,97 +70,48 @@ classdef QHYccd < handle
         % Constructor
         function QC=QHYccd(cameranum)
             %  cameranum: int, number of the camera to open (as enumerated by the SDK)
-            %     May be omitted. In that case the last camera is referred to
+            %     May be omitted. In that connection is deferred to when
+            %     connect() is separatly called.
 
-            % Load the library if needed (this is global?)           
-            if ~libisloaded('libqhyccd')
-                classpath=fileparts(mfilename('fullpath'));
-                % Quick and ugly patch to cope alternatively with:
-                %  -- James Fidell packaging of the library, v6.0.x
-                % or
-                %  -- QHY original installer of LINUX_X64_qhyccd_V20200219_0
-                % the two differ for location and content of the include files,
-                %  and therefore I use temporarily two patched versions of
-                %  the main include file qhyccd.h
-                if exist('/usr/lib/x86_64-linux-gnu/libqhyccd.so.6','file')
-                    loadlibrary('libqhyccd',...
-                        fullfile(classpath,'headers/qhyccd_matlab.h'));
-                elseif exist('/usr/local/lib/libqhyccd.so.20.2.19','file')
-                    loadlibrary('libqhyccd',...
-                        fullfile(classpath,'headers/qhyccd_20-2-19_matlab.h'),...
-                        'addheader',fullfile(classpath,'headers/qhyccdstruct_20-2-19_matlab.h'));
-                elseif exist('/usr/local/lib/libqhyccd.so.20.6.26','file')
-                    loadlibrary('libqhyccd',...
-                        fullfile(classpath,'headers/qhyccd_20-6-26_matlab.h'),...
-                        'addheader',fullfile(classpath,'headers/qhyccdstruct_20-6-26_matlab.h'));
-                elseif exist('/usr/local/lib/libqhyccd.so.20.8.26.3','file')
-                    loadlibrary('libqhyccd',...
-                        fullfile(classpath,'headers/qhyccd_20-8-26_matlab.h'),...
-                        'addheader',fullfile(classpath,'headers/qhyccdstruct_20-8-26_matlab.h'));
-                else
-                    error('these QHY installations change all the time; what shall I do?')
-                end
-                % this could perhaps be called harmlessly multiple times,
-                %  or does it interfere with previously constructed objects?
-                InitQHYCCDResource;
-            end
-            
-            %[ret,version,major,minor,build]=GetQHYCCDSDKVersion()
-            
-            % undocumented functions, suppress or enable stdout trace of
-            %  calls
-            EnableQHYCCDMessage(true)
-            SetQHYCCDLogLevel(10)
+            % this is done only if libqhyccd is not already loaded  
+            loadQHYlibraryAndOpen(QC);   
                         
-            % the constructor tries also to open the camera
-            
-% Comment this in order to connect not in the constructor phase.
-% This MIGHT help solving retriving data problem. Jul 15. DP
-%             if exist('cameranum','var')
-%                 connect(QC,cameranum);
-%             else
-%                 connect(QC);
-%             end
+            % open the camera when the object is constructed, if cameranum is
+            %  given
+            % David commented out on 15/7/2020 because
+            % "not connecting in the constructor phase. MIGHT help solving 
+            %  retriving data problem."
+            % If that is it, just instantiate without a cameranum
+            if exist('cameranum','var')
+                connect(QC,cameranum);
+            else
+%                connect(QC);
+            end
          end
         
         % Destructor
         function delete(QC)
             
-            % it shouldn't harm to try to stop the acquisition for good,
-            %  even if already stopped - and delete the image pointer QC.pImg
-            abort(QC)
-            
-            % make sure we close the communication, if not done already
-            success=disconnect(QC);
-            QC.setLastError(success,'could not close camera')
-            if success
-                QC.report('Succesfully closed camera\n')
-            else
-                QC.report('Failed to close camera\n')
-            end
-            
-            QHYCCDQuit % this is undocumented BUT IT PREVENTS CRASHES!
-            
-            % clear QC.pImg
-            
-            % but:
-            % don't release the SDK, other QC objects may be using it
-            % Besides, releasing prevents reopening
-            % ReleaseQHYCCDResource;
-            
-            % unload the library,
-            %  This, at least with libqhyccd 6.0.5 even crashes Matlab
-            %  with multiple errors traced into libpthread.so (unless
-            %  QHYCCDQuit is called before).
-            % On the other side, unloadlibrary is the last resort for
-            %  recovering usb communication or camera errors, and for
-            %  allowing future reconnections to the cameras
-            try
-                % if another instantiation is still using the library, this
-                % will fail
-                pause(1)
-                unloadlibrary('libqhyccd')
-            catch
+            % do all this only if the QC object has been effectively
+            % connected to a camera
+            if ~isempty(QC.camhandle)
+                % it shouldn't harm to try to stop the acquisition for good,
+                %  even if already stopped - and delete the image pointer QC.pImg
+                abort(QC)
+                
+                % make sure we close the communication, if not done already
+                success=disconnect(QC);
+                QC.setLastError(success,'could not close camera')
+                if success
+                    QC.report(['Succesfully closed "' QC.CameraName '"\n'])
+                else
+                    QC.report('Failed to close camera\n')
+                end
+                
+                if howManyQHYCCDobjects()==0
+                    QC.report('last QHY object destroyed, releasing library\n')
+                    releaseAndUnloadQHYlibrary()
+                end
             end
         end
         

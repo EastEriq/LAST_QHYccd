@@ -3,31 +3,32 @@ function success=connect(QC,cameranum)
     %  read from it some basic information like color capability,
     %  physical dimensions, etc.
     %  cameranum: int, number of the camera to open (as enumerated by the SDK)
-    %     May be omitted. In that case the last camera is referred to
+    %     May be omitted. In that case the first camera is referred to
+    % WARNING: reconnecting a camera object which was previously
+    %          disconnected (but not destroyed) crashes Matlab, as of now
+    %          (27/8/2020)
 
     QC.lastError='';
     
-    num=ScanQHYCCD;
-    QC.report(sprintf('%d QHY cameras found\n',num));
-
     if ~exist('cameranum','var')
-        QC.cameranum=num; % and thus open the last camera
-                         % (TODO, if possible, the first not
-                         %  already open)
+        QC.cameranum=1; % open the first camera. It would be nice if there
+                        %  was a way to check which other cameras are
+                        %  open, and open the next
     else
         QC.cameranum=cameranum;
     end
-    [ret,QC.CameraName]=GetQHYCCDId(max(min(QC.cameranum,num)-1,0));
+    [ret,QC.CameraName]=GetQHYCCDId(max(QC.cameranum-1,0));
 
     if ret
-        QC.lastError='could not even get one camera id';
+        QC.lastError=sprintf('could not open camera #%d',QC.cameranum);
+        QC.report([QC.lastError '\n'])
         return;
     end
     
     QC.camhandle=OpenQHYCCD(QC.CameraName);
     QC.report(sprintf('Opened camera "%s"\n',QC.CameraName));
 
-    InitQHYCCD(QC.camhandle);
+    InitQHYCCD(QC.camhandle); % this one crashes when reconnecting!
 
     % query the camera and populate the QC structures with some
     %  characteristic values

@@ -1,6 +1,6 @@
 # Modifications made to the original headers so that they work with Matlab: #
 
-Currently working with sdk_linux64_20.06.26, but leaving temporarily in support for V20200219_0 (QHY) and v6.0.5 as installed from James Fidell's packages.
+Currently working with sdk_linux64_20.08.26, but leaving temporarily in support for V20200219_0 (QHY) and v6.0.5 as installed from James Fidell's packages.
 
 ## Versions of 2020:
 

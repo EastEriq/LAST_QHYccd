@@ -17,7 +17,7 @@ l=''; controlblock=false; inum=-1;
 while ischar(l)
     l=fgetl(fid1);
     if ischar(l)
-        l=regexprep(l,'/\*.*\*/',''); %remove comments in v.20.6.23
+        l=regexprep(l,'/\*[^\*]*\*/',''); %remove comments in v.20.6.23
     end
     if controlblock
         if strfind(l,'}')>0

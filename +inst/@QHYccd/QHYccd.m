@@ -93,19 +93,25 @@ classdef QHYccd < handle
                     loadlibrary('libqhyccd',...
                         fullfile(classpath,'headers/qhyccd_20-6-26_matlab.h'),...
                         'addheader',fullfile(classpath,'headers/qhyccdstruct_20-6-26_matlab.h'));
+                elseif exist('/usr/local/lib/libqhyccd.so.20.8.26.3','file')
+                    loadlibrary('libqhyccd',...
+                        fullfile(classpath,'headers/qhyccd_20-8-26_matlab.h'),...
+                        'addheader',fullfile(classpath,'headers/qhyccdstruct_20-8-26_matlab.h'));
                 else
                     error('these QHY installations change all the time; what shall I do?')
                 end
+                % this could perhaps be called harmlessly multiple times,
+                %  or does it interfere with previously constructed objects?
+                InitQHYCCDResource;
             end
-
+            
+            %[ret,version,major,minor,build]=GetQHYCCDSDKVersion()
+            
             % undocumented functions, suppress or enable stdout trace of
             %  calls
             EnableQHYCCDMessage(true)
             SetQHYCCDLogLevel(10)
-            
-            % this can be called harmlessly multiple times?
-            InitQHYCCDResource;
-            
+                        
             % the constructor tries also to open the camera
             
 % Comment this in order to connect not in the constructor phase.

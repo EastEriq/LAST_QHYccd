@@ -20,15 +20,20 @@ function success=connect(QC,cameranum)
     [ret,QC.CameraName]=GetQHYCCDId(max(QC.cameranum-1,0));
 
     if ret
-        QC.lastError=sprintf('could not open camera #%d',QC.cameranum);
+        QC.lastError=sprintf('could get name of camera #%d',QC.cameranum);
         QC.report([QC.lastError '\n'])
         return;
     end
     
     QC.camhandle=OpenQHYCCD(QC.CameraName);
-    QC.report(sprintf('Opened camera "%s"\n',QC.CameraName));
-
-    InitQHYCCD(QC.camhandle); % this one crashes when reconnecting!
+    if ~isNull(QC.camhandle)
+        QC.report(sprintf('Opened camera "%s"\n',QC.CameraName));
+    else
+        QC.lastError=sprintf('could not open camera #%d',QC.cameranum);
+        QC.report([QC.lastError '\n'])
+    end
+    
+    InitQHYCCD(QC.camhandle) % this one crashes when reconnecting!
 
     % query the camera and populate the QC structures with some
     %  characteristic values

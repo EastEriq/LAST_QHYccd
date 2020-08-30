@@ -1,0 +1,28 @@
+We are working in a multiple camera setup. Cameras may be connected and
+disconnected many times during the lifetime of the caller application. Cameras may
+disconnect because of EMI, power or cable failure, and we need robust
+ways to handle disconnects and remediate.
+
+Setup is Ubuntu 18, we have been testing a lot of your versions of the SDK, up to 20.8.26.
+
+* we find no function in the SDK for determining if an opened camera [OpenQHYCCD(CameraName);  InitQHYCCD(camhandle)]
+is still reachable. Parameters can be read with GetQHYCCDParam() with a formerly valid camhandle, even if the cable of the camera has been pulled.
+
+* Calling ScanQHYCCD() after communication with a camera is opened, makes that camera unreachable.
+
+* we find no function in the SDK for determining how many cameras have been opened. Knowing that at least one camera is opened is necessary, to prevent calling ReleaseQHYCCDResource() too early.
+
+* the caller application segfaults with the following trace if a camera is opened 
+[OpenQHYCCD(CameraName);  InitQHYCCD(camhandle)], closed [CloseQHYCCD(camhandle)] and reopened again. What is going on?
+
+  Stack Trace (from fault):
+  [  0] 0x00007f1266346de6     /lib/x86_64-linux-gnu/libusb-1.0.so.0+00044518 libusb_control_transfer+00000086
+  [  1] 0x00007f12642f8949     /usr/local/lib/libqhyccd.so+00780617 _ZN6QHYCAM7vendTXDEPvhPht+00000229
+  [  2] 0x00007f12642fa5b2     /usr/local/lib/libqhyccd.so+00787890 _ZN6QHYCAM10LowLevelA0EPvhtth+00000196
+  [  3] 0x00007f12643c1ad5     /usr/local/lib/libqhyccd.so+01604309 _ZN10QHY600BASE12InitChipRegsEPv+00000277
+  [  4] 0x00007f12642e9d25     /usr/local/lib/libqhyccd.so+00720165 InitQHYCCD+00000411
+  ...
+
+* the caller application segfaults if libqhyccd.so is released before all cameras are closed and ReleaseQHYCCDResource() is called. What resource is left allocated under the carpet?
+
+* Explain the function QHYCCDQuit(). We have seen application crashes if it is not called when a camera is closed. On the other hand, the function has no argument specifying which camera connection is terminated.

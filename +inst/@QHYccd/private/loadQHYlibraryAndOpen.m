@@ -36,8 +36,8 @@ function loadQHYlibraryAndOpen(QC)
                 %[ret,version,major,minor,build]=GetQHYCCDSDKVersion()
                 % undocumented functions, suppress or enable stdout trace of
                 %  calls
-                EnableQHYCCDMessage(false)
-                SetQHYCCDLogLevel(0)                                
+                EnableQHYCCDMessage(false) %t his is probably for the log file
+                SetQHYCCDLogLevel(10) % this one affects the blabber on stdout                                
                 % ScanQHYCCD disconnects previously connected cameras, so we
                 %  cannot make use of it for enery new camera object created
                 %  (probabily this is new of 2020 SDKs, what do I know)

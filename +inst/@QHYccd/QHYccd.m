@@ -75,18 +75,24 @@ classdef QHYccd < handle
 
             % this is done only if libqhyccd is not already loaded  
             loadQHYlibraryAndOpen(QC);   
-                        
-            % open the camera when the object is constructed, if cameranum is
-            %  given
-            % David commented out on 15/7/2020 because
-            % "not connecting in the constructor phase. MIGHT help solving 
-            %  retriving data problem."
-            % If that is it, just instantiate without a cameranum
-            if exist('cameranum','var')
-                connect(QC,cameranum);
-            else
-%                connect(QC);
-            end
+
+            % Don't open the camera when constructed. Some details are
+            % inserted at the connect phase of the wrapper method
+            % (obs.camera.connect), so connect only seperately.
+            % DP - 2020 Sep 1
+            
+%             % open the camera when the object is constructed, if cameranum is
+%             %  given
+%             % David commented out on 15/7/2020 because
+%             % "not connecting in the constructor phase. MIGHT help solving 
+%             %  retriving data problem."
+%             % If that is it, just instantiate without a cameranum
+%             if exist('cameranum','var')
+%                 connect(QC,cameranum);
+%             else
+% %                connect(QC);
+%             end
+
          end
         
         % Destructor

@@ -93,7 +93,7 @@ classdef QHYccd < handle
 % %                connect(QC);
 %             end
 
-         end
+        end 
         
         % Destructor
         function delete(QC)

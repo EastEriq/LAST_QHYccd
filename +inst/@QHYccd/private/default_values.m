@@ -3,8 +3,8 @@ function default_values(QC)
 %  between camera models when needed
     QC.ExpTime=10;
     QC.Gain=0;
-    QC.offset=1;
-    QC.binning=[1,1];
+    QC.Offset=1;
+    QC.Binning=[1,1];
     
     switch QC.CameraName(1:6)
         case 'QHY600'

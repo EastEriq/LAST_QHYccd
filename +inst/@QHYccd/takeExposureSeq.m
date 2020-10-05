@@ -23,13 +23,13 @@ function imgs=takeExposureSeq(QC,num,expTime)
     for i=1:num
         startExposure(QC,expTime)
         
-        if ~isempty(QC.lastError)
+        if ~isempty(QC.LastError)
             return
         end
         
         imgs{i}=collectExposure(QC);
         
-        if ~isempty(QC.lastError)
+        if ~isempty(QC.LastError)
             return
         end
     end

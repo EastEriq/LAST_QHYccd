@@ -17,7 +17,7 @@ function startExposure(QC,expTime)
             ret=ExpQHYCCDSingleFrame(QC.camhandle);
             t1=now;
             
-            QC.time_start_delta=t1-t0;
+            QC.TimeStartDelta=t1-t0;
             
             if ret==hex2dec('2001') % "QHYCCD_READ_DIRECTLY". No idea but
                                     %   it is like that in the demoes
@@ -29,18 +29,18 @@ function startExposure(QC,expTime)
             QC.setLastError(success,'could not start single exposure');
 
             if success
-                QC.time_start=t0;
+                QC.TimeStart=t0;
                 QC.lastExpTime=QC.ExpTime;
                 QC.CamStatus='exposing';
             else
-                QC.time_start=NaN;
+                QC.TimeStart=NaN;
                 QC.lastExpTime=NaN;
                 QC.CamStatus='unknown';
                 QC.deallocate_image_buffer
             end
         otherwise
             QC.deallocate_image_buffer
-            QC.lastError='camera not ready to start exposure';
+            QC.LastError='camera not ready to start exposure';
     end
 
 end

@@ -1,27 +1,28 @@
-function success=connect(QC,cameranum)
+function success=connect(QC,CameraNum)
     % Open the connection with a specific camera, and
     %  read from it some basic information like color capability,
     %  physical dimensions, etc.
-    %  cameranum: int, number of the camera to open (as enumerated by the SDK)
+    %  CameraNum: int, number of the camera to open (as enumerated by the SDK)
     %     May be omitted. In that case the first camera is referred to
     % WARNING: reconnecting a camera object which was previously
     %          disconnected (but not destroyed) crashes Matlab, as of now
     %          (27/8/2020)
 
-    QC.lastError='';
+    success = 0;
+    QC.LastError='';
     
-    if ~exist('cameranum','var')
-        QC.cameranum=1; % open the first camera. It would be nice if there
+    if ~exist('CameraNum','var')
+        QC.CameraNum=1; % open the first camera. It would be nice if there
                         %  was a way to check which other cameras are
                         %  open, and open the next
     else
-        QC.cameranum=cameranum;
+        QC.CameraNum=CameraNum;
     end
-    [ret,QC.CameraName]=GetQHYCCDId(max(QC.cameranum-1,0));
+    [ret,QC.CameraName]=GetQHYCCDId(max(QC.CameraNum-1,0));
 
     if ret
-        QC.lastError=sprintf('could get name of camera #%d',QC.cameranum);
-        QC.report([QC.lastError '\n'])
+        QC.LastError=sprintf('could get name of camera #%d',QC.CameraNum);
+        QC.report([QC.LastError '\n'])
         return;
     end
     
@@ -29,8 +30,8 @@ function success=connect(QC,cameranum)
     if ~isNull(QC.camhandle)
         QC.report(sprintf('Opened camera "%s"\n',QC.CameraName));
     else
-        QC.lastError=sprintf('could not open camera #%d',QC.cameranum);
-        QC.report([QC.lastError '\n'])
+        QC.LastError=sprintf('could not open camera #%d',QC.CameraNum);
+        QC.report([QC.LastError '\n'])
     end
     
     InitQHYCCD(QC.camhandle) % this one crashes when reconnecting!
@@ -89,9 +90,9 @@ function success=connect(QC,cameranum)
     % put here also some plausible parameter settings which are
     %  not likely to be changed
 
-    QC.offset=0;
+    QC.Offset=0;
     colormode=false; % (local variable because no getter)
-    QC.color=colormode;
+    QC.Color=colormode;
 
     % USBtraffic value is said to affect glow. 30 is the value
     %   normally found in demos, it may need to be changed, also

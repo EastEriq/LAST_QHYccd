@@ -25,10 +25,10 @@ function img=collectExposure(QC)
                 QC.CamStatus='unknown';
             end
         otherwise
-            QC.lastError='no image to read because exposure not started';
+            QC.LastError='no image to read because exposure not started';
             img=[];
     end
     
-    QC.lastImage=img;
+    QC.LastImage=img;
 
 end

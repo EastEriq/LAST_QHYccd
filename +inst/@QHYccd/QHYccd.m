@@ -1,7 +1,7 @@
 classdef QHYccd < handle
  
     properties
-        cameranum
+        CameraNum
         % read/write properties, settings of the camera, for which
         %  hardware query is involved.
         %  We use getters/setters, even though instantiation
@@ -9,20 +9,20 @@ classdef QHYccd < handle
         %   of the camera require that camhandle is obtained first.
         %  Values set here as default won't likely be passed to the camera
         %   when the object is created
-        binning=[1,1]; % beware - SDK does not provide a getter for it, go figure
+        Binning=[1,1]; % beware - SDK does not provide a getter for it, go figure
         ExpTime=10;
         Gain=0;
     end
     
     properties(Transient)
-        lastImage
+        LastImage
     end
 
     properties(Dependent = true)
         Temperature
         ROI % beware - SDK does not provide a getter for it, go figure
         ReadMode
-        offset
+        Offset
     end
     
     properties(GetAccess = public, SetAccess = private)
@@ -32,8 +32,8 @@ classdef QHYccd < handle
         CoolingPower
         % Humidity  % probably not always supported, and units unknown
         % Pressure  % Ditto
-        time_start=[];
-        time_end=[];
+        TimeStart=[];
+        TimeEnd=[];
    end
     
     % Enrico, discretional
@@ -45,20 +45,20 @@ classdef QHYccd < handle
         readModesList=struct('name',[],'resx',[],'resy',[]);
         lastExpTime=NaN;
         progressive_frame = 0; % image of a sequence already available
-        time_start_delta % uncertainty, after-before calling exposure start
+        TimeStartDelta % uncertainty, after-before calling exposure start
     end
     
     % settings which have not been prescribed by the API,
     % but for which I have already made the code
     properties(Hidden)
-        color
-        bitDepth
+        Color
+        BitDepth
     end
     
     properties (Hidden,Transient)
         camhandle   % handle to the camera talked to - no need for the external
                     % consumer to know it
-        lastError='';
+        LastError='';
         verbose=true;
         pImg  % pointer to the image buffer (can we gain anything in going
               %  to a double buffer model?)
@@ -68,8 +68,8 @@ classdef QHYccd < handle
 
     methods
         % Constructor
-        function QC=QHYccd(cameranum)
-            %  cameranum: int, number of the camera to open (as enumerated by the SDK)
+        function QC=QHYccd(CameraNum)
+            %  CameraNum: int, number of the camera to open (as enumerated by the SDK)
             %     May be omitted. In that connection is deferred to when
             %     connect() is separatly called.
 
@@ -81,14 +81,14 @@ classdef QHYccd < handle
             % (obs.camera.connect), so connect only seperately.
             % DP - 2020 Sep 1
             
-%             % open the camera when the object is constructed, if cameranum is
+%             % open the camera when the object is constructed, if CameraNum is
 %             %  given
 %             % David commented out on 15/7/2020 because
 %             % "not connecting in the constructor phase. MIGHT help solving 
 %             %  retriving data problem."
-%             % If that is it, just instantiate without a cameranum
-%             if exist('cameranum','var')
-%                 connect(QC,cameranum);
+%             % If that is it, just instantiate without a CameraNum
+%             if exist('CameraNum','var')
+%                 connect(QC,CameraNum);
 %             else
 % %                connect(QC);
 %             end
@@ -131,7 +131,7 @@ classdef QHYccd < handle
             %  bookkeeping via class internal state variables. 
             switch QC.CamStatus
                 case 'exposing'
-                    if (now-QC.time_start)*24*3600 > QC.lastExpTime
+                    if (now-QC.TimeStart)*24*3600 > QC.lastExpTime
                        QC.CamStatus='reading'; % means, ready to read
                     end
             end
@@ -251,16 +251,16 @@ classdef QHYccd < handle
         end
 
         
-        function set.offset(QC,offset)
-            success=(SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET,offset)==0);
+        function set.Offset(QC,Offset)
+            success=(SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET,Offset)==0);
             QC.setLastError(success,'could not set offset')
         end
         
-        function offset=get.offset(QC)
+        function Offset=get.Offset(QC)
             % Offset seems to be a sort of bias, black level
-            offset=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET);
+            Offset=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET);
             % check whether err=double(FFFFFFFF)...
-            success=(offset>=0 & offset<2e6);
+            success=(Offset>=0 & Offset<2e6);
             QC.setLastError(success,'could not get offset')
         end
         
@@ -279,27 +279,27 @@ classdef QHYccd < handle
             QC.setLastError(success,'could not get the read mode')
         end
         
-        function set.binning(QC,binning)
+        function set.Binning(QC,Binning)
             % default is 1x1
             % for the QHY367, 1x1 and 2x2 seem to work; NxN with N>2 gives error,
             %  NxM gives no error, but all are uneffective and fall back to 1x1
-            success= (SetQHYCCDBinMode(QC.camhandle,binning(1),binning(2))==0);
+            success= (SetQHYCCDBinMode(QC.camhandle,Binning(1),Binning(2))==0);
             QC.setLastError(success,'could not set the read mode')
         end
         
         % The SDK doesn't provide a function for getting the current
         %  binning, go figure
 
-        function set.color(QC,ColorMode)
+        function set.Color(QC,ColorMode)
             % default has to be bw
              success=(SetQHYCCDDebayerOnOff(QC.camhandle,ColorMode)==0);
              QC.setLastError(success,'could not set color mode')
              if ColorMode
-                 QC.bitDepth=8; % segfault in buffer -> image otherwise
+                 QC.BitDepth=8; % segfault in buffer -> image otherwise
              end
         end
 
-        function set.bitDepth(QC,BitDepth)
+        function set.BitDepth(QC,BitDepth)
             % BitDepth: 8 or 16 (bit). My understanding is that this is in
             %  first place a communication setting, which however implies
             %  the scaling of the raw ADC readout. IIUC, e.g. a 14bit ADC
@@ -315,13 +315,13 @@ classdef QHYccd < handle
             QC.setLastError(success,'could not set bit depth')
 
             % ensure that color is set off if 16 bit (otherwise segfault!)
-            if BitDepth==16; QC.color=false; end
+            if BitDepth==16; QC.Color=false; end
         end
 
-        function bitDepth=get.bitDepth(QC)
-            bitDepth=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_TRANSFERBIT);
+        function BitDepth=get.BitDepth(QC)
+            BitDepth=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_TRANSFERBIT);
             % check whether err=double(FFFFFFFF)...
-            success=(bitDepth==8 | bitDepth==16);
+            success=(BitDepth==8 | BitDepth==16);
             QC.setLastError(success,'could not get bit depth')
         end
 

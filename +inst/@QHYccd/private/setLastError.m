@@ -1,8 +1,8 @@
 function setLastError(QC,success,msg)
-% helper to set QC.lastError empty or message
+% helper to set QC.LastError empty or message
     if success
-        QC.lastError='';
+        QC.LastError='';
     else
-        QC.lastError=msg;
+        QC.LastError=msg;
     end
 end

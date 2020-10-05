@@ -8,10 +8,10 @@ function img=collectExposure(QC)
                 GetQHYCCDSingleFrame(QC.camhandle,QC.pImg);
 
             if ret==0
-                QC.time_end=now;
+                QC.TimeEnd=now;
                 QC.progressive_frame=1;
             else
-                QC.time_end=[];
+                QC.TimeEnd=[];
             end
 
             img=unpackImgBuffer(QC.pImg,w,h,channels,bp);

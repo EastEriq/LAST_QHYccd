@@ -10,8 +10,10 @@ function takeExposure(QC,expTime)
         % one available till a new is there?
         QC.LastImage=[];
         
+        % tic
         QC.startExposure(QC.ExpTime)
-        
+        % fprintf('t after startExposure: %f\n',toc);
+
         collector=timer('Name','ImageCollector',...
             'ExecutionMode','SingleShot','BusyMode','Queue',...
             'StartDelay',QC.ExpTime,...
@@ -19,5 +21,5 @@ function takeExposure(QC,expTime)
             'StopFcn',@(mTimer,~)delete(mTimer));
             
         start(collector)
-        
+
 end

@@ -13,8 +13,11 @@ function img=unpackImgBuffer(pImg,w,h,channels,bp)
         if bp==8
             img=reshape(pImg.Value(1:w*h),w,h);
         else
-            img=reshape(uint16(pImg.Value(1:2:2*w*h))+...
-                bitshift(uint16(pImg.Value(2:2:2*w*h)),8),w,h);
+            % this one takes ~170ms
+            %  img=reshape(uint16(pImg.Value(1:2:2*w*h))+...
+            %  bitshift(uint16(pImg.Value(2:2:2*w*h)),8),w,h);
+            % and this one ~100ms
+            img=reshape(typecast(pImg.Value(1:2*w*h),'uint16'),w,h);
         end
     end
 end

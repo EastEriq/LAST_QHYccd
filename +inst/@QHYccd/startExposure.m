@@ -9,12 +9,16 @@ function startExposure(QC,expTime)
 
             QC.progressive_frame=0;
 
+            % fprintf('t before allocating buffer: %f\n',toc);
             QC.allocate_image_buffer
+            % fprintf('t after allocating buffer: %f\n',toc);
 
             SetQHYCCDStreamMode(QC.camhandle,0);
+            % fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
 
             t0=now;
             ret=ExpQHYCCDSingleFrame(QC.camhandle);
+            % fprintf('t after ExpQHYCCDSingleFrame: %f\n',toc);
             t1=now;
             
             QC.TimeStartDelta=t1-t0;

@@ -21,7 +21,7 @@ function success=connect(QC,CameraNum)
     [ret,QC.CameraName]=GetQHYCCDId(max(QC.CameraNum-1,0));
 
     if ret
-        QC.LastError=sprintf('could get name of camera #%d',QC.CameraNum);
+        QC.LastError=sprintf('could not get name of camera #%d',QC.CameraNum);
         QC.report([QC.LastError '\n'])
         return;
     end

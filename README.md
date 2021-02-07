@@ -22,3 +22,8 @@ See the project where all this started from: [QHYccd-Matlab](https://github.com/
    **Relative spectral sensitivity** (see also
     [measurement of the absolute QE](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=23&id=261) 
     and [Random noise optimize](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=23&id=281))
+
+## The file `qhyccd.ini`
+
+Apparently an addition of sdk 20.11.26 and later ones.
+https://www.qhyccd.com/file/repository/publish/SDK/qhyccd.ini

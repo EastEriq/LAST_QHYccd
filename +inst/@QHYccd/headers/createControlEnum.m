@@ -4,7 +4,8 @@
 if exist('/usr/lib/x86_64-linux-gnu/libqhyccd.so.6','file')
     % file locations style James Fidell package
     fid1=fopen('/usr/include/qhyccd/qhyccdstruct.h');
-elseif exist('/usr/local/lib/libqhyccd.so.20','file')
+elseif exist('/usr/local/lib/libqhyccd.so.20','file') ||...
+        exist('/usr/local/lib/libqhyccd.so.21','file')
     % file locations style QHY original install.h
     fid1=fopen('/usr/local/include/qhyccdstruct.h');
 else

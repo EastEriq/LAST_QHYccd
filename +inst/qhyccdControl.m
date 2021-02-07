@@ -64,6 +64,8 @@ classdef qhyccdControl < uint16
         CONTROL_MAX_ID_Error (61),
         CAM_HUMIDITY (62),
         CAM_PRESSURE (63),
-        CONTROL_MAX_ID (64)
+        CONTROL_VACUUM_PUMP (64),
+        CONTROL_SensorChamberCycle_PUMP (65),
+        CONTROL_MAX_ID (66)
     end
 end

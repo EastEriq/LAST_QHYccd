@@ -1,4 +1,4 @@
-classdef QHYccd < handle
+classdef QHYccd < obs.LAST_Handle
  
     properties
         CameraNum
@@ -70,7 +70,7 @@ classdef QHYccd < handle
         % Constructor
         function QC=QHYccd(CameraNum)
             %  CameraNum: int, number of the camera to open (as enumerated by the SDK)
-            %     May be omitted. In that connection is deferred to when
+            %     May be omitted. If so, that connection is deferred to when
             %     connect() is separatly called.
 
             % this is done only if libqhyccd is not already loaded  

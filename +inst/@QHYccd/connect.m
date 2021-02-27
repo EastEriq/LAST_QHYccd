@@ -34,7 +34,7 @@ function success=connect(QC,CameraNum)
         QC.report([QC.LastError '\n'])
     end
     
-    InitQHYCCD(QC.camhandle) % this one crashes when reconnecting!
+    InitQHYCCD(QC.camhandle); % this one crashes when reconnecting!
 
     % query the camera and populate the QC structures with some
     %  characteristic values

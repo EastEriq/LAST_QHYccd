@@ -35,5 +35,6 @@ function img=collectExposure(QC)
 
     QC.LastImage=img;
     % fprintf('t after copying LastImage: %f\n',toc);
+    QC.LastImageSaved=false;
 
 end

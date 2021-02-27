@@ -64,6 +64,7 @@ classdef QHYccd < handle
               %  to a double buffer model?)
               % Shall we allocate it only once on open(QC), or, like now,
               %  every time we start an acquisition?
+        LastImageSaved=false; % set true by the abstractor when saving the image, reset to false at new exposure
     end
 
     methods

@@ -9,8 +9,9 @@ function imgs=takeLiveSeq(QC,num,expTime)
 
     if contains(QC.CameraName,'QHY600')
         SetQHYCCDStreamMode(QC.camhandle,1);
-%        InitQHYCCD(QC.camhandle);
+        InitQHYCCD(QC.camhandle);
     else
+        InitQHYCCD(QC.camhandle);
         SetQHYCCDStreamMode(QC.camhandle,1);
     end
     
@@ -27,7 +28,8 @@ function imgs=takeLiveSeq(QC,num,expTime)
         ret=-1;
         while ret~=0
             [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
-            pause(0.01)
+            pause(0.5)
+            fprintf('%s\n',dec2hex(ret))
         end
         fprintf('got image %d\n',i)
         
@@ -38,7 +40,9 @@ function imgs=takeLiveSeq(QC,num,expTime)
         end
     end
     
+    fprintf('stopping live mode')
     StopQHYCCDLive(QC.camhandle);
+    fprintf('live mode stopped')
     
     QC.deallocate_image_buffer
 

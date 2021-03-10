@@ -53,6 +53,7 @@ classdef QHYccd < obs.LAST_Handle
     properties(Hidden)
         Color
         BitDepth
+        DebugOutput % if set true, library blabber is printed on stderr
     end
     
     properties (Hidden,Transient)
@@ -326,6 +327,13 @@ classdef QHYccd < obs.LAST_Handle
             QC.setLastError(success,'could not get bit depth')
         end
 
+        function set.DebugOutput(QC,flag)
+            % undocumented functions, suppress or enable stderr trace of
+            %  calls
+            EnableQHYCCDMessage(flag) % this was probably for the log file,
+            % in later SDKs it turns on the stderr trace
+            SetQHYCCDLogLevel(10) % this one affects the verbosity of the blabber
+        end
     end
     
 end

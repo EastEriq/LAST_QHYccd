@@ -32,8 +32,9 @@ classdef QHYccd < obs.LAST_Handle
         CoolingPower
         % Humidity  % probably not always supported, and units unknown
         % Pressure  % Ditto
-        TimeStart=[];
-        TimeEnd=[];
+        TimeStart; % timestamp immediately after ExpQHYCCDSingleFrame() is called
+        TimeEnd; % timestamp after GetQHYCCDSingleFrame() is called
+        TimeStartLastImage % copy of TimeStart when LastImage is filled, valid until LastImage is not overwritten
    end
     
     % Enrico, discretional

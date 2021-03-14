@@ -8,7 +8,10 @@ function img=collectExposure(QC)
             [ret,w,h,bp,channels]=...
                 GetQHYCCDSingleFrame(QC.camhandle,QC.pImg);
             % fprintf('t after calling GetQHYCCDSingleFrame: %f\n',toc);
-
+            
+            QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
+                                                % even if a subsequent
+                                                % exposure is started
             if ret==0
                 QC.TimeEnd=now;
                 QC.progressive_frame=1;

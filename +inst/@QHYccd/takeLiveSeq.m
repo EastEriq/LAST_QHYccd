@@ -13,7 +13,7 @@ function imgs=takeLiveSeq(QC,num,expTime)
 
     if contains(QC.CameraName,'QHY600')
         SetQHYCCDStreamMode(QC.camhandle,1);
-        %InitQHYCCD(QC.camhandle);
+        InitQHYCCD(QC.camhandle);
     else
         InitQHYCCD(QC.camhandle);
         SetQHYCCDStreamMode(QC.camhandle,1);

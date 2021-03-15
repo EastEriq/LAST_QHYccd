@@ -8,7 +8,7 @@ function takeExposure(QC,expTime)
         
         % last image: empty it when starting, or really keep the last
         % one available till a new is there?
-        QC.LastImage=[];
+        % QC.LastImage=[];
         
         % tic
         QC.startExposure(QC.ExpTime)

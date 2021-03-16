@@ -17,7 +17,7 @@ The only way I have found to prevent that is to unload `liqqhyccd` completely.
  I close (`QHYCCDQuit; ReleaseQHYCCDResource; unloadlibrary('libqhyccd')`) only
  when the **base** matlab workspace contains no more objects of class `QHYccd`.
  This is so far ok if the objects are called interactively, may need to be revised if
- they are created by functions, and live in a child workspace.  
+ they are created by functions, and live in a child workspace.
  Looking at the matlab objects is a workaround, as I don't know of an SDK function
  to count the opened cameras.
 

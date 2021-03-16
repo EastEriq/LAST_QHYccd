@@ -2,8 +2,11 @@ function success=disconnect(QC)
     % Close the connection with the camera registered in the
     %  current camera object
 
-    % don't try co lose an invalid camhandle, it would crash matlab
+    % don't try to close an invalid camhandle, it would crash matlab
     if ~isempty(QC.camhandle)
+        % maye for safety here we could attempt to call StopQHYCCDLive(QC.camhandle)
+        %  or would this cause a crash if live mode was never started?
+        %
         % check this status, which may fail
         success=(CloseQHYCCD(QC.camhandle)==0);
     else

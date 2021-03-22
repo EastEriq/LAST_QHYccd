@@ -4,11 +4,14 @@ function img=collectExposure(QC)
     switch QC.CamStatus
         case {'exposing','reading'}
 
-            % fprintf('t before calling GetQHYCCDSingleFrame: %f\n',toc);
+            if QC.verbose>1
+                fprintf('t before calling GetQHYCCDSingleFrame: %f\n',toc);
+            end
             [ret,w,h,bp,channels]=...
                 GetQHYCCDSingleFrame(QC.camhandle,QC.pImg);
-            % fprintf('t after calling GetQHYCCDSingleFrame: %f\n',toc);
-            
+            if QC.verbose>1 
+                fprintf('t after calling GetQHYCCDSingleFrame: %f\n',toc);
+            end
             QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                 % even if a subsequent
                                                 % exposure is started
@@ -21,8 +24,9 @@ function img=collectExposure(QC)
 
             % Conversion of an image buffer to a matlab image
             img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
-            % fprintf('t after unpacking buffer: %f\n',toc);
-
+            if QC.verbose>1
+                fprintf('t after unpacking buffer: %f\n',toc);
+            end
             QC.deallocate_image_buffer
 
             QC.setLastError(ret==0,'could not retrieve exposure from camera');
@@ -37,7 +41,9 @@ function img=collectExposure(QC)
     end
 
     QC.LastImage=img;
-    % fprintf('t after copying LastImage: %f\n',toc);
+    if QC.verbose>1
+        fprintf('t after copying LastImage: %f\n',toc);
+    end
     QC.LastImageSaved=false;
 
 end

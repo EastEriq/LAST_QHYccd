@@ -18,16 +18,17 @@ function img=collectExposure(QC)
             if ret==0
                 QC.TimeEnd=now;
                 QC.progressive_frame=1;
+                % Conversion of an image buffer to a matlab image
+                img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
+                if QC.verbose>1
+                    fprintf('t after unpacking buffer: %f\n',toc);
+                end
+                QC.deallocate_image_buffer
             else
+                QC.report(['error retreiving frame from camera ' QC.CameraName '\n'])
                 QC.TimeEnd=[];
+                img=[];
             end
-
-            % Conversion of an image buffer to a matlab image
-            img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
-            if QC.verbose>1
-                fprintf('t after unpacking buffer: %f\n',toc);
-            end
-            QC.deallocate_image_buffer
 
             QC.setLastError(ret==0,'could not retrieve exposure from camera');
             if ret==0

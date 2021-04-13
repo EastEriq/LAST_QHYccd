@@ -19,9 +19,10 @@ function imgs=takeLiveSeq(QC,num,expTime)
         SetQHYCCDStreamMode(QC.camhandle,1);
     end
     
-    BeginQHYCCDLive(QC.camhandle);
 
     QC.allocate_image_buffer
+
+    BeginQHYCCDLive(QC.camhandle);
 
     for i=1:num
 

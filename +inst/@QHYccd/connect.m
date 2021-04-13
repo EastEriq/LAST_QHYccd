@@ -104,6 +104,9 @@ function success=connect(QC,CameraNum)
     %  computer.
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,3);
 
+    % in demos of LiveMode - what does this do exactly?
+    % SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);
+
     % from https://www.qhyccd.com/bbs/index.php?topic=6861
     %  this is said to affect speed, and accepting 0,1,2
     % The SDK manual says:

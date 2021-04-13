@@ -6,6 +6,7 @@ function success=disconnect(QC)
     if ~isempty(QC.camhandle)
         % maye for safety here we could attempt to call StopQHYCCDLive(QC.camhandle)
         %  or would this cause a crash if live mode was never started?
+        % StopQHYCCDLive(QC.camhandle);
         %
         % check this status, which may fail
         success=(CloseQHYCCD(QC.camhandle)==0);

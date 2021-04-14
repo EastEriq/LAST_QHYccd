@@ -110,20 +110,42 @@ tht should have improved with 30-03-21. In fact the statement is:
   `GetQHYCCDLiveFrame()` now returns once a new value `0x7636800` before the first image, 
   besides -1 and 0. The value is not documented in `qhyccderr.h`.
 
-  Investigating what are the timing implications, and if there are stability issues. E.g.,
+  TODO Investigating what are the timing implications, and if there are stability issues. E.g.,
   what happens if an image is not collected in time.
 
-  Need to check and find solutions for
+  TODO Need to check and find solutions for
   interoperability with `Q.takeExposure()`, and whether acquiring a single frame in Live
-  mode is competitive
-  with SingleFrame mode.
+  mode is competitive with SingleFrame mode, in terms of calling overheads and of course
+  stability.
+
+  TODO check if by chance the controls `CAM_SINGLEFRAMEMODE` and `CAM_LIVEVIDEOMODE` can be
+  read or set, and if setting them is an alternative to `SetQHYCCDStreamMode()`.
 
 4) execution of `GetQHYCCDSingleFrame()` reduces to 1900ms (for short exp) to 1650ms (long exp).
    It is already an achievement given the former 2400ms. I don't understand the inverse 
    dependence on texp.
 
+  TODO: check the effect of control parameters like CONTROL_USBTRAFFIC. On fora it is said that
+  the lower the value the higher the fps. OTOH last year
+  [I wrote](https://www.qhyccd.com/bbs/index.php?topic=7525.0) that I observed no timing
+  difference in single frame mode.
+
 5) written 7 wrappers, but I have no indication about their use besides the function and argument names.
    At best they only take integer input arguments besides the camera handle, I have no clue
-   as for where the image data should be coming from. Full stop.
+   as for where the image data should be coming from. Maybe through callbacks (which would a bit
+   of pain to implement from matlab). In absence of further info, full stop.
+
+  On the QHY site, two cameras are mentioned using the Burst mode: 
+  [QHY42PRO](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=30&id=236) and
+  [QHY4040](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=138&id=50&cut=3).
+  _"If you need this mode please contact QHYCCD for details"_.
+
+  As a further guess, there are some control names possibly connected to the DDR memory:
+  `CONTROL_DDR`, `DDR_BUFFER_CAPACITY`, `DDR_BUFFER_READ_THRESHOLD`. Another hint,
+  we received a contraption called "Guider", and the preceding control name is
+   `CAM_QHY5II_GUIDE_MODE`.
 
 6) written a couple of them, which sometimes crash, sometimes not...
+
+Other TODO, since we are at it, check support, min/max values and effect of `CONTROL_ROWNOISERE`,
+which may turn on/off the row noise reduction.

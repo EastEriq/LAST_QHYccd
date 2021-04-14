@@ -62,13 +62,18 @@ function imgs=takeLiveSeq(QC,num,expTime)
         while ret~=0
             [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
             pause(0.1)
-            fprintf('%s\n',dec2hex(ret))
+            if QC.verbose>1
+                fprintf('%s\n',dec2hex(ret))
+            end
         end
         if QC.verbose>1
             fprintf('got image %d at time %f\n',i,toc);
         end
         
         imgs{i}=unpackImgBuffer(QC.pImg,w,h,channels,bp);
+        if QC.verbose>1
+            fprintf('t after unpacking: %f\n',toc);
+        end
         
         if ~isempty(QC.LastError)
             return
@@ -82,5 +87,8 @@ function imgs=takeLiveSeq(QC,num,expTime)
     end
     
     QC.deallocate_image_buffer
+    if QC.verbose>1
+        fprintf('t after deallocating buffer: %f\n',toc);
+    end
 
 end

@@ -47,37 +47,22 @@ function imgs=takeLiveSeq(QC,num,expTime)
         fprintf('t after allocating buffer: %f\n',toc);
     end
 
-    BeginQHYCCDLive(QC.camhandle);
+    ret=BeginQHYCCDLive(QC.camhandle);
     if QC.verbose>1
         fprintf('t after BeginQHYCCDLive: %f\n',toc);
     end
+    if ret==0
+        QC.CamStatus='exposing';
+    else
+        QC.CamStatus='unknown';
+    end
 
+    imgs=cell(1,num);
     for i=1:num
-
         if ~isempty(QC.LastError)
-            return
-        end
-        
-        ret=-1;
-        while ret~=0
-            [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
-            pause(0.1)
-            if QC.verbose>1
-                fprintf('%s\n',dec2hex(ret))
-            end
-        end
-        if QC.verbose>1
-            fprintf('got image %d at time %f\n',i,toc);
-        end
-        
-        imgs{i}=unpackImgBuffer(QC.pImg,w,h,channels,bp);
-        if QC.verbose>1
-            fprintf('t after unpacking: %f\n',toc);
-        end
-        
-        if ~isempty(QC.LastError)
-            return
-        end
+            break
+        end 
+        imgs{i}=collectLiveExposure(QC);
     end
     
     fprintf('stopping live mode\n')
@@ -85,6 +70,7 @@ function imgs=takeLiveSeq(QC,num,expTime)
     if QC.verbose>1
         fprintf('t after StopQHYCCDLive: %f\n',toc);
     end
+    QC.CamStatus='idle';
     
     QC.deallocate_image_buffer
     if QC.verbose>1

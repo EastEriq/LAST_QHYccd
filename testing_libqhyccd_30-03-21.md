@@ -126,7 +126,7 @@ tht should have improved with 30-03-21. In fact the statement is:
    dependence on texp.
 
   TODO: check the effect of control parameters like CONTROL_USBTRAFFIC. On fora it is said that
-  the lower the value the higher the fps. OTOH last year
+  the lower the value the higher the fps. Its range is {0:60}. OTOH last year
   [I wrote](https://www.qhyccd.com/bbs/index.php?topic=7525.0) that I observed no timing
   difference in single frame mode.
 

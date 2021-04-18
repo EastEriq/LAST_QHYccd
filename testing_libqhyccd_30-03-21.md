@@ -1,4 +1,4 @@
-# Testing Live and Burst mode on latest QHY sdk
+# Testing Live and Burst mode on QHY sdk_linux64_21.03.13 + libqhyccd.so.21.3.30.13
 
 Testing on CFENRICO-PC01.
 
@@ -21,7 +21,7 @@ Testing on CFENRICO-PC01.
 + compilation with:
 `g++ LiveFrameSample3.cpp -o lfm -I /usr/local/include/ -L /usr/local/lib/ -lqhyccd`
 
-1) `LiveFrameSample3.cpp` differs from the latest `LiveFrameSample.cpp` with respect of:
+1) My `LiveFrameSample3.cpp` differs from the latest `LiveFrameSample.cpp` received, with respect of:
 
 + `SetQHYCCDBitsMode(camhandle,8)` vs `SetQHYCCDParam(camhandle, CONTROL_TRANSFERBIT, 8)`
 + correct computation of fps
@@ -85,7 +85,7 @@ ReleaseQHYCCDResource
 
 In principle we already know that the calling sequence in which first we set camera properties and then
 repeatedly call LiveFrame is incompatible wit previous versions of the sdk, and there is no reason why
-tht should have improved with 30-03-21. In fact the statement is:
+that should have improved with 30-03-21. In fact the statement is:
 
 >    "But if camera work on Live mode,you need call CloseQHYCCD and ReleaseQHYCCDResource,and
 >     reconnect camera,call    StopQHYCCDLive and BeginQHYCCDLive is not available presently."
@@ -99,7 +99,7 @@ tht should have improved with 30-03-21. In fact the statement is:
   the loadlib script so that it builds the thunk file with it too
 3. check if the same attempts of LiveMode go any further with 30-03-21
 4. check timings in SingleFrame mode with this newest .so
-5. write wrappers for 6 Burst mode functions and experiment with them a little
+5. write wrappers for 7 Burst mode functions and experiment with them a little
 6. write a set of sure-crash matlab scripts, for future reference and
    problem spotting
 
@@ -131,19 +131,30 @@ tht should have improved with 30-03-21. In fact the statement is:
   only involves a fixed initial overhead of ~200ms and a post exposure transfer overhead of 1600ms
   (see next point).
 
+  Checked if a trick can be played out, like setting initially a short texp to get a fast
+  initialization, to change it to longer exposure afterwards - apparently not, it produces
+  a) return values `0x7636800` at random calls also for frames after the first, b) corrupted images
+  (vertical full height blocks with different exposure times).
+
   Checked if by chance the controls `CAM_SINGLEFRAMEMODE` and `CAM_LIVEVIDEOMODE` can be
   read or set, and if setting them is an alternative to `SetQHYCCDStreamMode()`. **They are
   reported as supported by `IsQHYCCDControlAvailable()`, but any attempt of accessing
   them or checking their ranges reports -1**.
 
 4) execution of `GetQHYCCDSingleFrame()` reduces to 1900ms (for short exp) to 1650ms (long exp).
-   It is already an achievement given the former 2400ms. I don't understand the inverse 
+   It is already an achievement given the former 2400ms. I don't understand the inverse
    dependence on texp.
 
   Checked the effect of control parameters like CONTROL_USBTRAFFIC. On fora it is said that
-  the lower the value the higher the fps. Its range is {0:60}. OTOH last year
+  the lower the value the higher the fps. Its range is {0:60}.
+
+  As for Live mode, indeed a value of 0 produces a frame transfer time of ~450ms (full frame, 16bit),
+  30 of ~600ms, and 60 of ~850ms.
+
+  For single frame mode, I already noted a comment in some file about it being non relevant,
+  AND last year
   [I wrote](https://www.qhyccd.com/bbs/index.php?topic=7525.0) that I observed no timing
-  difference in single frame mode.
+  difference. This remains valid also with the present combination.
 
 5) written 7 wrappers, but I have no indication about their use besides the function and argument names.
    At best they only take integer input arguments besides the camera handle, I have no clue
@@ -163,7 +174,7 @@ tht should have improved with 30-03-21. In fact the statement is:
 6) written a couple of them, which sometimes crash, sometimes not...
 
 Since we are at it, I thought of checking support, min/max values and effect of `CONTROL_ROWNOISERE`,
-which may turn on/off the row noise reduction: Not Supported.
+which may turn on/off the row noise reduction: **Not Supported for QHY600**.
 
 ## Mandatory parameters which have to be reset after `InitQHYCCD()`
 
@@ -173,8 +184,8 @@ The demo cpp sets 8 parameters, let's see which are essential and the effect of 
 + `QC.Binning=[1,1]` not setting it causes
   `__pthread_mutex_lock: Assertion 'mutex->__data.__owner == 0' failed`. and camera lockup,
   demanding power cycle, sometimes not at the first sequence
-+`SetQHYCCDResolution()` not setting it causes timeout at the first frame
-+`QC.BitDepth=16` Not setting it causes the appearance of the new return code `3B1B400` at the first
++ `SetQHYCCDResolution()` not setting it causes timeout at the first frame
++ `QC.BitDepth=16` Not setting it causes the appearance of the new return code `3B1B400` at the first
  frame, for a change, a few calls after the 0, dark images on first sequence,
  and crash at the second sequence;
 + `Q.gain` and `Q.Offset` maybe they are persistent and don't need to be reset,
@@ -182,5 +193,5 @@ The demo cpp sets 8 parameters, let's see which are essential and the effect of 
 + `Q.ExpTime` needs to be reset, otherwise it is apparently set to 0 or something the like.
 + `CONTROL_USBTRAFFIC` probably doesn't have to be reset, the former value is kept.
 + `CONTROL_DDR` not setting has caused me once an
-  `Assertion `new_prio == -1 || (new_prio >= fifo_min_prio && new_prio <= fifo_max_prio)' failed`
+  `Assertion 'new_prio == -1 || (new_prio >= fifo_min_prio && new_prio <= fifo_max_prio)' failed`
   crash, other times worked...

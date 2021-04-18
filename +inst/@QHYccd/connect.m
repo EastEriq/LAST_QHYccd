@@ -102,7 +102,9 @@ function success=connect(QC,CameraNum)
     %  for continuous mode, and the larger the bandwidth setting, the
     %  lower the frame rate, which can reduce the load of the
     %  computer.
-    SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,3);
+    % The forum wisdom seems to be that the lower the value, the
+    %  higher the fps. I verified some timings with sdk+30-3-21
+    SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,0);
 
     % in demos of LiveMode - what does this do exactly?
     % SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);

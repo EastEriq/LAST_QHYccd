@@ -1,11 +1,11 @@
 function imgs=takeLiveSeq(QC,num,expTime)
-% attempting once more to take live images, this time with the SDK 21-02-01
-% NOT WORKING, can hang or crash matlab in creative ways, depending on camera (600 or 367,
-%  USB port or cable), depending probably on low level USB communication issues, DDR
-%  issues, and wrong call sequence of SDK functions.
-% Don't use in real life.
-
-    imgs={};
+% attempting once more to take live images, this time with the SDK
+% 21-02-01 + 30-3-21
+% Tested on QHY600 only, so far.
+% TODO: instead of just storing the images in a big struct containing
+%  only the image pixels, save also the retrieval times, and/or
+%  allow the call of an external funtion which saves the images
+%  with appropriate metadata
 
     if QC.verbose>1
         tic;
@@ -26,17 +26,18 @@ function imgs=takeLiveSeq(QC,num,expTime)
     end
 
     % set again parameters here
-    
     QC.Color=false;
-    QC.Binning=[1 1];
+    QC.Binning=QC.Binning;
     SetQHYCCDResolution(QC.camhandle,0,0,QC.physical_size.nx,QC.physical_size.ny);
     QC.BitDepth=16;
-    QC.Gain=0;
-    QC.Offset=1;
-    SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,30);
+    QC.Gain=QC.Gain; % maybe this has to be reset, maybe not
+    QC.Offset=QC.Offset; % ditto
+    %SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,0);
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);
     if exist('expTime','var')
         QC.ExpTime=expTime;
+    else
+        QC.ExpTime=QC.ExpTime;
     end
     if QC.verbose>1
         fprintf('t after setting again parameters: %f\n',toc);
@@ -65,7 +66,9 @@ function imgs=takeLiveSeq(QC,num,expTime)
         imgs{i}=collectLiveExposure(QC);
     end
     
-    fprintf('stopping live mode\n')
+    if QC.verbose
+        fprintf('stopping live mode\n')
+    end
     StopQHYCCDLive(QC.camhandle);
     if QC.verbose>1
         fprintf('t after StopQHYCCDLive: %f\n',toc);

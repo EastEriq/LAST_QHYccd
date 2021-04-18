@@ -97,7 +97,7 @@ tht should have improved with 30-03-21. In fact the statement is:
   sdk_linux64_21.03.13
 2. replace `/usr/local/lib/libqhyccd.so` with the latest received with 30-03-21, and update
   the loadlib script so that it builds the thunk file with it too
-3. TODO check if the same attempts of LiveMode go any further with 30-03-21
+3. check if the same attempts of LiveMode go any further with 30-03-21
 4. check timings in SingleFrame mode with this newest .so
 5. write wrappers for 6 Burst mode functions and experiment with them a little
 6. write a set of sure-crash matlab scripts, for future reference and
@@ -105,27 +105,42 @@ tht should have improved with 30-03-21. In fact the statement is:
 
 ### Comments and results
 
-3) Getting there with `Q.takeLiveSeq()`. Seems that the trick is to set again a number 
+3) Getting there with `Q.takeLiveSeq()`. Seems that the trick is to set again a number
   of parameters after `InitQHYCCD()`, figuring out which.
-  `GetQHYCCDLiveFrame()` now returns once a new value `0x7636800` before the first image, 
-  besides -1 and 0. The value is not documented in `qhyccderr.h`.
 
-  TODO Investigating what are the timing implications, and if there are stability issues. E.g.,
-  what happens if an image is not collected in time.
+  `GetQHYCCDLiveFrame()` now returns once a new value `0x7636800` before the first image,
+  besides -1 and 0. The value is not documented in `qhyccderr.h`. _Maybe that flags
+  something like "initialization done, ready to retrieve last image now"?_. Yes!
+  and that is about 2*texp after beginning, for long exposures. From there, another texp
+  is required before the first image can be retrieved.
 
-  TODO Need to check and find solutions for
+  Investigating what are the timing implications, and if there are stability issues.
+
+  It seems that nothing bad happens if an image is not collected in time, and `GetQHYCCDLiveFrame()`
+  is called late (I don't know which image is actually read, though, the latest or the first unread).
+
+  Need to check and find solutions for
   interoperability with `Q.takeExposure()`, and whether acquiring a single frame in Live
   mode is competitive with SingleFrame mode, in terms of calling overheads and of course
   stability.
 
-  TODO check if by chance the controls `CAM_SINGLEFRAMEMODE` and `CAM_LIVEVIDEOMODE` can be
-  read or set, and if setting them is an alternative to `SetQHYCCDStreamMode()`.
+  Short answers: 1) probably one needs a disconnect/connect cycle to change mode (not
+  doing so, I have gotten corrupted single frame images after a live sequence; but live
+  after single frame seems ok). 2) Live mode has clearly an overhead of 3 exposure
+  times + calling overheads before the first image can be retrieved, Single frame
+  only involves a fixed initial overhead of ~200ms and a post exposure transfer overhead of 1600ms
+  (see next point).
+
+  Checked if by chance the controls `CAM_SINGLEFRAMEMODE` and `CAM_LIVEVIDEOMODE` can be
+  read or set, and if setting them is an alternative to `SetQHYCCDStreamMode()`. **They are
+  reported as supported by `IsQHYCCDControlAvailable()`, but any attempt of accessing
+  them or checking their ranges reports -1**.
 
 4) execution of `GetQHYCCDSingleFrame()` reduces to 1900ms (for short exp) to 1650ms (long exp).
    It is already an achievement given the former 2400ms. I don't understand the inverse 
    dependence on texp.
 
-  TODO: check the effect of control parameters like CONTROL_USBTRAFFIC. On fora it is said that
+  Checked the effect of control parameters like CONTROL_USBTRAFFIC. On fora it is said that
   the lower the value the higher the fps. Its range is {0:60}. OTOH last year
   [I wrote](https://www.qhyccd.com/bbs/index.php?topic=7525.0) that I observed no timing
   difference in single frame mode.
@@ -135,7 +150,7 @@ tht should have improved with 30-03-21. In fact the statement is:
    as for where the image data should be coming from. Maybe through callbacks (which would a bit
    of pain to implement from matlab). In absence of further info, full stop.
 
-  On the QHY site, two cameras are mentioned using the Burst mode: 
+  On the QHY site, two cameras are mentioned using the Burst mode:
   [QHY42PRO](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=30&id=236) and
   [QHY4040](https://www.qhyccd.com/index.php?m=content&c=index&a=show&catid=138&id=50&cut=3).
   _"If you need this mode please contact QHYCCD for details"_.
@@ -143,9 +158,29 @@ tht should have improved with 30-03-21. In fact the statement is:
   As a further guess, there are some control names possibly connected to the DDR memory:
   `CONTROL_DDR`, `DDR_BUFFER_CAPACITY`, `DDR_BUFFER_READ_THRESHOLD`. Another hint,
   we received a contraption called "Guider", and the preceding control name is
-   `CAM_QHY5II_GUIDE_MODE`.
+   `CAM_QHY5II_GUIDE_MODE`. **Checked**: Neither is supported.
 
 6) written a couple of them, which sometimes crash, sometimes not...
 
-Other TODO, since we are at it, check support, min/max values and effect of `CONTROL_ROWNOISERE`,
-which may turn on/off the row noise reduction.
+Since we are at it, I thought of checking support, min/max values and effect of `CONTROL_ROWNOISERE`,
+which may turn on/off the row noise reduction: Not Supported.
+
+## Mandatory parameters which have to be reset after `InitQHYCCD()`
+
+The demo cpp sets 8 parameters, let's see which are essential and the effect of not resetting them.
+
++ `Q.Color=false` not setting it causes a segfault at the second sequence
++ `QC.Binning=[1,1]` not setting it causes
+  `__pthread_mutex_lock: Assertion 'mutex->__data.__owner == 0' failed`. and camera lockup,
+  demanding power cycle, sometimes not at the first sequence
++`SetQHYCCDResolution()` not setting it causes timeout at the first frame
++`QC.BitDepth=16` Not setting it causes the appearance of the new return code `3B1B400` at the first
+ frame, for a change, a few calls after the 0, dark images on first sequence,
+ and crash at the second sequence;
++ `Q.gain` and `Q.Offset` maybe they are persistent and don't need to be reset,
+  at least Gain seems to persist (but recheck)
++ `Q.ExpTime` needs to be reset, otherwise it is apparently set to 0 or something the like.
++ `CONTROL_USBTRAFFIC` probably doesn't have to be reset, the former value is kept.
++ `CONTROL_DDR` not setting has caused me once an
+  `Assertion `new_prio == -1 || (new_prio >= fifo_min_prio && new_prio <= fifo_max_prio)' failed`
+  crash, other times worked...

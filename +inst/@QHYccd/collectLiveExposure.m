@@ -1,16 +1,14 @@
-function img=collectLiveExposure(QC,w,h,bp,channels)
+function img=collectLiveExposure(QC)
 % collect a frame from an ongoing live take, but only if we are in Live Mode, if
-%  exposure was started, and time out if waiting for more than texp
+%  exposure was started, and time out if waiting for more than X*texp
  
-
     % 600msec is for 16bit, USB3, full frame. If there would be a neat
     %  way of understanding ROI, bit mode, color mode, USB speed, without
-    %  wasting time, we could be more strict 
-    timeout=max(1.5*QC.ExpTime,0.6); % in secs
-    
-    GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC)
-    [ret,minp,maxp,stepp]=...
-        GetQHYCCDParamMinMaxStep(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC)
+    %  wasting time, we could be more strict
+    % setting up the scenes for the first image requires additional ~2 secs 
+    %  plus about two exposures. Thus for long exposures the first image 
+    %  may be retrieved only after something like 3*texp!
+    timeout=max(4*QC.ExpTime+3, 2.6); % in secs
     
     switch QC.CamStatus
         case {'exposing','reading'}  % check what is set as status in Live
@@ -20,10 +18,10 @@ function img=collectLiveExposure(QC,w,h,bp,channels)
                 [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
                 pause(0.1)
                 if QC.verbose>1
-                    fprintf('%s\n',dec2hex(ret))
+                    fprintf('%s at t=%f\n',dec2hex(ret), toc)
                 end
             end
-            if ret~=-1
+            if ret==0
                 if QC.verbose>1
                     fprintf('got image at time %f\n',toc);
                 end
@@ -33,7 +31,8 @@ function img=collectLiveExposure(QC,w,h,bp,channels)
                     fprintf('t after unpacking: %f\n',toc);
                 end
             else
-                QC.LastError='timed out without reading a Live image!';
+                img=[];
+                QC.LastError='timed out without reading a Live image!\n';
                 QC.report(QC.LastError);
             end
         otherwise

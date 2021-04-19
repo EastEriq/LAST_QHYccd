@@ -11,18 +11,28 @@ function imgs=takeLiveSeq(QC,num,expTime)
         tic;
     end
 
-    if contains(QC.CameraName,'QHY600')
-        SetQHYCCDStreamMode(QC.camhandle,1);
-        if QC.verbose>1
-            fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
+    if QC.StreamMode~=1
+        if contains(QC.CameraName,'QHY600')
+            ret=SetQHYCCDStreamMode(QC.camhandle,1);
+            if QC.verbose>1
+                fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
+            end
+            InitQHYCCD(QC.camhandle);
+            if QC.verbose>1
+                fprintf('t after InitQHYCCD: %f\n',toc);
+            end
+        else
+            InitQHYCCD(QC.camhandle);
+            ret=SetQHYCCDStreamMode(QC.camhandle,1);
         end
-        InitQHYCCD(QC.camhandle);
-        if QC.verbose>1
-            fprintf('t after InitQHYCCD: %f\n',toc);
+
+        if ret==0
+            QC.StreamMode=1;
+        else
+            QC.report(ret,'Camera cannot be put in Live mode')
+            QC.LastError='Camera cannot be put in Live mode';
+            return
         end
-    else
-        InitQHYCCD(QC.camhandle);
-        SetQHYCCDStreamMode(QC.camhandle,1);
     end
 
     % set again parameters here

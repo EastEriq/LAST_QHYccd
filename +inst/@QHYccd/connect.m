@@ -132,4 +132,10 @@ function success=connect(QC,CameraNum)
 
     QC.CamStatus='idle'; % whishful, if we got till here.
     
+    % set the camera in single frame mode by default, so to avoid
+    %  calling this function again (takes 100ms) for further single
+    %  exposures
+    SetQHYCCDStreamMode(QC.camhandle,0);
+    QC.StreamMode=0; % track the state in the object
+
 end

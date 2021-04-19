@@ -16,7 +16,7 @@ function img=collectLiveExposure(QC)
             ret=-1;
             while ret~=0 && (now-t0)*86400<timeout
                 [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
-                pause(0.1)
+                pause(0.01)
                 if QC.verbose>1
                     fprintf('%s at t=%f\n',dec2hex(ret), toc)
                 end

@@ -17,11 +17,13 @@ function startExposure(QC,expTime)
                 fprintf('t after allocating buffer: %f\n',toc);
             end
 
-           SetQHYCCDStreamMode(QC.camhandle,0);
-           if QC.verbose>1
-               fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
-           end
-           
+            if QC.StreamMode~=0
+                SetQHYCCDStreamMode(QC.camhandle,0);
+                if QC.verbose>1
+                    fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
+                end
+            end
+
             t0=now;
             ret=ExpQHYCCDSingleFrame(QC.camhandle);
             if QC.verbose>1

@@ -47,6 +47,7 @@ classdef QHYccd < obs.LAST_Handle
         lastExpTime=NaN;
         progressive_frame = 0; % image of a sequence already available
         TimeStartDelta % uncertainty, after-before calling exposure start
+        StreamMode % 0=single frame, 1=Live. Keep track as property because sdk doesn't retrieve it
     end
     
     % settings which have not been prescribed by the API,

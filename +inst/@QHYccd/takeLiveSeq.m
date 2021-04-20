@@ -11,39 +11,11 @@ function imgs=takeLiveSeq(QC,num,expTime)
         tic;
     end
 
-    if QC.StreamMode~=1
-        if contains(QC.CameraName,'QHY600')
-            ret=SetQHYCCDStreamMode(QC.camhandle,1);
-            if QC.verbose>1
-                fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
-            end
-            InitQHYCCD(QC.camhandle);
-            if QC.verbose>1
-                fprintf('t after InitQHYCCD: %f\n',toc);
-            end
-        else
-            InitQHYCCD(QC.camhandle);
-            ret=SetQHYCCDStreamMode(QC.camhandle,1);
-        end
-
-        if ret==0
-            QC.StreamMode=1;
-        else
-            QC.report(ret,'Camera cannot be put in Live mode')
-            QC.LastError='Camera cannot be put in Live mode';
-            return
-        end
+    QC.initStreamMode(1);
+    if QC.verbose>1
+        fprintf('t after eventual reinitialization: %f\n',toc);
     end
-
-    % set again parameters here
-    QC.Color=false;
-    QC.Binning=QC.Binning;
-    SetQHYCCDResolution(QC.camhandle,0,0,QC.physical_size.nx,QC.physical_size.ny);
-    QC.BitDepth=16;
-    QC.Gain=QC.Gain; % maybe this has to be reset, maybe not
-    QC.Offset=QC.Offset; % ditto
-    %SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,0);
-    SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);
+    
     if exist('expTime','var')
         QC.ExpTime=expTime;
     else

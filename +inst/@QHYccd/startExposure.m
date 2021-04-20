@@ -1,6 +1,12 @@
 function startExposure(QC,expTime)
 % set up the scenes for taking a single exposure
 
+    if QC.StreamMode~=0
+        % this is expensive (~5sec), but needed if we were previously in
+        %  Live mode
+        initStreamMode(QC,0)
+    end
+
     switch QC.CamStatus
         case {'idle','unknown'} % shall we try exposing for 'unknown' too?
             if exist('expTime','var')
@@ -15,13 +21,6 @@ function startExposure(QC,expTime)
             QC.allocate_image_buffer
             if QC.verbose>1
                 fprintf('t after allocating buffer: %f\n',toc);
-            end
-
-            if QC.StreamMode~=0
-                SetQHYCCDStreamMode(QC.camhandle,0);
-                if QC.verbose>1
-                    fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
-                end
             end
 
             t0=now;

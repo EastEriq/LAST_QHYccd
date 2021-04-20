@@ -25,7 +25,7 @@ function img=collectExposure(QC)
                 end
                 QC.deallocate_image_buffer
             else
-                QC.report(['error retreiving frame from camera ' QC.CameraName '\n'])
+                QC.report(['error retrieving frame from camera ' QC.CameraName '\n'])
                 QC.TimeEnd=[];
                 img=[];
             end

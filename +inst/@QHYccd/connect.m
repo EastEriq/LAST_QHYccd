@@ -34,7 +34,7 @@ function success=connect(QC,CameraNum)
         QC.report([QC.LastError '\n'])
     end
     
-    InitQHYCCD(QC.camhandle); % this one crashes when reconnecting!
+    InitQHYCCD(QC.camhandle); % this one crashed when reconnecting!
 
     % query the camera and populate the QC structures with some
     %  characteristic values
@@ -107,7 +107,7 @@ function success=connect(QC,CameraNum)
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,0);
 
     % in demos of LiveMode - what does this do exactly?
-    % SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);
+    SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);
 
     % from https://www.qhyccd.com/bbs/index.php?topic=6861
     %  this is said to affect speed, and accepting 0,1,2
@@ -132,10 +132,4 @@ function success=connect(QC,CameraNum)
 
     QC.CamStatus='idle'; % whishful, if we got till here.
     
-    % set the camera in single frame mode by default, so to avoid
-    %  calling this function again (takes 100ms) for further single
-    %  exposures
-    SetQHYCCDStreamMode(QC.camhandle,0);
-    QC.StreamMode=0; % track the state in the object
-
 end

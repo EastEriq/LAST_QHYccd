@@ -39,4 +39,5 @@ function img=collectLiveExposure(QC)
             QC.LastError='no image to read because exposure not started';
             img=[];
     end
+    QC.LastImage=img;
 end

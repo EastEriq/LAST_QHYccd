@@ -17,7 +17,10 @@ function img=unpackImgBuffer(pImg,w,h,channels,bp)
             %  img=reshape(uint16(pImg.Value(1:2:2*w*h))+...
             %  bitshift(uint16(pImg.Value(2:2:2*w*h)),8),w,h);
             % and this one ~100ms
-            img=reshape(typecast(pImg.Value(1:2*w*h),'uint16'),w,h);
+            %img=reshape(typecast(pImg.Value(1:2*w*h),'uint16'),w,h);
+            % and this one ~58ms
+            reshape(pImg,1,2*w*h);
+            img=reshape(typecast(pImg.value,'uint16'),w,h);
         end
     end
 end

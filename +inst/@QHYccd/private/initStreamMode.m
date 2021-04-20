@@ -33,6 +33,10 @@ function initStreamMode(QC,newmode)
         end
 
         if ret==0
+            % The most fantastic call to avoid (??) a queue of two
+            %  exposures in the DDR before a third can be retrieved.
+            % From an email of Qiu Hongyun, 20/4/2021
+            SetQHYCCDBurstModePatchNumber(QC.camhandle,32001);
             QC.StreamMode=1;
         else
             QC.report(ret,'Camera cannot be put in Live mode')

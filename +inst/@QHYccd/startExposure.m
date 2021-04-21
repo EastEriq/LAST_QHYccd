@@ -1,9 +1,10 @@
 function startExposure(QC,expTime)
 % set up the scenes for taking a single exposure
 
-    if QC.StreamMode~=0
+    if isempty(QC.StreamMode) || QC.StreamMode~=0
         % this is expensive (~5sec), but needed if we were previously in
         %  Live mode
+        tic
         initStreamMode(QC,0)
     end
 

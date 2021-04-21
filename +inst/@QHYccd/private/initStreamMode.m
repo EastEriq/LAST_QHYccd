@@ -13,9 +13,9 @@ function initStreamMode(QC,newmode)
         newmode=QC.StreamMode; % i.e. no change
     end
 
-    if newmode==1 && QC.StreamMode~=1
+    if newmode ~= QC.StreamMode
         if contains(QC.CameraName,'QHY600')
-            ret=SetQHYCCDStreamMode(QC.camhandle,1);
+            ret=SetQHYCCDStreamMode(QC.camhandle,newmode);
             if QC.verbose>1
                 fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
             end
@@ -23,35 +23,36 @@ function initStreamMode(QC,newmode)
             if QC.verbose>1
                 fprintf('t after InitQHYCCD: %f\n',toc);
             end
-            % set again parameters here
-            QC.resetCriticalParameters
         else
             InitQHYCCD(QC.camhandle);
-            % set again parameters here
-            QC.resetCriticalParameters
-            ret=SetQHYCCDStreamMode(QC.camhandle,1);
+            if QC.verbose>1
+                fprintf('t after InitQHYCCD: %f\n',toc);
+            end
+            ret=SetQHYCCDStreamMode(QC.camhandle,newmode);
+            if QC.verbose>1
+                fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
+            end
         end
-
-        if ret==0
+        if newmode==1 && ret==0
             % The most fantastic call to avoid (??) a queue of two
             %  exposures in the DDR before a third can be retrieved.
             % From an email of Qiu Hongyun, 20/4/2021
             SetQHYCCDBurstModePatchNumber(QC.camhandle,32001);
             QC.StreamMode=1;
-        else
-            QC.report(ret,'Camera cannot be put in Live mode')
+        elseif newmode==1 && ret==0
             QC.LastError='Camera cannot be put in Live mode';
-            return
-        end
-    else % this includes Streammode==[] and 0
-        if newmode~=1 && QC.StreamMode~=0
-            InitQHYCCD(QC.camhandle);
-            % set again parameters here
-            QC.resetCriticalParameters
-            SetQHYCCDStreamMode(QC.camhandle,0);
-            if QC.verbose>1
-                fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
-            end
+            QC.report(QC.LastError)
             QC.StreamMode=0;
+            return
+        else
+            QC.StreamMode=0;            
         end
+    end
+    
+    if true %newmode==1
+        % set again parameters here. It seems that we have
+        %  to redo it before each live sequence, even if we had already
+        %  done it earlier and we haven't changed StreamMode. Otherwise,
+        %  bad things.
+        QC.resetCriticalParameters
     end

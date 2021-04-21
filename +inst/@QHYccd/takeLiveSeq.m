@@ -35,6 +35,9 @@ function imgs=takeLiveSeq(QC,num,expTime)
         fprintf('t after BeginQHYCCDLive: %f\n',toc);
     end
     if ret==0
+        % we have no way at the moment of knowing the real start time
+        %  of each usable exposure, this is essentially a placeholder
+        QC.TimeStart=now;
         QC.CamStatus='exposing';
     else
         QC.CamStatus='unknown';

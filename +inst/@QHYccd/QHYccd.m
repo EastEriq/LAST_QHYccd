@@ -16,7 +16,7 @@ classdef QHYccd < obs.LAST_Handle
     
     properties(Transient)
         LastImage % the last image acquired is copied here
-        ImageHandler=struct('function',[],'keyvalues',{}); % what to do of every acquired image
+        ImageHandler % function to treat every acquired image, e.g. @simpleshowimage
     end
 
     properties(Dependent = true)

@@ -22,22 +22,29 @@ function img=collectLiveExposure(QC)
                 end
             end
             if ret==0
+                QC.TimeEnd=now;
                 if QC.verbose>1
                     fprintf('got image at time %f\n',toc);
                 end
-                
                 img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
                 if QC.verbose>1
                     fprintf('t after unpacking: %f\n',toc);
                 end
             else
                 img=[];
+                QC.TimeEnd=[];
                 QC.LastError='timed out without reading a Live image!\n';
                 QC.report(QC.LastError);
             end
         otherwise
+            QC.TimeEnd=[];
             QC.LastError='no image to read because exposure not started';
             img=[];
     end
     QC.LastImage=img;
+
+    if ~isempty(QC.ImageHandler)
+        QC.ImageHandler(QC)
+    end
+
 end

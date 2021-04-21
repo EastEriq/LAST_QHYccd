@@ -48,7 +48,7 @@ function img=collectExposure(QC)
     QC.LastImageSaved=false;
 
     if ~isempty(QC.ImageHandler)
-        QC.ImageHandler.function(QC.LastImage)
+        QC.ImageHandler(QC)
     end
 
 end

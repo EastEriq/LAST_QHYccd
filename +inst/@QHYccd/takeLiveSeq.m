@@ -43,17 +43,23 @@ function imgs=takeLiveSeq(QC,num,expTime)
         QC.CamStatus='unknown';
     end
 
-    imgs=cell(1,num);
+    if nargout>0
+        imgs=cell(1,num);
+    end
     for i=1:num
+        if nargout>0
+            imgs{i}=collectLiveExposure(QC);
+        else
+            collectLiveExposure(QC);
+        end
         if ~isempty(QC.LastError)
             break
-        end 
-        imgs{i}=collectLiveExposure(QC);
+        else
+            QC.report(sprintf('  got image %d/%d\n',i,num))
+        end
     end
     
-    if QC.verbose
-        fprintf('stopping live mode\n')
-    end
+    QC.report('stopping live mode\n')
     StopQHYCCDLive(QC.camhandle);
     if QC.verbose>1
         fprintf('t after StopQHYCCDLive: %f\n',toc);

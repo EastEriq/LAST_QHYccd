@@ -312,7 +312,7 @@ classdef QHYccd < obs.LAST_Handle
             % Constrain BitDepth to 8|16, the functions wouldn't give any
             %  error anyway for different values.
             BitDepth=max(min(round(BitDepth/8)*8,16),8);
-            QC.report(sprintf('Setting depth to %dbit\n',BitDepth))
+            %QC.report(sprintf('Setting depth to %dbit\n',BitDepth))
             SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_TRANSFERBIT,BitDepth);
             % There is also a second SDK function for setting this. I don't
             %  know if they are *really* equivalent. In doubt call both.

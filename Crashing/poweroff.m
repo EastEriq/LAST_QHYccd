@@ -5,15 +5,14 @@ Q.DebugOutput=true;
 
 % Q.disconnect % if this is uncommented, no crash
 
-clear all
+clear Q
 
 if libisloaded('libqhyccd')
     fprintf('libqhyccd is still loaded\n')
 end
 
-fprintf('\nNow disconnect the power of the camera....\n')
-
-% Matlab crashes in a couple of seconds.
+fprintf('\nNow disconnect the power of the camera.\n')
+fprintf('Matlab crashes within a couple of seconds...\n')
 
 
 % QHYCCD|QHYCCD.CPP|CloseQHYCCD|START

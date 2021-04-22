@@ -4,7 +4,7 @@ function success=disconnect(QC)
 
     % don't try to close an invalid camhandle, it would crash matlab
     if ~isempty(QC.camhandle)
-        % maye for safety here we could attempt to call StopQHYCCDLive(QC.camhandle)
+        % maybe for safety here we could attempt to call StopQHYCCDLive(QC.camhandle)
         %  or would this cause a crash if live mode was never started?
         % StopQHYCCDLive(QC.camhandle);
         %

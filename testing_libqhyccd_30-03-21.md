@@ -127,7 +127,7 @@ that should have improved with 30-03-21. In fact the statement is:
   Short answers: 1) probably one needs a disconnect/connect cycle to change mode (not
   doing so, I have gotten corrupted single frame images after a live sequence; but live
   after single frame seems ok). 2) Live mode has clearly an overhead of 3 exposure
-  times + calling overheads before the first image can be retrieved, Single frame
+  times + calling overheads before the first image can be retrieved. Single frame
   only involves a fixed initial overhead of ~200ms and a post exposure transfer overhead of 1600ms
   (see next point).
 

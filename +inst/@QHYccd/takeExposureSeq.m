@@ -10,7 +10,6 @@ function imgs=takeExposureSeq(QC,num,expTime)
 % of the polling-for-image-ready function; overrun destroys sequence take;
 % bad error recovery.
 
-    imgs={};
     
     if exist('expTime','var')
         QC.ExpTime=expTime;
@@ -20,14 +19,22 @@ function imgs=takeExposureSeq(QC,num,expTime)
     %  buffer before the loop and deallocate it at the end, but here we go
     %  for economy of writing, since this is a placeholder
 
+    if nargout>0
+        imgs=cell(1,num);
+    end
     for i=1:num
         startExposure(QC,expTime)
         
         if ~isempty(QC.LastError)
             return
         end
-        
-        imgs{i}=collectExposure(QC);
+
+        if nargout>0
+            imgs{i}=collectExposure(QC);
+        else
+            collectExposure(QC);
+        end
+        QC.report(sprintf('  got image %d/%d\n',i,num))
         
         if ~isempty(QC.LastError)
             return

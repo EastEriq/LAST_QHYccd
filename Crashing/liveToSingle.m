@@ -1,3 +1,9 @@
+% Seemingly solved after careful reinitialization and
+%  restoring of all mandatory parameters on mode change
+% Possibly it was a segmentation fault simply due
+%  to copying wrongly sized data in the correctly allocate image buffer,
+%  wrongly sized because "incomplete" treatment of the above 
+
 Q=inst.QHYccd;Q.connect;Q.verbose=0; Q.DebugOutput=true;
 
 imgs=Q.takeLiveSeq(3,1)

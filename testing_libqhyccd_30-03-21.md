@@ -188,10 +188,22 @@ The demo cpp sets 8 parameters, let's see which are essential and the effect of 
 + `QC.BitDepth=16` Not setting it causes the appearance of the new return code `3B1B400` at the first
  frame, for a change, a few calls after the 0, dark images on first sequence,
  and crash at the second sequence;
-+ `Q.gain` and `Q.Offset` maybe they are persistent and don't need to be reset,
++ `Q.Gain` and `Q.Offset` maybe they are persistent and don't need to be reset,
   at least Gain seems to persist (but recheck)
 + `Q.ExpTime` needs to be reset, otherwise it is apparently set to 0 or something the like.
 + `CONTROL_USBTRAFFIC` probably doesn't have to be reset, the former value is kept.
 + `CONTROL_DDR` not setting has caused me once an
   `Assertion 'new_prio == -1 || (new_prio >= fifo_min_prio && new_prio <= fifo_max_prio)' failed`
   crash, other times worked...
+
+## Application notes
+
++ Repeated and alternated calling of SingleFrame and LiveFrame without disconnection is now possible, but
+ needed a lot of care in resetting calling `SetQHYCCDStreamMode()` _before_ `InitQHYCCD()` in each case,
+ **and** resetting the said parameters.
+
++ Skip only one (instead of two) initial frames in Live mode is achieved by calling
+     ```
+     SetQHYCCDBurstModePatchNumber(QC.camhandle,32001)
+     ```
+  after `InitQHYCCD()` (private communication by Qiu Hongyun).

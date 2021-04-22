@@ -102,7 +102,7 @@ classdef QHYccd < obs.LAST_Handle
         
         % Destructor
         function delete(QC)
-            
+            %fprintf('deleting camera object...\n')
             % do all this only if the QC object has been effectively
             % connected to a camera
             if ~isempty(QC.camhandle)

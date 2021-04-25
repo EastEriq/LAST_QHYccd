@@ -20,8 +20,17 @@ function img=collectLiveExposure(QC,varargin)
                 if QC.verbose>1
                     fprintf('%s at t=%f\n',dec2hex(ret), toc)
                 end
+                % we have no way at the moment of knowing the real start time
+                %  of each usable exposure. This is an estimate, counting
+                %  on that the expoure started ExpTime before it is ready
+                %  for retrieval. The value is updated at each polling
+                %  iteration.
+                QC.TimeStart=now-QC.ExpTime/86400;
             end
             if ret==0
+                QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
+                                                    % even if a subsequent
+                                                    % exposure is started
                 QC.TimeEnd=now;
                 if QC.verbose>1
                     fprintf('got image at time %f\n',toc);
@@ -42,6 +51,7 @@ function img=collectLiveExposure(QC,varargin)
             img=[];
     end
     QC.LastImage=img;
+    QC.LastImageSaved=false;
 
     if ~isempty(QC.ImageHandler)
         QC.ImageHandler(QC,varargin{:})

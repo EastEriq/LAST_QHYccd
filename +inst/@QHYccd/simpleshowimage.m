@@ -7,6 +7,7 @@ function simpleshowimage(Q,varargin)
     if ~isempty(varargin) && isa(varargin{1},'char')
         title([varargin{1},datestr(Q.TimeEnd,'HH:MM:SS.FFF')])
     else
-        title(datestr(Q.TimeEnd,'HH:MM:SS.FFF'))
+        title([datestr(Q.TimeEnd,'HH:MM:SS.FFF'),', ',...
+              sprintf('t_{end}-t_{start}=%fs',(Q.TimeEnd-Q.TimeStart)*86400)])
     end
     drawnow

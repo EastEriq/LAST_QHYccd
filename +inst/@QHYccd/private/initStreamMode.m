@@ -36,6 +36,7 @@ function initStreamMode(QC,newmode)
         if newmode==1 && ret==0
             % The most fantastic call to avoid (??) a queue of two
             %  exposures in the DDR before a third can be retrieved.
+            %  This BurstModePatch reduces it to one (not zero, unfortunately)
             % From an email of Qiu Hongyun, 20/4/2021
             SetQHYCCDBurstModePatchNumber(QC.camhandle,32001);
             QC.StreamMode=1;

@@ -1,4 +1,4 @@
-function img=collectExposure(QC)
+function img=collectExposure(QC,varargin)
 % collect the exposed frame, but only if an exposure was started!
 
     switch QC.CamStatus
@@ -48,7 +48,7 @@ function img=collectExposure(QC)
     QC.LastImageSaved=false;
 
     if ~isempty(QC.ImageHandler)
-        QC.ImageHandler(QC)
+        QC.ImageHandler(QC,varargin{:})
     end
 
 end

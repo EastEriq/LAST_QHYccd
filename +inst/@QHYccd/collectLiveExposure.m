@@ -1,4 +1,4 @@
-function img=collectLiveExposure(QC)
+function img=collectLiveExposure(QC,varargin)
 % collect a frame from an ongoing live take, but only if we are in Live Mode, if
 %  exposure was started, and time out if waiting for more than X*texp
  
@@ -33,8 +33,8 @@ function img=collectLiveExposure(QC)
             else
                 img=[];
                 QC.TimeEnd=[];
-                QC.LastError='timed out without reading a Live image!\n';
-                QC.report(QC.LastError);
+                QC.LastError='timed out without reading a Live image!';
+                QC.report([QC.LastError,'\n']);
             end
         otherwise
             QC.TimeEnd=[];
@@ -44,7 +44,7 @@ function img=collectLiveExposure(QC)
     QC.LastImage=img;
 
     if ~isempty(QC.ImageHandler)
-        QC.ImageHandler(QC)
+        QC.ImageHandler(QC,varargin{:})
     end
 
 end

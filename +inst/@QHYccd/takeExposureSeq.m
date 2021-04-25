@@ -1,14 +1,30 @@
-function imgs=takeExposureSeq(QC,num,expTime)
-% blocking function, take N images. This should be done in Live mode;
-%  but since there are so many issues with it with the QHY, as a functional
-%  placeholder we implement it as a repeated take of single exposures.
-%  This implies a large overhead for reading and rearming the take each
-%  time.
-% The many issues of the QHY sdk for live mode include: cumbersome
-% requirement for the order of calls for initializing the camera; different
-% requirements for the QHY367 and the QHY600; inconsistent state reporting
-% of the polling-for-image-ready function; overrun destroys sequence take;
-% bad error recovery.
+function imgs=takeExposureSeq(QC,num,expTime,varargin)
+% Take a series of num images with the same exposure time,
+%  setting the camera in Single Frame mode, and iterating
+%  exposure and retrieval of single frames. This is a blocking function,
+%  which returns only when the sequence is complete or if acquisition
+%  times out.
+% This mode of operation implies larger dead time than Live mode
+%  acquisition, but has been seen as much less problematic
+%  with earlier versions of the SQK, and more consistent in operation
+%  with either the QHY367 and the QHY600.
+% Transitioning from Live to Single Frame Mode takes some seconds
+%  of initialization time, which are spent the first time this
+%  method is called.
+% If the method is called with one return argument, all the images
+%  are returned in a cell array. This can take up quite some space for
+%  long sequences.
+% Alternatively, to dispose of the images as soon as they are retrieved,
+%  an user function can be used. The handle to that function is assigned
+%  to the object property Q.ImageHandler. The function assigned there
+%  receives the whole object Q as first argument, and transparently
+%  any other further argument added to the call of 
+%    Q.takeExposureSeq(num,expTime,extra_args)
+%
+%  See the function simpleshowimage(Q,varargin) for an example:
+%
+%    Q.ImageHandler=@simpleshowimage
+%    Q.takeExposureSeq(4,0.5,'retrieved at t=')
 
     
     if exist('expTime','var')
@@ -30,9 +46,9 @@ function imgs=takeExposureSeq(QC,num,expTime)
         end
 
         if nargout>0
-            imgs{i}=collectExposure(QC);
+            imgs{i}=collectExposure(QC,varargin{:});
         else
-            collectExposure(QC);
+            collectExposure(QC,varargin{:});
         end
         QC.report(sprintf('  got image %d/%d\n',i,num))
         

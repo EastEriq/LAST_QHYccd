@@ -1,11 +1,26 @@
-function imgs=takeLiveSeq(QC,num,expTime)
-% attempting once more to take live images, this time with the SDK
-% 21-02-01 + 30-3-21
-% Tested on QHY600 only, so far.
-% TODO: instead of just storing the images in a big struct containing
-%  only the image pixels, save also the retrieval times, and/or
-%  allow the call of an external funtion which saves the images
-%  with appropriate metadata
+function imgs=takeLiveSeq(QC,num,expTime,varargin)
+% Take a series of num images with the same exposure time,
+%  setting the camera in Live mode. This is a blocking function,
+%  which returns only when the sequence is complete or if acquisition
+%  times out.
+% Transitioning from Single Frame to Live Mode takes some seconds
+%  of initialization time, which are spent the first time this
+%  method is called. To do it preemptively without really acquiring
+%  images, call Q.takeLiveSeq(0).
+% If the method is called with one return argument, all the images
+%  are returned in a cell array. This can take up quite some space for
+%  long sequences.
+% Alternatively, to dispose of the images as soon as they are retrieved,
+%  an user function can be used. The handle to that function is assigned
+%  to the object property Q.ImageHandler. The function assigned there
+%  receives the whole object Q as first argument, and transparently
+%  any other further argument added to the call of 
+%    Q.takeLiveSeq(num,expTime,extra_args)
+%
+%  See the function simpleshowimage(Q,varargin) for an example:
+%
+%    Q.ImageHandler=@simpleshowimage
+%    Q.takeLiveSeq(4,0.5,'retrieved at t=')
 
     if QC.verbose>1
         tic;
@@ -48,9 +63,9 @@ function imgs=takeLiveSeq(QC,num,expTime)
     end
     for i=1:num
         if nargout>0
-            imgs{i}=collectLiveExposure(QC);
+            imgs{i}=collectLiveExposure(QC,varargin{:});
         else
-            collectLiveExposure(QC);
+            collectLiveExposure(QC,varargin{:});
         end
         if ~isempty(QC.LastError)
             break

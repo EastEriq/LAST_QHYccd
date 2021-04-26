@@ -25,34 +25,14 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
     if QC.verbose>1
         tic;
     end
-
-    QC.initStreamMode(1);
-    if QC.verbose>1
-        fprintf('t after eventual reinitialization: %f\n',toc);
-    end
     
     if exist('expTime','var')
         QC.ExpTime=expTime;
-    else
-        QC.ExpTime=QC.ExpTime;
-    end
-    if QC.verbose>1
-        fprintf('t after setting again parameters: %f\n',toc);
     end
 
-    QC.allocate_image_buffer
-    if QC.verbose>1
-        fprintf('t after allocating buffer: %f\n',toc);
-    end
 
-    ret=BeginQHYCCDLive(QC.camhandle);
-    if QC.verbose>1
-        fprintf('t after BeginQHYCCDLive: %f\n',toc);
-    end
-    if ret==0
-        QC.CamStatus='exposing';
-    else
-        QC.CamStatus='unknown';
+    startLive(QC)
+    if ~isempty(QC.LastError)
         return
     end
 

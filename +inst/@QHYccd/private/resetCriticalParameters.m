@@ -13,8 +13,10 @@ function resetCriticalParameters(QC)
 %         QC.effective_area.x1Eff+QC.effective_area.sxEff,...
 %         QC.effective_area.y1Eff+QC.effective_area.syEff];
     QC.BitDepth=16;
-    QC.Gain=QC.Gain; % maybe this has to be reset, maybe not
-    QC.Offset=QC.Offset; % ditto
+    % resetting Gain this way is ok for the QHY600, not for the 367 which
+    %  instead changes it to Gain=2000
+    QC.Gain=QC.Gain;
+    QC.Offset=QC.Offset; % maybe this has to be reset, maybe not
     % maybe too low USB traffic is at risk od libusb errors -> crashes
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,10);
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);

@@ -22,6 +22,10 @@ function takeLive(QC,num,expTime,varargin)
 %  method is called. To do it preemptively without really acquiring
 %  images, call Q.takeLiveSeq(0).
 
+    if QC.verbose>1
+        tic;
+    end
+    
     if exist('expTime','var')
         QC.ExpTime=expTime;
     end

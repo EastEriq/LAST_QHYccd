@@ -55,7 +55,12 @@ function takeLive(QC,num,expTime,varargin)
     start(collector)
     
     function stoplive(QC,mTimer)
-        StopQHYCCDLive(QC.camhandle);
+        ret=StopQHYCCDLive(QC.camhandle);
+        if ret==0
+            QC.CamStatus='idle';
+        else
+            QC.CamStatus='unknown';
+        end
         delete(mTimer);
     end
 end

@@ -1,6 +1,8 @@
 function simpleshowimage(Q,varargin)
 % sample handler function for displaying an acquired image, mainly for
 %  testing
+    figure(Q.CameraNum)
+    set(gcf,'Name',Q.CameraName)
     imagesc(Q.LastImage)
     colorbar
     colormap gray

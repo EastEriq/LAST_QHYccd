@@ -30,7 +30,6 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
         QC.ExpTime=expTime;
     end
 
-
     startLive(QC)
     if ~isempty(QC.LastError)
         return

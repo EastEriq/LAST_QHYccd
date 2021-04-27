@@ -10,7 +10,7 @@ function startLive(QC)
     if QC.verbose>1
         fprintf('t after eventual reinitialization: %f\n',toc);
     end
-    
+
     QC.ExpTime=QC.ExpTime;
     if QC.verbose>1
         fprintf('t after setting again parameters: %f\n',toc);
@@ -21,7 +21,9 @@ function startLive(QC)
         fprintf('t after allocating buffer: %f\n',toc);
     end
 
+    t0=now;
     ret=BeginQHYCCDLive(QC.camhandle);
+    QC.TimeStartDelta=now-t0;
     if QC.verbose>1
         fprintf('t after BeginQHYCCDLive: %f\n',toc);
     end

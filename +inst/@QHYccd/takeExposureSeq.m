@@ -39,7 +39,7 @@ function imgs=takeExposureSeq(QC,num,expTime,varargin)
         imgs=cell(1,num);
     end
     for i=1:num
-        startExposure(QC,expTime)
+        startExposure(QC,QC.ExpTime)
         
         if ~isempty(QC.LastError)
             return

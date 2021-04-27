@@ -13,6 +13,10 @@ function takeLive(QC,num,expTime,varargin)
 %    Q.ImageHandler=@simpleshowimage
 %    Q.takeLiveSeq(4,0.5,'retrieved at t=')
 %
+% another simple example
+%
+%    Q.ImageHandler=@(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n'));
+%
 % Transitioning from Single Frame to Live Mode takes some seconds
 %  of initialization time, which are spent the first time this
 %  method is called. To do it preemptively without really acquiring
@@ -30,10 +34,18 @@ function takeLive(QC,num,expTime,varargin)
     
     collector=timer('Name',sprintf('ImageCollector-%d',QC.CameraNum),...
         'ExecutionMode','fixedRate','BusyMode','Queue',...
-        'TasksToExecute',num,'Period',QC.ExpTime,...
+        'TasksToExecute',num,...
         'TimerFcn',@(~,~)collectLiveExposure(QC,varargin{:}),...
         'StopFcn',@(mTimer,~)stoplive(QC,mTimer));
     
+    % for short exp, we are limited by the image transfer time.
+    %  I have no means to anticipate it depending on ROI, bits,
+    %  USB/fiber connection, hence I take 800ms, which is slightly
+    %  more than what needed on USB3 with USBTRAFFIC=10.
+    % trying to repeat too often starves the event queue, making
+    %  impossible for other callbacks to fill in (e.g., for timed
+    %  retrievals from other cameras)
+    collector.Period=max(QC.ExpTime,0.8); 
     
     % StartDelay should be decreased to 1*ExpTime if some fantastic
     %  patch code for retrieving the first image available is someday

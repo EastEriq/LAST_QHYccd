@@ -7,7 +7,10 @@ function abort(QC)
 %  though that doesn't say if an exposure was started at all or not
 
 % stop the image collector timer, if there is one active
-    stop(timerfind('Name',sprintf('ImageCollector-%d',QC.CameraNum)));
+    ic=timerfind('Name',sprintf('ImageCollector-%d',QC.CameraNum));
+    if ~isempty(ic)
+        stop(ic)
+    end
 
 % stopping single image exposure
     CancelQHYCCDExposingAndReadout(QC.camhandle);

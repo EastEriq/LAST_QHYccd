@@ -104,7 +104,10 @@ function success=connect(QC,CameraNum)
     %  computer.
     % The forum wisdom seems to be that the lower the value, the
     %  higher the fps. I verified some timings with sdk+30-3-21
-    SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,0);
+    % The practical wisdom is that a very low value increases the chance
+    %  of irrecoverable USB errors (functions hang, camera has to be power
+    %  cycled)
+    SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,30);
 
     % in demos of LiveMode - what does this do exactly?
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);

@@ -14,13 +14,19 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
 %  an user function can be used. The handle to that function is assigned
 %  to the object property Q.ImageHandler. The function assigned there
 %  receives the whole object Q as first argument, and transparently
-%  any other further argument added to the call of 
+%  any other further argument added to the call of
+%
 %    Q.takeLiveSeq(num,expTime,extra_args)
 %
 %  See the function simpleshowimage(Q,varargin) for an example:
 %
 %    Q.ImageHandler=@simpleshowimage
 %    Q.takeLiveSeq(4,0.5,'retrieved at t=')
+%
+% another simple example
+%
+%    Q.ImageHandler=@(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n'));
+    
 
     if QC.verbose>1
         tic;

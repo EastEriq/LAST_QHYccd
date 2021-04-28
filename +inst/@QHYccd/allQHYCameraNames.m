@@ -1,11 +1,6 @@
 function names=allQHYCameraNames(Q)
 % get the vector of names of all QHY cameras connected to the host computer.
-% Because of known limitatins of the SDK, this is done by getting first the
-%  number of cameras connected, then connecting individually to each one,
-%  closing the connection afterwards. Pay attention that, because of the
-%  SDK too, this method has to be called when no connection with any camera
-%  is already open, otherwise the camera becames unreachable after the
-%  first call to ScanQHYCCD.
+%
 % For convenience and integration with the existing codebase, this function
 %  is implemented as a method of class QHYccd. In other words, the suggested
 %  calling sequence in a matlab session is:
@@ -20,8 +15,6 @@ function names=allQHYCameraNames(Q)
     num=ScanQHYCCD;
     names=cell(num,1);
     for i=1:num
-        Q.connect(i);
-        names{i}=Q.CameraName;
-        Q.disconnect;
+        [~,names{i}]=GetQHYCCDId(i-1);
     end
     

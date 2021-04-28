@@ -18,12 +18,24 @@ function success=connect(QC,CameraNum)
     else
         QC.CameraNum=CameraNum;
     end
-    [ret,QC.CameraName]=GetQHYCCDId(max(QC.CameraNum-1,0));
 
-    if ret
-        QC.LastError=sprintf('could not get name of camera #%d',QC.CameraNum);
+    if isa(CameraNum,'numeric')
+        QC.CameraNum=min(max(QC.CameraNum,1),ScanQHYCCD());
+        [ret,QC.CameraName]=GetQHYCCDId(QC.CameraNum-1);
+        if ret
+            QC.LastError=sprintf('could not get name of camera #%d',QC.CameraNum);
+            QC.report([QC.LastError '\n'])
+            return;
+        end
+    elseif isa(CameraNum,'char')
+        QC.CameraName=CameraNum;
+        %  but how to get the Q.CameraNum then? Get the list of names and
+        %  search for it
+        names=QC.allQHYCameraNames;
+        QC.CameraNum=find(contains(names,QC.CameraName),1,'first');
+    else
+        QC.LastError=sprintf('argument to connect() must be a number or a camera name');
         QC.report([QC.LastError '\n'])
-        return;
     end
     
     QC.camhandle=OpenQHYCCD(QC.CameraName);
@@ -32,6 +44,7 @@ function success=connect(QC,CameraNum)
     else
         QC.LastError=sprintf('could not open camera #%d',QC.CameraNum);
         QC.report([QC.LastError '\n'])
+        return
     end
     
     InitQHYCCD(QC.camhandle); % this one crashed when reconnecting!

@@ -87,7 +87,7 @@ by an user provided function, whose handle is assigned to `.ImageHandler`.
 
 The methods `.takeLive` and `.collectLiveExposure` **only** support the latter way of retrieving images.
 
-The function assigned to `.ImageHandler` must treat as first argument the camera object itself, but can take any number of further arguments. It is thus possible to pass to this function not only information about the camera
+The function assigned to `.ImageHandler` must accept as first argument the camera object itself, but can take any number of further arguments. It is thus possible to pass to this function not only information about the camera
 and `.LastImage` just acquired, but also for instance about the pier system.
 
 Such additional arguments are passed transparently, as `varargin` arguments after the mandatory ones, to the
@@ -110,7 +110,7 @@ Display the image in a figure, using `imagesc()`, using an example method provid
 Q.ImageHandler = @simpleshowimage
 ```
 
-Simply output on screen the number of the camera and the timestamp when a new image:
+Simply output on screen the number of the camera and the timestamp when a new image arrives:
 
 ```
 Q.ImageHandler = @(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n')]);
@@ -151,4 +151,5 @@ Typical situations leading to problems:
   can lead to failure to acquire, but also to freezes or crashes. Mostly they require power cycling
   the camera to restore (which, as said above, may crash Matlab as well).
   _Note -- there is an internal parameter `USBTRAFFIC` whose value could be tuned --
-   low values make live transfer fast but less stable with multiple cameras/poor cables._
+   the lower the value the faster the live transfer, but also less stable 
+   with multiple cameras/poor cables._

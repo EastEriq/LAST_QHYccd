@@ -12,7 +12,7 @@ function success=connect(QC,CameraNum)
     QC.LastError='';
     
     if ~exist('CameraNum','var')
-        QC.CameraNum=1; % open the first camera. It would be nice if there
+        CameraNum=1; % open the first camera. It would be nice if there
                         %  was a way to check which other cameras are
                         %  open, and open the next
     else
@@ -20,7 +20,7 @@ function success=connect(QC,CameraNum)
     end
 
     if isa(CameraNum,'numeric')
-        QC.CameraNum=min(max(QC.CameraNum,1),ScanQHYCCD());
+        QC.CameraNum=min(max(CameraNum,1),ScanQHYCCD());
         [ret,QC.CameraName]=GetQHYCCDId(QC.CameraNum-1);
         if ret
             QC.LastError=sprintf('could not get name of camera #%d',QC.CameraNum);

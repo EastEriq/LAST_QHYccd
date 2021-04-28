@@ -25,7 +25,7 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
 %
 % another simple example
 %
-%    Q.ImageHandler=@(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n'));
+%    Q.ImageHandler=@(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n')]);
     
 
     if QC.verbose>1

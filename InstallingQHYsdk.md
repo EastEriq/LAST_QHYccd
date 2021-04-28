@@ -1,6 +1,6 @@
 # Installation of QHY SDK
 
-(Status of 16/3/2021)
+### (Status of 16/3/2021, official release)
 
 Things keep changing without notice from QHY, so take it with a grain of salt.
 
@@ -18,11 +18,27 @@ One way to check that the installation succeeded, is to check for the presence o
 
 Other ways are trying to compile test applications in <path-to>`/sdk_linux64_XX.XX.XX/usr/local/testapp/`, and finally try to connect to a camera using the QHYccd class in Matlab.
 
+### adding 21.03.30, unofficial [may be superseded by a future version, who knows]
+
+Extra steps after the preceding ones:
+
+5. get the new shared library file from
+  [here](https://drive.google.com/file/d/1VnpejKukQmjZu3i65bJAoKZpt0li4ySs/view?usp=sharing)
+  and store it somewhere
+
+6. open a shell and run:
+
+        sudo cp <somewhere>/libqhyccd.so.21.3.30.13 /usr/local/lib
+        cd /usr/local/lib
+        sudo ln -sf libqhyccd.so.21.3.30.13 libqhyccd.so.20
+        sudo ln -sf libqhyccd.so.20 libqhyccd.so
+
 ## Versions of the SDK supported
 
 Keep in mind that our matlab toolbox does not support *just any* version of the sdk out of the box. So far any new version published needed review from our side, and some adjustments in our code, notably adapting the header
-files needed by`loadlibrary`. The versions which our toolboks knows how to work with are, as of now:
+files needed by `loadlibrary`. The versions which our toolboks knows how to work with are, as of now:
 
+- 21.3.30 (unofficial)
 - 21.03.13
 - 21.02.01
 - 20.08.26

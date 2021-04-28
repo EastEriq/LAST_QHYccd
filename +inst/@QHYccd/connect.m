@@ -21,7 +21,13 @@ function success=connect(QC,CameraNum)
 
     if isa(CameraNum,'numeric')
         QC.CameraNum=min(max(CameraNum,1),ScanQHYCCD());
-        [ret,QC.CameraName]=GetQHYCCDId(QC.CameraNum-1);
+        if QC.CameraNum>0
+            [ret,QC.CameraName]=GetQHYCCDId(QC.CameraNum-1);
+        else
+            QC.LastError='No cameras to connect to';
+            QC.report([QC.LastError '\n'])
+            return
+        end
         if ret
             QC.LastError=sprintf('could not get name of camera #%d',QC.CameraNum);
             QC.report([QC.LastError '\n'])
@@ -36,13 +42,14 @@ function success=connect(QC,CameraNum)
     else
         QC.LastError=sprintf('argument to connect() must be a number or a camera name');
         QC.report([QC.LastError '\n'])
+        return
     end
     
     QC.camhandle=OpenQHYCCD(QC.CameraName);
     if ~isNull(QC.camhandle)
         QC.report(sprintf('Opened camera "%s"\n',QC.CameraName));
     else
-        QC.LastError=sprintf('could not open camera #%d',QC.CameraNum);
+        QC.LastError=sprintf('could not open the camera named "%s"',QC.CameraName);
         QC.report([QC.LastError '\n'])
         return
     end

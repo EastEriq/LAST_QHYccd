@@ -46,6 +46,9 @@ function startExposure(QC,expTime)
                 QC.TimeStart=t0;
                 QC.lastExpTime=QC.ExpTime;
                 QC.CamStatus='exposing';
+                % undocumented, I hope it does what it's name says
+                %  apparently no timeout on an unpowered QHY367, however
+                % SetQHYCCDSingleFrameTimeOut(QC.camhandle,QC.ExpTime*1500)
             else
                 QC.TimeStart=NaN;
                 QC.lastExpTime=NaN;

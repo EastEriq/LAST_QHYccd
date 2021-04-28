@@ -5,7 +5,7 @@ function names=allQHYCameraNames(Q)
 %  is implemented as a method of class QHYccd. In other words, the suggested
 %  calling sequence in a matlab session is:
 %
-% -create a QHYccd object, but DON'T connect to it
+% -create a QHYccd object, doesn't matter whether we connect to the camera
 % -call this method to get the list of camera names
 % -find the numbers of the elements of this list corresponding to the 
 %  cameras to be opened

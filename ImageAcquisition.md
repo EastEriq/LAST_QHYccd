@@ -1,7 +1,6 @@
 # Different modes for taking images with LAST_QHYccd
 
 Status of 28/4/2021. Things change, and SDK support is unstable.
-
 Workings were checked with two QHY600 and one QHY367.
 
 ## Properties and methods discussed here:
@@ -14,14 +13,14 @@ Workings were checked with two QHY600 and one QHY367.
 + `.LastImage`, `.LastImageSaved`, `.TimeStart`, `.TimeEnd`, `.TimeStartLastImage`,
   `.TimeStartDelta`: last image acquired and information about its acquisition.
 + all other properties which should be preserved when changing acquisition mode:
-  ROI, Binning, BitDepth, Gain, Offset, Temperature...
+  `ROI`, `Binning`, `BitDepth`, `Gain`, `Offset`, `Temperature`...
 
 ### methods
 
-+ `.takeExposure(expTime)`:  **blocking**, take one image in Single Frame mode.
++ `.takeExposure(expTime)`:  **blocking**, take one image in Single Exposure mode.
 + `.startExposure(expTime)`: starts a single exposure, returns immediately.
 + `.collectExposure(varargin)`: **blocking**, waits for a single exposure to be available, and retrieves it
-+ `.takeExposureSeq(num,expTime,varargin)`: **blocking**, take many images in Single Frame mode.
++ `.takeExposureSeq(num,expTime,varargin)`: **blocking**, take many images in Single Exposure mode.
 + `.takeLive(num,expTime,varargin)`: **non-blocking**, take many images in Live mode.
 + `.takeLiveSeq(num,expTime,varargin)`: **blocking**, take many images in Live mode.
 + `.startLive(expTime)`: **non-blocking**, starts continuous exposure in Live mode, returns immediately
@@ -48,6 +47,28 @@ Also, setting the QHY367 in Live mode causes Gain erroneously to be reset at 200
 As of today, Live mode implies that the first image retrievable is only the _second_ one
 after having started the process.
 Since the exposure time canot be changed, this adds the duration of one exposure time to the initial overhead.
+
+Currently, for the QHY600 the timings and overheads which I observed for retrieving 16bit, full frame images
+are of the order of:
+
++ **Single Exposure**: 350ms pre-exposure, [_Texp_], 1600-1900ms image transfer time,
+  50-100ms image unpacking time (CPU dependent)
++ **Live mode**: 450ms + _Texp_ pre-exposure, [_Texp_], 200-800ms image transfer time
+ _(`USBTRAFFIC` dependent)_, 50-100ms image unpacking time (CPU dependent).
+ Transfer rate is however limited at something like 1.2fps, even if Texp is
+ shorter than 800msec (1.2fps for practical matlab programming reasons, the
+ camera would be capable of ~2.2fps).
+
+Thus acquring N exposures in Single Exposure mode will require about
+ *N&times;(Texp+2.2*sec*)*, whereas in Live mode would require *~1*sec *+(N+1)&times;Texp*.
+
+Switching among the two modes adds an overhead of ~4500ms the first time acquisition in a new mode is called.
+
+With the QHY367 all overheads are not-really-proportionally smaller.
+
+Theoretically there would be a third possible mode, **Burst**, likely designed to acquire a small number
+of shortly exposed images at a high fps and to store them temporarily inside the camera DDR memory,
+but we are given no information about its operation.
 
 ## Blocking vs. nonblocking (timed callbacks)
 
@@ -77,6 +98,7 @@ The methods `takeExposure`, `collectExposure`, `takeExposureSeq`  and `takeLiveS
 an output argument, e.g.
 ```
 img=Q.takeExposure(2.5);
+imgs=Q.takeExposureSeq(10,2.5);
 imgs=Q.takeLiveSeq(10,2.5);
 ```
 and return the image array(s) directly or in a struct (_Seq_ methods). The latter can be very memory

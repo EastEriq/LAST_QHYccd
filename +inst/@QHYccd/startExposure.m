@@ -16,17 +16,17 @@ function startExposure(QC,expTime)
 
             QC.progressive_frame=0;
 
-            if QC.verbose>1
+            if QC.Verbose>1
                 tic;
             end
             QC.allocate_image_buffer
-            if QC.verbose>1
+            if QC.Verbose>1
                 fprintf('t after allocating buffer: %f\n',toc);
             end
 
             t0=now;
             ret=ExpQHYCCDSingleFrame(QC.camhandle);
-            if QC.verbose>1
+            if QC.Verbose>1
                 fprintf('t after ExpQHYCCDSingleFrame: %f\n',toc);
             end
             t1=now;

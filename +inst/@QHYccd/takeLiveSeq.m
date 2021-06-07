@@ -28,7 +28,7 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
 %    Q.ImageHandler=@(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n')]);
     
 
-    if QC.verbose>1
+    if QC.Verbose>1
         tic;
     end
     
@@ -59,13 +59,13 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
     
     QC.report('stopping live mode\n')
     StopQHYCCDLive(QC.camhandle);
-    if QC.verbose>1
+    if QC.Verbose>1
         fprintf('t after StopQHYCCDLive: %f\n',toc);
     end
     QC.CamStatus='idle';
     
     QC.deallocate_image_buffer
-    if QC.verbose>1
+    if QC.Verbose>1
         fprintf('t after deallocating buffer: %f\n',toc);
     end
 

@@ -62,8 +62,6 @@ classdef QHYccd < obs.LAST_Handle
     properties (Hidden,Transient)
         camhandle   % handle to the camera talked to - no need for the external
                     % consumer to know it
-        LastError='';
-        verbose=true;
         pImg  % pointer to the image buffer (can we gain anything in going
               %  to a double buffer model?)
               % Shall we allocate it only once on open(QC), or, like now,
@@ -208,10 +206,10 @@ classdef QHYccd < obs.LAST_Handle
         function ExpTime=get.ExpTime(QC)
             % ExpTime in seconds
             ExpTime=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE)/1e6;
-            % if QC.verbose, fprintf('Exposure time is %f sec.\n',ExpTime); end
+            % if QC.Verbose, fprintf('Exposure time is %f sec.\n',ExpTime); end
             success=(ExpTime~=1e6*hex2dec('FFFFFFFF'));            
             QC.setLastError(success,'could not get exposure time')
-            if QC.verbose>1
+            if QC.Verbose>1
                 [~,PixelPeriod,LinePeriod,FramePeriod,ClocksPerLine,...
               LinesPerFrame,ActualExposureTime,isLongExposureMode]=...
                                         GetQHYCCDPreciseExposureInfo(QC.camhandle);

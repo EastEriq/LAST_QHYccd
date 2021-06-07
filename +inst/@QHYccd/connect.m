@@ -92,7 +92,7 @@ function success=connect(QC,CameraNum)
     if colorAvailable, QC.report(' Color camera\n'); end
 
     [ret5,Nmodes]=GetQHYCCDNumberOfReadModes(QC.camhandle);
-    if QC.verbose, QC.report('Read modes:\n'); end
+    if QC.Verbose, QC.report('Read modes:\n'); end
     for mode=1:Nmodes
         [~,QC.readModesList(mode).name]=...
             GetQHYCCDReadModeName(QC.camhandle,mode-1);

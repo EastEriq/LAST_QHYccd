@@ -1,6 +1,6 @@
 Q=inst.QHYccd;
 Q.connect;
-Q.verbose=2;
+Q.Verbose=2;
 Q.DebugOutput=true;
 
 % Q.disconnect % if this is uncommented, no crash

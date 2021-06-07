@@ -16,20 +16,20 @@ function initStreamMode(QC,newmode)
     if newmode ~= QC.StreamMode
         if contains(QC.CameraName,'QHY600')
             ret=SetQHYCCDStreamMode(QC.camhandle,newmode);
-            if QC.verbose>1
+            if QC.Verbose>1
                 fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
             end
             InitQHYCCD(QC.camhandle);
-            if QC.verbose>1
+            if QC.Verbose>1
                 fprintf('t after InitQHYCCD: %f\n',toc);
             end
         else
             InitQHYCCD(QC.camhandle);
-            if QC.verbose>1
+            if QC.Verbose>1
                 fprintf('t after InitQHYCCD: %f\n',toc);
             end
             ret=SetQHYCCDStreamMode(QC.camhandle,newmode);
-            if QC.verbose>1
+            if QC.Verbose>1
                 fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
             end
         end

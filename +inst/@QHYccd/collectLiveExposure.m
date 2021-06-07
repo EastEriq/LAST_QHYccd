@@ -17,7 +17,7 @@ function img=collectLiveExposure(QC,varargin)
             while ret~=0 && (now-t0)*86400<timeout
                 [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
                 pause(0.01)
-                if QC.verbose>1
+                if QC.Verbose>1
                     fprintf('%s at t=%f\n',dec2hex(ret), toc)
                 end
                 % we have no way at the moment of knowing the real start time
@@ -32,11 +32,11 @@ function img=collectLiveExposure(QC,varargin)
                                                     % even if a subsequent
                                                     % exposure is started
                 QC.TimeEnd=now;
-                if QC.verbose>1
+                if QC.Verbose>1
                     fprintf('got image at time %f\n',toc);
                 end
                 img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
-                if QC.verbose>1
+                if QC.Verbose>1
                     fprintf('t after unpacking: %f\n',toc);
                 end
             else

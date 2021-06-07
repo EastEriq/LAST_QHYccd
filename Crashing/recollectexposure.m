@@ -1,6 +1,6 @@
 Q=inst.QHYccd;
 Q.connect;
-Q.verbose=2;
+Q.Verbose=2;
 Q.DebugOutput=true;
 
 Q.startExposure(1)

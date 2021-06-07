@@ -4,12 +4,12 @@ function img=collectExposure(QC,varargin)
     switch QC.CamStatus
         case {'exposing','reading'}
 
-            if QC.verbose>1
+            if QC.Verbose>1
                 fprintf('t before calling GetQHYCCDSingleFrame: %f\n',toc);
             end
             [ret,w,h,bp,channels]=...
                 GetQHYCCDSingleFrame(QC.camhandle,QC.pImg);
-            if QC.verbose>1 
+            if QC.Verbose>1 
                 fprintf('t after calling GetQHYCCDSingleFrame: %f\n',toc);
             end
             QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
@@ -20,7 +20,7 @@ function img=collectExposure(QC,varargin)
                 QC.progressive_frame=1;
                 % Conversion of an image buffer to a matlab image
                 img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
-                if QC.verbose>1
+                if QC.Verbose>1
                     fprintf('t after unpacking buffer: %f\n',toc);
                 end
                 QC.deallocate_image_buffer
@@ -42,7 +42,7 @@ function img=collectExposure(QC,varargin)
     end
 
     QC.LastImage=img;
-    if QC.verbose>1
+    if QC.Verbose>1
         fprintf('t after copying LastImage: %f\n',toc);
     end
     QC.LastImageSaved=false;

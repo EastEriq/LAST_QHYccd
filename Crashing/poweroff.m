@@ -3,7 +3,9 @@ Q.connect;
 Q.Verbose=2;
 Q.DebugOutput=true;
 
-% Q.disconnect % if this is uncommented, no crash
+% Q.disconnect % if this is uncommented, no crash 
+%  (because Q.camhandle becomes [], and hence unloadlibrary is not executed
+%   by the delete method, as of now!)
 
 clear Q
 
@@ -13,7 +15,6 @@ end
 
 fprintf('\nNow disconnect the power of the camera.\n')
 fprintf('Matlab crashes within a couple of seconds...\n')
-
 
 % QHYCCD|QHYCCD.CPP|CloseQHYCCD|START
 % QHYCCD|QHYCAM.CPP|closeCamera
@@ -27,3 +28,5 @@ fprintf('Matlab crashes within a couple of seconds...\n')
 
 % Stack Trace (from fault):
 % [  0] 0x00007f224d7dd40d                                   <unknown-module>+00000000
+
+fprintf('\ninstead, if you don''t power off, matlab crashes after 30 sec\n')

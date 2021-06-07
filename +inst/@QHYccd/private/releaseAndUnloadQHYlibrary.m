@@ -1,8 +1,8 @@
-function releaseAndUnloadQHYlibrary()
+function releaseAndUnloadQHYlibrary(QC)
 % various actions "the last out turns off the light" in attempt
 %  to exit cleanly from the SDK and avoid matlab crashes
 
-    % this is undocumented BUT IT PREVENTS CRASHES!
+    % this is undocumented BUT IT USED TO PREVENT CRASHES!
     % is it right to do it when there are more than one QC
     %  objects?
     QHYCCDQuit
@@ -11,6 +11,8 @@ function releaseAndUnloadQHYlibrary()
     % don't release the SDK, other QC objects may be using it
     % Besides, releasing prevents reopening
     ReleaseQHYCCDResource;
+    
+    QC.report('Released...\n')
 
     % unload the library,
     %  This, at least with libqhyccd 6.0.5 even crashes Matlab
@@ -27,4 +29,5 @@ function releaseAndUnloadQHYlibrary()
         pause(1)
         unloadlibrary('libqhyccd')
     catch
+        QC.report('Error in unloading libqhyccd!!\n')
     end

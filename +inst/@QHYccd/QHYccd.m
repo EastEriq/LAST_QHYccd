@@ -117,9 +117,18 @@ classdef QHYccd < obs.LAST_Handle
                     QC.report('Failed to close camera\n')
                 end
                 
+                % if I put this out of the if, i.e. if I try even for an
+                % object never connected to a camera, QC.report doesn't exist
+                % anymore. why?
                 if howManyQHYCCDobjects()==0
+                    % maybe I could consider also
+                    %  [~,~,c]=inmem;
+                    %  if any(contains(c,'inst.QHYccd'))
+                    % but at this point 'inst.QHYccd' is not anymore in
+                    % memory. There is something I don't grasp about
+                    %  scoping and destructor/nodestructor, maybe
                     QC.report('last QHY object destroyed, releasing library\n')
-                    releaseAndUnloadQHYlibrary()
+                    QC.releaseAndUnloadQHYlibrary()
                 end
             end
         end

@@ -71,31 +71,13 @@ classdef QHYccd < obs.LAST_Handle
 
     methods
         % Constructor
-        function QC=QHYccd(CameraNum)
+        function QC=QHYccd(id)
             %  CameraNum: int, number of the camera to open (as enumerated by the SDK)
             %     May be omitted. If so, that connection is deferred to when
             %     connect() is separatly called.
 
             % this is done only if libqhyccd is not already loaded  
             loadQHYlibraryAndOpen(QC);   
-
-            % Don't open the camera when constructed. Some details are
-            % inserted at the connect phase of the wrapper method
-            % (obs.camera.connect), so connect only seperately.
-            % DP - 2020 Sep 1
-            
-%             % open the camera when the object is constructed, if CameraNum is
-%             %  given
-%             % David commented out on 15/7/2020 because
-%             % "not connecting in the constructor phase. MIGHT help solving 
-%             %  retriving data problem."
-%             % If that is it, just instantiate without a CameraNum
-%             if exist('CameraNum','var')
-%                 connect(QC,CameraNum);
-%             else
-% %                connect(QC);
-%             end
-
         end 
         
         % Destructor

@@ -1,4 +1,4 @@
-classdef QHYccd < obs.LAST_Handle
+classdef QHYccd < obs.camera
  
     properties
         CameraNum
@@ -72,12 +72,12 @@ classdef QHYccd < obs.LAST_Handle
     methods
         % Constructor
         function QC=QHYccd(id)
-            %  CameraNum: int, number of the camera to open (as enumerated by the SDK)
-            %     May be omitted. If so, that connection is deferred to when
-            %     connect() is separatly called.
-
-            % this is done only if libqhyccd is not already loaded  
-            loadQHYlibraryAndOpen(QC);   
+            %  id: the logical Id label of the camera (see parent
+            %      constructor)
+            % call the parent constructor
+            QC=QC@obs.camera(id);
+            % load libqhyccd on first time  
+            loadQHYlibraryAndOpen(QC);
         end 
         
         % Destructor

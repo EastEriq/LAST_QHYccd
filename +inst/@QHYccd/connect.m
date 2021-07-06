@@ -3,7 +3,8 @@ function success=connect(QC,CameraNum)
     %  read from it some basic information like color capability,
     %  physical dimensions, etc.
     %  CameraNum: int, number of the camera to open (as enumerated by the SDK)
-    %     May be omitted. In that case the first camera is referred to
+    %     May be omitted. In that case the first camera is referred to;
+    %         or, char, exact name of the camera (e.g. 'QHY600M-f25bb143a87518b5b')
     % WARNING: reconnecting a camera object which was previously
     %          disconnected (but not destroyed) crashes Matlab, as of now
     %          (27/8/2020)
@@ -152,7 +153,11 @@ function success=connect(QC,CameraNum)
     
     % set default values, perhaps differentiating camera models
     QC.default_values
-
+    
     QC.CamStatus='idle'; % whishful, if we got till here.
+    
+    % call the superclass method for reading the configuration, and
+    %  eventual further clericalities
+    connect@obs.camera(QC)
     
 end

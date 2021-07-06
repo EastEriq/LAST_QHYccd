@@ -286,6 +286,9 @@ classdef QHYccd < obs.camera
             % default is 1x1
             % for the QHY367, 1x1 and 2x2 seem to work; NxN with N>2 gives error,
             %  NxM gives no error, but all are uneffective and fall back to 1x1
+            if numel(Binning)==1
+                Binning=[Binning,Binning];
+            end
             success= (SetQHYCCDBinMode(QC.camhandle,Binning(1),Binning(2))==0);
             QC.setLastError(success,'could not set the read mode')
         end

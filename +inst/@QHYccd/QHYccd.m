@@ -12,6 +12,7 @@ classdef QHYccd < obs.camera
         Binning=[1,1]; % beware - SDK does not provide a getter for it, go figure
         ExpTime=10;
         Gain=0;
+        ROI % beware - SDK does not provide a getter for it, go figure
     end
     
     properties(Transient)
@@ -21,7 +22,6 @@ classdef QHYccd < obs.camera
 
     properties(Dependent = true)
         Temperature
-        ROI % beware - SDK does not provide a getter for it, go figure
         ReadMode
         Offset
     end

@@ -28,6 +28,7 @@ classdef QHYccd < obs.camera
     
     properties(GetAccess = public, SetAccess = private)
         CameraName
+        CameraModel
         CamStatus='unknown';
         CoolingStatus
         CoolingPower
@@ -118,6 +119,13 @@ classdef QHYccd < obs.camera
     end
     
     methods %getters and setters
+        
+        function model=get.CameraModel(QC)
+            [ret,model]=GetQHYCCDModel(QC.CameraName);
+            if ret
+                QC.reportError('could not read QHY camera model - maybe camera not yet connected?')
+            end
+        end
         
         function status=get.CamStatus(QC)
             % forget about getting any info about what the camera is doing

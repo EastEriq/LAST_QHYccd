@@ -26,9 +26,9 @@ classdef QHYccd < obs.camera
     end
     
     properties(GetAccess = public, SetAccess = private)
-        CameraName
-        CameraModel
-        CamStatus='unknown';
+        CameraName char = '';
+        CameraModel char = ''
+        CamStatus char = 'unknown';
         CoolingStatus
         CoolingPower
         % Humidity  % probably not always supported, and units unknown
@@ -75,6 +75,9 @@ classdef QHYccd < obs.camera
         function QC=QHYccd(id)
             %  id: the logical Id label of the camera (see parent
             %      constructor)
+            if ~exist('id','var')
+                id='';
+            end
             % call the parent constructor
             QC=QC@obs.camera(id);
             % load libqhyccd on first time  

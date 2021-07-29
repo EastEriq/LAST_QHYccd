@@ -15,9 +15,8 @@ classdef QHYccd < obs.camera
         ROI % beware - SDK does not provide a getter for it, go figure
     end
     
-    properties(Transient)
+    properties(Transient, SetObservable)
         LastImage % the last image acquired is copied here
-        ImageHandler % function to treat every acquired image, e.g. @simpleshowimage
     end
 
     properties(Dependent = true)
@@ -68,6 +67,7 @@ classdef QHYccd < obs.camera
               % Shall we allocate it only once on open(QC), or, like now,
               %  every time we start an acquisition?
         LastImageSaved=false; % set true by the abstractor when saving the image, reset to false at new exposure
+        ImageHandler function_handle % function to treat every acquired image, e.g. @simpleshowimage
     end
 
     methods

@@ -29,7 +29,8 @@ function loadQHYlibraryAndOpen(QC)
                         'addheader',fullfile(classpath,'headers/qhyccdstruct_20-6-26_matlab.h'));
                 elseif exist('/usr/local/lib/libqhyccd.so.21.2.1.10','file') ||...
                     exist('/usr/local/lib/libqhyccd.so.21.3.13.16','file') ||...
-                    exist('/usr/local/lib/libqhyccd.so.21.3.30.13','file')
+                    exist('/usr/local/lib/libqhyccd.so.21.3.30.13','file') ||...
+                    exist('/usr/local/lib/libqhyccd.so.21.7.16.13','file')
                 % sdk 21.03.13 fortunately has only a couple of additions
                 %  in qhyccdcamdef.h with respect to its predecessor, and
                 %  only changes in comments in qhyccd.h

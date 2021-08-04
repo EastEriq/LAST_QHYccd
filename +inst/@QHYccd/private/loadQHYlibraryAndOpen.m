@@ -42,6 +42,9 @@ function loadQHYlibraryAndOpen(QC)
                 else
                     error('these QHY installations change all the time; what shall I do?')
                 end
+                % try to enforce the debug logging status before init, maybe
+                % it works
+                QC.DebugOutput=QC.DebugOutput;
                 % this could perhaps be called harmlessly multiple times,
                 %  or does it interfere with previously constructed objects?
                 InitQHYCCDResource;

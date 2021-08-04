@@ -56,7 +56,7 @@ classdef QHYccd < obs.camera
     properties(Hidden)
         Color
         BitDepth
-        DebugOutput % if set true, library blabber is printed on stderr
+        DebugOutput=false; % if set true, library blabber is printed on stderr
     end
     
     properties (Hidden,Transient)
@@ -255,12 +255,8 @@ classdef QHYccd < obs.camera
             sy=max(min(sy,QC.physical_size.ny-y1),1);
             
             success=(SetQHYCCDResolution(QC.camhandle,x1,y1,sx,sy)==0);
-            QC.setLastError(success,'could not set ROI')
-            if success
-                QC.report(sprintf('ROI successfully set to (%d,%d)+(%dx%d)\n',...
-                          x1,y1,sx,sy));
-            else
-                QC.report(sprintf('set ROI to (%d,%d)+(%dx%d) FAILED\n',x1,y1,sx,sy));
+            if ~success
+                QC.reportError(sprintf('set ROI to (%d,%d)+(%dx%d) FAILED\n',x1,y1,sx,sy));
             end
         end
 

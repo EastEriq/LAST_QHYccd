@@ -14,7 +14,7 @@ function startExposure(QC,expTime)
                 QC.ExpTime=expTime;
             end
 
-            QC.progressive_frame=0;
+            QC.ProgressiveFrame=0;
 
             if QC.Verbose>1
                 tic;

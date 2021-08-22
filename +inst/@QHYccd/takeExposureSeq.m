@@ -38,6 +38,8 @@ function imgs=takeExposureSeq(QC,num,expTime,varargin)
     if nargout>0
         imgs=cell(1,num);
     end
+    
+    QC.SequenceLength=num;
     for i=1:num
         startExposure(QC,QC.ExpTime)
         

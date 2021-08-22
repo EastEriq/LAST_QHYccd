@@ -26,7 +26,6 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
 % another simple example
 %
 %    Q.ImageHandler=@(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n')]);
-    
 
     if QC.Verbose>1
         tic;
@@ -35,6 +34,8 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
     if exist('expTime','var')
         QC.ExpTime=expTime;
     end
+
+    QC.SequenceLength=num;
 
     startLive(QC)
     if ~isempty(QC.LastError)

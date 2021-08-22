@@ -32,6 +32,7 @@ function img=collectLiveExposure(QC,varargin)
                                                     % even if a subsequent
                                                     % exposure is started
                 QC.TimeEnd=now;
+                QC.ProgressiveFrame=QC.ProgressiveFrame+1;
                 if QC.Verbose>1
                     fprintf('got image at time %f\n',toc);
                 end

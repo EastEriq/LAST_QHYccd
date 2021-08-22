@@ -23,6 +23,7 @@ function startLive(QC)
 
     t0=now;
     ret=BeginQHYCCDLive(QC.camhandle);
+    QC.ProgressiveFrame=0;
     QC.TimeStartDelta=now-t0;
     if QC.Verbose>1
         fprintf('t after BeginQHYCCDLive: %f\n',toc);

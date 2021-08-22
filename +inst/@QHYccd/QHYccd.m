@@ -46,7 +46,8 @@ classdef QHYccd < obs.camera
         overscan_area=struct('x1Over',[],'y1Over',[],'sxOver',[],'syOver',[]);
         readModesList=struct('name',[],'resx',[],'resy',[]);
         lastExpTime=NaN;
-        progressive_frame = 0; % image of a sequence already available
+        ProgressiveFrame double % progressive frame number when a sequence of exposures is requested
+        SequenceLength double % total number of frames requested for the sequence
         TimeStartDelta % uncertainty, after-before calling exposure start
         StreamMode % 0=single frame, 1=Live. Keep track as property because sdk doesn't retrieve it
     end

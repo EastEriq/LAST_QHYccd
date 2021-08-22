@@ -17,7 +17,7 @@ function img=collectExposure(QC,varargin)
                                                 % exposure is started
             if ret==0
                 QC.TimeEnd=now;
-                QC.progressive_frame=1;
+                QC.ProgressiveFrame=1;
                 % Conversion of an image buffer to a matlab image
                 img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
                 if QC.Verbose>1

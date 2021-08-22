@@ -2,6 +2,10 @@ function takeLive(QC,num,expTime,varargin)
 % Take a series of num images with the same exposure time,
 %  setting the camera in Live mode. This is a non-blocking function,
 %  which uses a timer callback function to retrieve the images.
+% Transitioning from Single Frame to Live Mode takes some seconds
+%  of initialization time, which are spent the first time this
+%  method is called. To do it preemptively without really acquiring
+%  images, call Q.takeLiveSeq(0).
 % Images are handled as soon as they are retrieved by the user function defined
 % in the object property Q.ImageHandler. The function assigned there
 %  receives the whole object Q as first argument, and transparently
@@ -15,12 +19,7 @@ function takeLive(QC,num,expTime,varargin)
 %
 % another simple example
 %
-%    Q.ImageHandler=@(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n'));
-%
-% Transitioning from Single Frame to Live Mode takes some seconds
-%  of initialization time, which are spent the first time this
-%  method is called. To do it preemptively without really acquiring
-%  images, call Q.takeLiveSeq(0).
+%    Q.ImageHandler=@(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n')]);
 
     if QC.Verbose>1
         tic;
@@ -29,6 +28,8 @@ function takeLive(QC,num,expTime,varargin)
     if exist('expTime','var')
         QC.ExpTime=expTime;
     end
+    
+    QC.SequenceLength=num;
 
     startLive(QC)
     deltat=QC.TimeStartDelta*86400; % TimeStartDelta set inside startLive

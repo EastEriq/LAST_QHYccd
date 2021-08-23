@@ -43,8 +43,15 @@ function img=collectLiveExposure(QC,varargin)
             else
                 img=[];
                 QC.TimeEnd=[];
-                QC.LastError='timed out without reading a Live image!';
-                QC.report([QC.LastError,'\n']);
+                QC.reportError('timed out without reading a Live image, aborting Live!');
+                % if this function was called back by an image collector timer
+                %  (i.e. if acquisition was started by QC.takeLive),
+                %  try to stop that timer. We have not assigned it
+                %  to a property, hence try to discover it with timerfind
+                collector=timerfind('Name',...
+                              sprintf('ImageCollector-%d',QC.CameraNum));
+                stop(collector)
+                % the timer deletes itself with its stop function.
             end
         otherwise
             QC.TimeEnd=[];

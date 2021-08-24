@@ -1,6 +1,6 @@
 # Installation of QHY SDK
 
-### (Status of 16/3/2021, official release)
+### (installing an official release)
 
 Things keep changing without notice from QHY, so take it with a grain of salt.
 
@@ -18,7 +18,7 @@ One way to check that the installation succeeded, is to check for the presence o
 
 Other ways are trying to compile test applications in <path-to>`/sdk_linux64_XX.XX.XX/usr/local/testapp/`, and finally try to connect to a camera using the QHYccd class in Matlab.
 
-### adding 21.03.30, unofficial [may be superseded by a future version, who knows]
+### adding 21.03.30, unofficial, to 21.03.13 [superseded by subsequent versions; no more recommended]
 
 Extra steps after the preceding ones:
 
@@ -33,11 +33,25 @@ Extra steps after the preceding ones:
         sudo ln -sf libqhyccd.so.21.3.30.13 libqhyccd.so.20
         sudo ln -sf libqhyccd.so.20 libqhyccd.so
 
+## Later versions tested:
+
+* 21.08.14 _[Log: add sensor status checking]_ --> **tested**, cameras hang about 1 time in 2.
+* 21.08.05 _[Log: Disable device reset option when use linux by default]_ hohoho (not tested)
+* 21.07.16 _[Log: update old camera memory issue during disconnection in LINUX]_ **tested, the stablest I've found so far**
+* 21.06.25 _[Log: Fixed multiple cameras stop live mode bug in Linux]_ oh! (not tested, or did I?)
+* 21.03.13 _[Log: Stability update]_ + private 21.03.30 patch: **tested** Maybe one hang in 10 calls
+* 21.02.01 _[Log: Fixed: cannot get frame continuously under Linux]_ **tested**, impossible to shoot live more than once
+
+Versions older than them had serious issues with live acquisition, or more odd crashes.
+
 ## Versions of the SDK supported
 
 Keep in mind that our matlab toolbox does not support *just any* version of the sdk out of the box. So far any new version published needed review from our side, and some adjustments in our code, notably adapting the header
 files needed by `loadlibrary`. The versions which our toolboks knows how to work with are, as of now:
 
+- 21.08.14
+- 21.08.05
+- 21.07.16
 - 21.3.30 (unofficial)
 - 21.03.13
 - 21.02.01

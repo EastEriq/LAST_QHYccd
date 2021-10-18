@@ -52,7 +52,7 @@ function imgs=takeExposureSeq(QC,num,expTime,varargin)
         else
             collectExposure(QC,varargin{:});
         end
-        QC.report(sprintf('  got image %d/%d\n',i,num))
+        QC.report('  got image %d/%d\n',i,num)
         
         if ~isempty(QC.LastError)
             return

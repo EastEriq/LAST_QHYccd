@@ -54,7 +54,7 @@ function imgs=takeLiveSeq(QC,num,expTime,varargin)
         if ~isempty(QC.LastError)
             break
         else
-            QC.report(sprintf('  got image %d/%d\n',i,num))
+            QC.report('  got image %d/%d\n',i,num)
         end
     end
     

@@ -30,8 +30,7 @@ function success=connect(QC,CameraNum)
             return
         end
         if ret
-            QC.LastError=sprintf('could not get name of camera #%d',QC.CameraNum);
-            QC.report([QC.LastError '\n'])
+            QC.reportError('could not get name of camera #%d',QC.CameraNum);
             return;
         end
     elseif isa(CameraNum,'char')
@@ -41,17 +40,15 @@ function success=connect(QC,CameraNum)
         names=QC.allQHYCameraNames;
         QC.CameraNum=find(contains(names,QC.CameraName),1,'first');
     else
-        QC.LastError=sprintf('argument to connect() must be a number or a camera name');
-        QC.report([QC.LastError '\n'])
+        QC.reportError('argument to connect() must be a number or a camera name');
         return
     end
     
     QC.camhandle=OpenQHYCCD(QC.CameraName);
     if ~isNull(QC.camhandle)
-        QC.report(sprintf('Opened camera "%s"\n',QC.CameraName));
+        QC.report('Opened camera "%s"\n',QC.CameraName);
     else
-        QC.LastError=sprintf('could not open the camera named "%s"',QC.CameraName);
-        QC.report([QC.LastError '\n'])
+        QC.reportError('could not open the camera named "%s"',QC.CameraName);
         return
     end
     
@@ -80,17 +77,17 @@ function success=connect(QC,CameraNum)
     colorAvailable=(ret4>0 & ret4<5);
 
     if QC.Verbose>1
-        QC.report(sprintf('%.3fx%.3fmm chip, %dx%d %.2fx%.2fµm pixels, %dbp\n',...
-            QC.physical_size.chipw,QC.physical_size.chiph,...
-            QC.physical_size.nx,QC.physical_size.ny,...
-            QC.physical_size.pixelw,QC.physical_size.pixelh,...
-            bp_supported))
-        QC.report(sprintf(' effective chip area: (%d,%d)+(%dx%d)\n',...
-            QC.effective_area.x1Eff,QC.effective_area.y1Eff,...
-            QC.effective_area.sxEff,QC.effective_area.syEff));
-        QC.report(sprintf(' overscan area: (%d,%d)+(%dx%d)\n',...
-            QC.overscan_area.x1Over,QC.overscan_area.y1Over,...
-            QC.overscan_area.sxOver,QC.overscan_area.syOver));
+        QC.report('%.3fx%.3fmm chip, %dx%d %.2fx%.2fµm pixels, %dbp\n',...
+                    QC.physical_size.chipw,QC.physical_size.chiph,...
+                    QC.physical_size.nx,QC.physical_size.ny,...
+                    QC.physical_size.pixelw,QC.physical_size.pixelh,...
+                    bp_supported)
+        QC.report(' effective chip area: (%d,%d)+(%dx%d)\n',...
+                    QC.effective_area.x1Eff,QC.effective_area.y1Eff,...
+                    QC.effective_area.sxEff,QC.effective_area.syEff);
+        QC.report(' overscan area: (%d,%d)+(%dx%d)\n',...
+                    QC.overscan_area.x1Over,QC.overscan_area.y1Over,...
+                    QC.overscan_area.sxOver,QC.overscan_area.syOver);
         if colorAvailable, QC.report(' Color camera\n'); end
     end
     
@@ -102,8 +99,8 @@ function success=connect(QC,CameraNum)
                 GetQHYCCDReadModeName(QC.camhandle,mode-1);
             [~,QC.readModesList(mode).resx,QC.readModesList(mode).resy]=...
                 GetQHYCCDReadModeResolution(QC.camhandle,mode-1);
-            QC.report(sprintf('(%d) %s: %dx%d\n',mode-1,QC.readModesList(mode).name,...
-                QC.readModesList(mode).resx,QC.readModesList(mode).resy));
+            QC.report('(%d) %s: %dx%d\n',mode-1,QC.readModesList(mode).name,...
+                QC.readModesList(mode).resx,QC.readModesList(mode).resy);
         end
     end
 

@@ -181,9 +181,9 @@ classdef QHYccd < obs.camera
             % get the current cooling status, by checking the current PWM
             % applied to the cooler.
             pwm=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_CURPWM);
-%            QC.report(sprintf('current cooler PWM %.1f%%%%\n',pwm/2.55))
+%            QC.report('current cooler PWM %.1f%%%%\n',pwm/2.55)
 %            temp=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_COOLER);
-%            QC.report(sprintf('current target T %.1f°C\n',temp))
+%            QC.report('current target T %.1f°C\n',temp)
             if pwm==0
                 status='off';
             elseif pwm<=255
@@ -200,7 +200,7 @@ classdef QHYccd < obs.camera
         
         function set.ExpTime(QC,ExpTime)
             % ExpTime in seconds
-            %QC.report(sprintf('setting exposure time to %f sec.\n',ExpTime))
+            %QC.report('setting exposure time to %f sec.\n',ExpTime)
             success=...
                 (SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE,ExpTime*1e6)==0);
             QC.setLastError(success,'could not set exposure time')
@@ -216,10 +216,10 @@ classdef QHYccd < obs.camera
                 [~,PixelPeriod,LinePeriod,FramePeriod,ClocksPerLine,...
               LinesPerFrame,ActualExposureTime,isLongExposureMode]=...
                                         GetQHYCCDPreciseExposureInfo(QC.camhandle);
-                QC.report(sprintf(['Periods: pixel %dps, line %dns, frame %dus;\n',...
+                QC.report(['Periods: pixel %dps, line %dns, frame %dus;\n',...
                     '%d clocks/line, %d lines/frame; actual Texp=%d (long=%d)\n'],...
                     PixelPeriod,LinePeriod,FramePeriod,ClocksPerLine,...
-                    LinesPerFrame,ActualExposureTime,isLongExposureMode))
+                    LinesPerFrame,ActualExposureTime,isLongExposureMode)
             end
         end
 
@@ -257,7 +257,7 @@ classdef QHYccd < obs.camera
             
             success=(SetQHYCCDResolution(QC.camhandle,x1,y1,sx,sy)==0);
             if ~success
-                QC.reportError(sprintf('set ROI to (%d,%d)+(%dx%d) FAILED\n',x1,y1,sx,sy));
+                QC.reportError('set ROI to (%d,%d)+(%dx%d) FAILED\n',x1,y1,sx,sy);
             end
         end
 
@@ -278,8 +278,8 @@ classdef QHYccd < obs.camera
         function set.ReadMode(QC,readMode)
             success=(SetQHYCCDReadMode(QC.camhandle,readMode)==0);
             if ~success
-                QC.report(sprintf('Invalid read mode! Legal is %d:%d\n',0,...
-                    numel(QC.readModesList)-1));
+                QC.report('Invalid read mode! Legal is %d:%d\n',0,...
+                    numel(QC.readModesList)-1);
             end
             QC.setLastError(success,'could not set the read mode')
         end
@@ -321,7 +321,7 @@ classdef QHYccd < obs.camera
             % Constrain BitDepth to 8|16, the functions wouldn't give any
             %  error anyway for different values.
             BitDepth=max(min(round(BitDepth/8)*8,16),8);
-            %QC.report(sprintf('Setting depth to %dbit\n',BitDepth))
+            %QC.report('Setting depth to %dbit\n',BitDepth)
             SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_TRANSFERBIT,BitDepth);
             % There is also a second SDK function for setting this. I don't
             %  know if they are *really* equivalent. In doubt call both.

@@ -61,5 +61,5 @@ function loadQHYlibraryAndOpen(QC)
                 %  cannot make use of it for every new camera object created
                 %  (probabily this is new of 2020 SDKs, what do I know)
                 num=ScanQHYCCD;
-                QC.report(sprintf('%d QHY cameras found\n',num));
+                QC.report('%d QHY cameras found\n',num);
             end

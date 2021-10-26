@@ -341,7 +341,11 @@ classdef QHYccd < obs.camera
 
         function set.DebugOutput(QC,flag)
             % undocumented functions, suppress or enable stderr trace of
-            %  calls
+            %  inner library calls
+            % EnableQHYCCDLogFile(flag) % tries to open .qhyccd/qhyccd.log,
+                                        % but segfaults matlab as soon as it tries
+                                        % to write there (see comments in
+                                        % the function file)
             EnableQHYCCDMessage(flag) % this was probably for the log file,
             % in later SDKs it turns on the stderr trace
             SetQHYCCDLogLevel(10) % this one affects the verbosity of the blabber

@@ -58,6 +58,7 @@ classdef QHYccd < obs.camera
         Color
         BitDepth
         DebugOutput=false; % if set true, library blabber is printed on stderr
+        DebugLogLevel=10; % the higher, the more verbose; no idea what each number does
     end
     
     properties (Hidden,Transient)
@@ -348,7 +349,14 @@ classdef QHYccd < obs.camera
                                         % the function file)
             EnableQHYCCDMessage(flag) % this was probably for the log file,
             % in later SDKs it turns on the stderr trace
-            SetQHYCCDLogLevel(10) % this one affects the verbosity of the blabber
+        end
+        
+        function set.DebugLogLevel(QC,level)
+            % This one affects the verbosity of the blabber. Possibly, 0 means off.
+            %  Since it does not depend on a specific camera, probaby when there
+            %  are many QC objects and the property is set for one, it affects the
+            %  behavior of all. There is no getter function.
+            SetQHYCCDLogLevel(level)
         end
     end
     

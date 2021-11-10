@@ -20,15 +20,11 @@ function startExposure(QC,expTime)
                 tic;
             end
             QC.allocate_image_buffer
-            if QC.Verbose>1
-                fprintf('t after allocating buffer: %f\n',toc);
-            end
+            QC.reportDebug('t after allocating buffer: %f\n',toc);
 
             t0=now;
             ret=ExpQHYCCDSingleFrame(QC.camhandle);
-            if QC.Verbose>1
-                fprintf('t after ExpQHYCCDSingleFrame: %f\n',toc);
-            end
+            QC.reportDebug('t after ExpQHYCCDSingleFrame: %f\n',toc);
             t1=now;
             
             QC.TimeStartDelta=t1-t0;

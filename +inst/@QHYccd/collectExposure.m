@@ -4,14 +4,10 @@ function img=collectExposure(QC,varargin)
     switch QC.CamStatus
         case {'exposing','reading'}
 
-            if QC.Verbose>1
-                fprintf('t before calling GetQHYCCDSingleFrame: %f\n',toc);
-            end
+            QC.reportDebug('t before calling GetQHYCCDSingleFrame: %f\n',toc);
             [ret,w,h,bp,channels]=...
                 GetQHYCCDSingleFrame(QC.camhandle,QC.pImg);
-            if QC.Verbose>1 
-                fprintf('t after calling GetQHYCCDSingleFrame: %f\n',toc);
-            end
+            QC.reportDebug('t after calling GetQHYCCDSingleFrame: %f\n',toc);
             QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                 % even if a subsequent
                                                 % exposure is started
@@ -20,9 +16,7 @@ function img=collectExposure(QC,varargin)
                 QC.ProgressiveFrame=1;
                 % Conversion of an image buffer to a matlab image
                 img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
-                if QC.Verbose>1
-                    fprintf('t after unpacking buffer: %f\n',toc);
-                end
+                QC.reportDebug('t after unpacking buffer: %f\n',toc)
                 QC.deallocate_image_buffer
             else
                 QC.report(['error retrieving frame from camera ' QC.CameraName '\n'])
@@ -37,14 +31,13 @@ function img=collectExposure(QC,varargin)
                 QC.CamStatus='unknown';
             end
         otherwise
-            QC.LastError='no image to read because exposure not started';
+            QC.reportError='no image to read because exposure not started';
             img=[];
     end
 
     QC.LastImage=img;
-    if QC.Verbose>1
-        fprintf('t after copying LastImage: %f\n',toc);
-    end
+    QC.reportDebug('t after copying LastImage: %f\n',toc)
+
     QC.LastImageSaved=false;
 
     if ~isempty(QC.ImageHandler)

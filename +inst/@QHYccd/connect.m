@@ -44,6 +44,7 @@ function success=connect(QC,CameraNum)
         return
     end
     
+    QC.reportDebug('calling OpenQHYCCD\n')
     QC.camhandle=OpenQHYCCD(QC.CameraName);
     if ~isNull(QC.camhandle)
         QC.report('Opened camera "%s"\n',QC.CameraName);
@@ -52,11 +53,12 @@ function success=connect(QC,CameraNum)
         return
     end
     
+    QC.reportDebug('calling InitQHYCCD\n')
     InitQHYCCD(QC.camhandle); % this one crashed when reconnecting!
 
     % query the camera and populate the QC structures with some
     %  characteristic values
-
+    QC.reportDebug('reading sizes\n')
     [ret1,QC.physical_size.chipw,QC.physical_size.chiph,...
         QC.physical_size.nx,QC.physical_size.ny,...
         QC.physical_size.pixelw,QC.physical_size.pixelh,...
@@ -76,20 +78,18 @@ function success=connect(QC,CameraNum)
     ret4=IsQHYCCDControlAvailable(QC.camhandle, inst.qhyccdControl.CAM_COLOR);
     colorAvailable=(ret4>0 & ret4<5);
 
-    if QC.Verbose>1
-        QC.report('%.3fx%.3fmm chip, %dx%d %.2fx%.2fµm pixels, %dbp\n',...
+        QC.reportDebug('%.3fx%.3fmm chip, %dx%d %.2fx%.2fµm pixels, %dbp\n',...
                     QC.physical_size.chipw,QC.physical_size.chiph,...
                     QC.physical_size.nx,QC.physical_size.ny,...
                     QC.physical_size.pixelw,QC.physical_size.pixelh,...
                     bp_supported)
-        QC.report(' effective chip area: (%d,%d)+(%dx%d)\n',...
+        QC.reportDebug(' effective chip area: (%d,%d)+(%dx%d)\n',...
                     QC.effective_area.x1Eff,QC.effective_area.y1Eff,...
                     QC.effective_area.sxEff,QC.effective_area.syEff);
-        QC.report(' overscan area: (%d,%d)+(%dx%d)\n',...
+        QC.reportDebug(' overscan area: (%d,%d)+(%dx%d)\n',...
                     QC.overscan_area.x1Over,QC.overscan_area.y1Over,...
                     QC.overscan_area.sxOver,QC.overscan_area.syOver);
-        if colorAvailable, QC.report(' Color camera\n'); end
-    end
+        if colorAvailable, QC.reportDebug(' Color camera\n'); end
     
     [ret5,Nmodes]=GetQHYCCDNumberOfReadModes(QC.camhandle);
     if QC.Verbose>2

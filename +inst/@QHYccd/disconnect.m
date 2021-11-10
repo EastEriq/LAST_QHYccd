@@ -9,6 +9,7 @@ function success=disconnect(QC)
         % StopQHYCCDLive(QC.camhandle);
         %
         % check this status, which may fail
+        QC.reportDebug('calling CloseQHYCCD\n')
         success=(CloseQHYCCD(QC.camhandle)==0);
     else
         success=true;

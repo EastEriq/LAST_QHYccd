@@ -213,7 +213,7 @@ classdef QHYccd < obs.camera
             % if QC.Verbose, fprintf('Exposure time is %f sec.\n',ExpTime); end
             success=(ExpTime~=1e6*hex2dec('FFFFFFFF'));            
             QC.setLastError(success,'could not get exposure time')
-            if QC.Verbose>1
+            if QC.Verbose>2
                 [~,PixelPeriod,LinePeriod,FramePeriod,ClocksPerLine,...
               LinesPerFrame,ActualExposureTime,isLongExposureMode]=...
                                         GetQHYCCDPreciseExposureInfo(QC.camhandle);
@@ -322,7 +322,7 @@ classdef QHYccd < obs.camera
             % Constrain BitDepth to 8|16, the functions wouldn't give any
             %  error anyway for different values.
             BitDepth=max(min(round(BitDepth/8)*8,16),8);
-            %QC.report('Setting depth to %dbit\n',BitDepth)
+            QC.reportDebug('Setting depth to %dbit\n',BitDepth)
             SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_TRANSFERBIT,BitDepth);
             % There is also a second SDK function for setting this. I don't
             %  know if they are *really* equivalent. In doubt call both.

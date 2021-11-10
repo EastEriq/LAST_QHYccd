@@ -16,22 +16,14 @@ function initStreamMode(QC,newmode)
     if newmode ~= QC.StreamMode
         if contains(QC.CameraName,'QHY600')
             ret=SetQHYCCDStreamMode(QC.camhandle,newmode);
-            if QC.Verbose>1
-                fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
-            end
+            QC.reportDebug('t after SetQHYCCDStreamMode: %f\n',toc)
             InitQHYCCD(QC.camhandle);
-            if QC.Verbose>1
-                fprintf('t after InitQHYCCD: %f\n',toc);
-            end
+            QC.reportDebug('t after InitQHYCCD: %f\n',toc);
         else
             InitQHYCCD(QC.camhandle);
-            if QC.Verbose>1
-                fprintf('t after InitQHYCCD: %f\n',toc);
-            end
+            QC.reportDebug('t after InitQHYCCD: %f\n',toc);
             ret=SetQHYCCDStreamMode(QC.camhandle,newmode);
-            if QC.Verbose>1
-                fprintf('t after SetQHYCCDStreamMode: %f\n',toc);
-            end
+            QC.reportDebug('t after SetQHYCCDStreamMode: %f\n',toc);
         end
         if newmode==1 && ret==0
             % The most fantastic call to avoid (??) a queue of two
@@ -41,8 +33,7 @@ function initStreamMode(QC,newmode)
             SetQHYCCDBurstModePatchNumber(QC.camhandle,32001);
             QC.StreamMode=1;
         elseif newmode==1 && ret==0
-            QC.LastError='Camera cannot be put in Live mode';
-            QC.report(QC.LastError)
+            QC.reportError('Camera cannot be put in Live mode')
             QC.StreamMode=0;
             return
         else

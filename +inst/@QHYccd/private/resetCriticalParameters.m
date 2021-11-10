@@ -8,7 +8,9 @@ function resetCriticalParameters(QC)
 %  complications.
     QC.Color=false;
     QC.Binning=QC.Binning;
+    QC.reportDebug('calling SetQHYCCDResolution\n')
     SetQHYCCDResolution(QC.camhandle,0,0,QC.physical_size.nx,QC.physical_size.ny);
+    QC.reportDebug('after SetQHYCCDResolution call\n')
 %     QC.ROI=[QC.effective_area.x1Eff,QC.effective_area.y1Eff,...
 %         QC.effective_area.x1Eff+QC.effective_area.sxEff,...
 %         QC.effective_area.y1Eff+QC.effective_area.syEff];
@@ -18,8 +20,11 @@ function resetCriticalParameters(QC)
     QC.Gain=QC.Gain;
     QC.Offset=QC.Offset; % maybe this has to be reset, maybe not
     % maybe too low USB traffic is at risk od libusb errors -> crashes
+    QC.reportDebug('calling SetQHYCCDParam USBTRAFFIC & DDR\n')
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,10);
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_DDR,1);
+    QC.reportDebug('after SetQHYCCDParam USBTRAFFIC & DDR\n')
+
     
     % and let's hope that I haven't forgotten any other essential setting.
     % Other settings (e.g. temperature) might just survive mode change...

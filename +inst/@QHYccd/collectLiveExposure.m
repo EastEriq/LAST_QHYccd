@@ -8,24 +8,24 @@ function img=collectLiveExposure(QC,varargin)
     % setting up the scenes for the first image requires additional ~2 secs 
     %  plus about two exposures. Thus for long exposures the first image 
     %  may be retrieved only after something like 3*texp!
-    timeout=max(4*QC.ExpTime+3, 2.6); % in secs
+    exptime=QC.ExpTime; % read it only once, via GetQHYCCDParam
+    timeout=max(4*exptime+3, 2.6); % in secs
     
     switch QC.CamStatus
         case {'exposing','reading'}  % check what is set as status in Live
             t0=now;
             ret=-1;
+            QC.reportDebug('entering GetQHYCCDLiveFrame polling loop\n')
             while ret~=0 && (now-t0)*86400<timeout
                 [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
                 pause(0.01)
-                if QC.Verbose>1
-                    fprintf('%s at t=%f\n',dec2hex(ret), toc)
-                end
+                QC.reportDebug('%s at t=%f\n',dec2hex(ret), toc)
                 % we have no way at the moment of knowing the real start time
                 %  of each usable exposure. This is an estimate, counting
                 %  on that the expoure started ExpTime before it is ready
                 %  for retrieval. The value is updated at each polling
                 %  iteration.
-                QC.TimeStart=now-QC.ExpTime/86400;
+                QC.TimeStart=now-exptime/86400;
             end
             if ret==0
                 QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
@@ -33,13 +33,11 @@ function img=collectLiveExposure(QC,varargin)
                                                     % exposure is started
                 QC.TimeEnd=now;
                 QC.ProgressiveFrame=QC.ProgressiveFrame+1;
-                if QC.Verbose>1
-                    fprintf('got image at time %f\n',toc);
-                end
+                QC.reportDebug('got image at time %f\n',toc)
+
                 img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
-                if QC.Verbose>1
-                    fprintf('t after unpacking: %f\n',toc);
-                end
+                QC.reportDebug('t after unpacking: %f\n',toc)
+
             else
                 img=[];
                 QC.TimeEnd=[];

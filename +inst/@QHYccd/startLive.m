@@ -7,27 +7,21 @@ function startLive(QC)
 % Live mode must be then stopped with Q.abort().
 
     QC.initStreamMode(1);
-    if QC.Verbose>1
-        fprintf('t after eventual reinitialization: %f\n',toc);
-    end
+    QC.reportDebug('t after eventual reinitialization: %f\n',toc)
 
     QC.ExpTime=QC.ExpTime;
-    if QC.Verbose>1
-        fprintf('t after setting again parameters: %f\n',toc);
-    end
+    QC.reportDebug('t after setting again exposure time: %f\n',toc)
 
     QC.allocate_image_buffer
-    if QC.Verbose>1
-        fprintf('t after allocating buffer: %f\n',toc);
-    end
+    QC.reportDebug('t after allocating buffer: %f\n',toc)
 
     t0=now;
+    QC.reportDebug('calling BeginQHYCCDLive\n')
     ret=BeginQHYCCDLive(QC.camhandle);
     QC.ProgressiveFrame=0;
     QC.TimeStartDelta=now-t0;
-    if QC.Verbose>1
-        fprintf('t after BeginQHYCCDLive: %f\n',toc);
-    end
+    QC.reportDebug('t after BeginQHYCCDLive: %f\n',toc)
+
     if ret==0
         QC.CamStatus='exposing';
     else

@@ -18,7 +18,7 @@ One way to check that the installation succeeded, is to check for the presence o
 
 Other ways are trying to compile test applications in <path-to>`/sdk_linux64_XX.XX.XX/usr/local/testapp/`, and finally try to connect to a camera using the QHYccd class in Matlab.
 
-### adding 21.03.30, unofficial, to 21.03.13 [superseded by subsequent versions; no more recommended]
+### adding 21.03.30, unofficial, to 21.03.13 [*superseded by subsequent versions; no more recommended*]
 
 Extra steps after the preceding ones:
 
@@ -49,6 +49,7 @@ Versions older than them had serious issues with live acquisition, or more odd c
 Keep in mind that our matlab toolbox does not support *just any* version of the sdk out of the box. So far any new version published needed review from our side, and some adjustments in our code, notably adapting the header
 files needed by `loadlibrary`. The versions which our toolboks knows how to work with are, as of now:
 
+- 21.10.12
 - 21.08.14
 - 21.08.05
 - 21.07.16

@@ -262,6 +262,10 @@ classdef QHYccd < obs.camera
             end
         end
 
+        % TODO, perhaps, only for recent (>8.2021 versions of the SDK)
+%         function roi=get.ROI(QC)
+%             % perhaps with GetQHYCCDCurrentROI, if that is real
+%         end
         
         function set.Offset(QC,Offset)
             success=(SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET,Offset)==0);

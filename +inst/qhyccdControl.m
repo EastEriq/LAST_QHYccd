@@ -66,6 +66,13 @@ classdef qhyccdControl < uint16
         CAM_PRESSURE (63),
         CONTROL_VACUUM_PUMP (64),
         CONTROL_SensorChamberCycle_PUMP (65),
-        CONTROL_MAX_ID (66)
+        CAM_32BITS (66),
+        CAM_Sensor_ULVO_Status (67),
+        CAM_SensorPhaseReTrain (68),
+        CAM_InitConfigFromFlash (69),
+        CAM_TRIGER_MODE (70),
+        CAM_TRIGER_OUT (71),
+        CAM_BURST_MODE (72),
+        CONTROL_MAX_ID (73)
     end
 end

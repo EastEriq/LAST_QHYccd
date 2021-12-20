@@ -12,6 +12,10 @@ function initStreamMode(QC,newmode)
     if ~exist('newmode','var')
         newmode=QC.StreamMode; % i.e. no change
     end
+    
+    if QC.Verbose<=1 % Q&D fix to use toc later on, if tic not called earlier
+        tic;
+    end
 
     if newmode ~= QC.StreamMode
         if contains(QC.CameraName,'QHY600')

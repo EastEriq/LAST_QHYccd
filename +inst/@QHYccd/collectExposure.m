@@ -1,6 +1,10 @@
 function img=collectExposure(QC,varargin)
 % collect the exposed frame, but only if an exposure was started!
 
+    if QC.Verbose<=1 % Q&D fix to use toc later on, if tic not called earlier
+        tic;
+    end
+
     switch QC.CamStatus
         case {'exposing','reading'}
 

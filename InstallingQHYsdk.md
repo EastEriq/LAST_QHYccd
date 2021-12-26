@@ -35,9 +35,10 @@ Extra steps after the preceding ones:
 
 ## Later versions tested:
 
+* 21.10.12 _[Log: add new camera support]_ --> **tested**, prevents using Live mode simultaneously on two cameras, and crashes.
 * 21.08.14 _[Log: add sensor status checking]_ --> **tested**, cameras hang about 1 time in 2.
 * 21.08.05 _[Log: Disable device reset option when use linux by default]_ hohoho (not tested)
-* 21.07.16 _[Log: update old camera memory issue during disconnection in LINUX]_ **tested, the stablest I've found so far**
+* **21.07.16** _[Log: update old camera memory issue during disconnection in LINUX]_ **tested, the stablest I've found so far**
 * 21.06.25 _[Log: Fixed multiple cameras stop live mode bug in Linux]_ oh! (not tested, or did I?)
 * 21.03.13 _[Log: Stability update]_ + private 21.03.30 patch: **tested** Maybe one hang in 10 calls
 * 21.02.01 _[Log: Fixed: cannot get frame continuously under Linux]_ **tested**, impossible to shoot live more than once

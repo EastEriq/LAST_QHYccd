@@ -18,20 +18,22 @@ function img=collectLiveExposure(QC,varargin)
             QC.reportDebug('entering GetQHYCCDLiveFrame polling loop\n')
             while ret~=0 && (now-t0)*86400<timeout
                 [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
-                pause(0.01)
-                QC.reportDebug('%s at t=%f\n',dec2hex(ret), toc)
                 % we have no way at the moment of knowing the real start time
                 %  of each usable exposure. This is an estimate, counting
                 %  on that the expoure started ExpTime before it is ready
                 %  for retrieval. The value is updated at each polling
                 %  iteration.
                 QC.TimeStart=now-exptime/86400;
+                QC.reportDebug('%s at t=%f\n',dec2hex(ret), toc)
+                if ret~=0
+                    pause(0.01)
+                end
             end
             if ret==0
+                QC.TimeEnd=now;
                 QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                     % even if a subsequent
                                                     % exposure is started
-                QC.TimeEnd=now;
                 QC.ProgressiveFrame=QC.ProgressiveFrame+1;
                 QC.reportDebug('got image at time %f\n',toc)
 

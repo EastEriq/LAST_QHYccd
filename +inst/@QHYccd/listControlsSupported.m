@@ -17,7 +17,7 @@ function listControlsSupported(QC)
         else
             fprintf('ERR ')
         end
-        fprintf('[%05d:%05d:%05d]',minV,stepV,maxV)
+        fprintf('[%g:%g:%g]',minV,stepV,maxV)
         fprintf(' %s\n',s{i});
     end
 end

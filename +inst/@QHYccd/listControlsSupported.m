@@ -10,14 +10,14 @@ function listControlsSupported(QC)
         if available
             fprintf('AVAIL ');
         else
-            fprintf('xxxxx ');
+            fprintf(' xxx  ');
         end
         if ret==0
             fprintf(' OK ')
         else
             fprintf('ERR ')
         end
-        fprintf('[%g : %g : %g]',minV,stepV,maxV)
+        fprintf('[ %g : %g : %g]',minV,stepV,maxV)
         fprintf(' %s\n',s{i});
     end
 end

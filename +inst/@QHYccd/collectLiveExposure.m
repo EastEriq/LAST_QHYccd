@@ -9,7 +9,16 @@ function img=collectLiveExposure(QC,varargin)
     %  plus about two exposures. Thus for long exposures the first image 
     %  may be retrieved only after something like 3*texp!
     exptime=QC.ExpTime; % read it only once, via GetQHYCCDParam
-    timeout=max(4*exptime+3, 2.6); % in secs
+                        % (beware: could be MAXINT/1e6 if camera went fishing)
+    if exptime==(2^32-1)*1e-6
+        QC.reportError('invalid exposure time read -- camera disconnected?')
+        timeout=0; % elegant way of saying fuck you
+    elseif QC.ProgressiveFrame==0
+        timeout=max(2*exptime+3, 2.6); % in secs
+    else
+        timeout=4; % not getting an image ontime is anyway suspicious,
+                   % don't get stuck forever polling in the called back collector
+    end
     
     switch QC.CamStatus
         case {'exposing','reading'}  % check what is set as status in Live
@@ -39,27 +48,29 @@ function img=collectLiveExposure(QC,varargin)
 
                 img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
                 QC.reportDebug('t after unpacking: %f\n',toc)
-
             else
                 img=[];
                 QC.TimeEnd=[];
                 QC.reportError('timed out without reading a Live image, aborting Live!');
-                % if this function was called back by an image collector timer
-                %  (i.e. if acquisition was started by QC.takeLive),
-                %  try to stop that timer. We have not assigned it
-                %  to a property, hence try to discover it with timerfind
-                collector=timerfind('Name',...
-                              sprintf('ImageCollector-%d',QC.CameraNum));
-                stop(collector)
-                % the timer deletes itself with its stop function.
             end
         otherwise
             QC.TimeEnd=[];
-            QC.LastError='no image to read because exposure not started';
+            QC.reportError='no image to read because exposure not started';
             img=[];
     end
     QC.LastImage=img;
     QC.LastImageSaved=false;
+
+    if isempty(QC.TimeEnd)
+        % if this function was called back by an image collector timer
+        %  (i.e. if acquisition was started by QC.takeLive), and something
+        %  went wrong, try to stop that timer. We have not assigned it
+        %  to a property, hence try to discover it with timerfind
+        collector=timerfind('Name',...
+            sprintf('ImageCollector-%d',QC.CameraNum));
+        stop(collector)
+        % the timer deletes itself with its stop function.
+    end
 
     if ~isempty(QC.ImageHandler)
         QC.ImageHandler(QC,varargin{:})

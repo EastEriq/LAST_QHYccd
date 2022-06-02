@@ -21,6 +21,8 @@ function Result = testDarkCurrent(Obj, Args)
     
     Obj.ReadMode     = Args.ReadMode;
     
+    Result.CameraName  = Obj.CameraName;
+    
     Ngain   = numel(Args.Gain);
     Noffset = numel(Args.Offset);
     Ntemp   = numel(Args.Temperature);

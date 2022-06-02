@@ -21,9 +21,10 @@ function Result = testOffset(Obj, Args)
         Args.ExpTime     = 1;
         Args.Nim         = 20;
         Args.ReadMode    = [2];
-        Args.Gain        = [0 20 40 60 80];
+        Args.Gain        = 0; %[0 20 40 60 80];
         
-        Args.Offset      = [2:18]; %(1:1:10);
+        Args.Offset      = 4; %[2:18]; %(1:1:10);
+        Args.KeepImage   = false;
     end
     
     Obj.Temperature = Args.Temperature;
@@ -44,7 +45,6 @@ function Result = testOffset(Obj, Args)
         for Ioffset=1:1:Noffset
             Offset = Args.Offset(Ioffset);
             
-            
             Obj.Gain   = Gain;
             Obj.Offset = Offset;
             
@@ -61,6 +61,10 @@ function Result = testOffset(Obj, Args)
             Result.Gain(Igain).Offset.Median(Ioffset) = nanmedian(single(Obj.LastImage(:)));
             Result.Gain(Igain).Offset.Std(Ioffset)    = nanstd(single(Obj.LastImage(:)));
             Result.Gain(Igain).Offset.RStd(Ioffset)   = tools.math.stat.rstd(single(Obj.LastImage(:)));
+            
+            if Args.KeepImage
+                Result.Gain(Igain).Offset.Image = single(Obj.LastImage);
+            end
         end
         
         Igood = find(Result.Gain(Igain).Offset.N0<50 & ...

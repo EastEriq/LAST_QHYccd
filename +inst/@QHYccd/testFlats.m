@@ -1,5 +1,7 @@
 function Result = testFlats(Obj, Args)
     %
+    % Example: 
+    
    
     arguments
         Obj
@@ -7,11 +9,12 @@ function Result = testFlats(Obj, Args)
         Args.Gain         = 0;
         Args.Offset       = 4;
         Args.Temperature  = -5;
-        Args.ExpTime      = [0.3 0.5 1 1.5 2 3 5 6 7 8];
+        Args.FlatExpTime  = ones(1,10);
+        Args.ExpTime      = [[0.1:0.3:1.2],[1.5:1:8]]; % [0.3 0.5 1 1.5 2 3 5 6 7 8];
         Args.NormExpTime  = 0.5;  % ExpTime by which to normalize
-        Args.CCDSEC       = [2700 3700 4300 5300];
         Args.Bias         = [];
-        %Args.CCDSEC       = [3100 3300 4700 4900];
+        %Args.CCDSEC       = [2700 3700 4300 5300];
+        Args.CCDSEC       = [3100 3300 4700 4900];
     end
     
     if isempty(Args.Bias)
@@ -26,11 +29,14 @@ function Result = testFlats(Obj, Args)
     Noffset = numel(Args.Offset);
     Ntemp   = numel(Args.Temperature);
     Nexp    = numel(Args.ExpTime);
+    NexpF   = numel(Args.FlatExpTime);
     
     Result.Table = nan(Ntemp.*Ngain.*Noffset.*Nexp, 11);
     Fit   = nan(Ntemp.*Ngain.*Noffset, 8);
+    Result.GainTable = nan(Ntemp.*Ngain.*Noffset,5);
     IndF = 0;
     Ind = 0;
+    IndG = 0;
     for Itemp=1:1:Ntemp
         Temp = Args.Temperature(Itemp);
         Obj.Temperature = Temp;
@@ -46,6 +52,32 @@ function Result = testFlats(Obj, Args)
                 Offset = Args.Offset(Ioffset);
                 Obj.Offset = Offset;
                 
+                % prep master flat
+                for IexpF=1:1:NexpF
+                    ExpTime    = Args.FlatExpTime(IexpF);
+                    Obj.Object = sprintf('G%d.O%d',Gain,Offset);
+                    Obj.SaveOnDisk = false;
+                    Obj.takeExposure(ExpTime);
+                    Obj.waitFinish;
+                    Obj.SaveOnDisk = true;
+                    if IexpF==1
+                        SizeIm = size(Obj.LastImage);
+                        Cube = zeros(SizeIm(1), SizeIm(2), NexpF);
+                    end
+                    Cube(:,:,IexpF) = single(Obj.LastImage) - single(Args.Bias);
+                end
+                Flat = median(Cube,3, 'omitnan');
+                Flat = Flat./median(Flat,'all');
+                
+                % gain per pixel
+                StdPP  = std(Cube,[],3);
+                MedPP  = median(Cube,3);
+                GainPP = StdPP.^2./MedPP;
+                IndG = IndG + 1;
+                StdGain = tools.math.stat.rstd(GainPP(:));
+                Result.GainTable(IndG,:) = [Temp, Gain, Offset, median(GainPP,'all','omitnan'), StdGain];
+                
+                
                 % start measurments
                 for Iexp=1:1:Nexp
                     Ind = Ind + 1;
@@ -56,7 +88,7 @@ function Result = testFlats(Obj, Args)
                     Obj.waitFinish;
                     Obj.SaveOnDisk = true;
                     
-                    Image = single(Obj.LastImage) - single(Args.Bias);
+                    Image = (single(Obj.LastImage) - single(Args.Bias))./Flat;
                     Image = Image(Args.CCDSEC(3):Args.CCDSEC(4), Args.CCDSEC(1):Args.CCDSEC(2));
                     
                     Median = nanmedian(Image(:));
@@ -65,7 +97,7 @@ function Result = testFlats(Obj, Args)
                     Std    = nanstd(Image(:));
                     Max    = max(Image(:));
                     NpixMax= sum(Image(:)==Max);
-                    MeasuredGain = RStd.^2./Median;
+                    MeasuredGain = (RStd.^2./Median);   % no sqrt!
                     Table(Ind,:) = [Temp, Gain, Offset, ExpTime, Median, RStd, Mean, Std, Max, NpixMax, MeasuredGain];
                     
                 end
@@ -105,4 +137,6 @@ function Result = testFlats(Obj, Args)
     Result.FitTable = array2table(Fit);
     Result.FitTable.Properties.VariableNames = {'Temp', 'Gain', 'Offset', 'Par1_1', 'Par1_2', 'Par2_1', 'Par2_2', 'Par2_3'};
     
+    Result.GainTable = array2table(Result.GainTable);
+    Result.GainTable.Properties.VariableNames = {'Temp', 'Gain', 'Offset', 'MedGainPP', 'StdGainPP'};
 end

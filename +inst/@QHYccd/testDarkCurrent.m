@@ -14,7 +14,7 @@ function Result = testDarkCurrent(Obj, Args)
         Obj
         Args.ReadMode     = 2;
         Args.Gain         = 0;
-        Args.Offset       = [3 10];
+        Args.Offset       = [4];
         Args.ExpTime      = [1 3 10 30 100];
         Args.Temperature  = [-5];
     end

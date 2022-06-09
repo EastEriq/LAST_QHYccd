@@ -19,9 +19,9 @@ function Result = testOffset(Obj, Args)
         Obj
         Args.Temperature = -5;
         Args.ExpTime     = 1;
-        Args.Nim         = 20;
+        %Args.Nim         = 20;
         Args.ReadMode    = [2];
-        Args.Gain        = [0 20 40 60 80];
+        Args.Gain        = (0:10:100); %[0 20 40 60 80];
         
         Args.Offset      = [2:18]; %(1:1:10);
         Args.KeepImage   = false;

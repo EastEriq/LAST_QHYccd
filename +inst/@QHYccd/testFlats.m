@@ -1,18 +1,34 @@
 function Result = testFlats(Obj, Args)
-    %
-    % Example: 
+    % Measure gain and non-linearity from flat images using different methods
+    %   Measure the gain per pixel and take the average over all pixels,
+    %   and measure gain from variance of multiple pixels in the same
+    %   image.
+    % Input  : - A inst.QHYccd object.
+    %          * ...,key,val,...
+    %            'Gain' - Vector of gain parameters to test.
+    %            'Offset' - Vector of offsets, with the same length as the
+    %                   gain parameter. The gain and offset are tested in
+    %                   pairs.
+    %            'Bias' - A dark image.
+    %                   If this is a structure array, then each element
+    %                   corresponds to one gain/offset, and the Coadd field
+    %                   contains the dark image.
+    %            -- see code for additional parameters
+    % Output :
+    % Author : Eran Ofek (Jun 2022)
+    % Example: Rflat = P.Camera{2}.testFlats('Bias',D);
     
    
     arguments
         Obj
         Args.ReadMode     = 2;
-        Args.Gain         = 0;
-        Args.Offset       = 4;
+        Args.Gain         = (0:10:80); % offset and gain must be of the same length
+        Args.Offset       = [4     4     4     5     5     6     8    10    13];
         Args.Temperature  = -5;
-        Args.FlatExpTime  = ones(1,10);
-        Args.ExpTime      = [[0.1:0.3:1.2],[1.5:1:8]]; % [0.3 0.5 1 1.5 2 3 5 6 7 8];
+        Args.FlatExpTime  = ones(1,30);
+        Args.ExpTime      = [[0.1:0.1:1.2],[1.5:0.5:8]]; % [0.3 0.5 1 1.5 2 3 5 6 7 8];
         Args.NormExpTime  = 0.5;  % ExpTime by which to normalize
-        Args.Bias         = [];
+        Args.Bias         = [];  % or struct array with Coadd field
         %Args.CCDSEC       = [2700 3700 4300 5300];
         Args.CCDSEC       = [3100 3300 4700 4900];
     end
@@ -33,8 +49,8 @@ function Result = testFlats(Obj, Args)
     
     Result.Table = nan(Ntemp.*Ngain.*Noffset.*Nexp, 11);
     Fit   = nan(Ntemp.*Ngain.*Noffset, 8);
-    Result.GainTable = nan(Ntemp.*Ngain.*Noffset,5);
-    IndF = 0;
+    Result.GainTable = nan(Ntemp.*Ngain,5);
+    IndF = 0;                                                                                                                     
     Ind = 0;
     IndG = 0;
     for Itemp=1:1:Ntemp
@@ -46,9 +62,19 @@ function Result = testFlats(Obj, Args)
         end
         
         for Igain=1:1:Ngain
+            if isstruct(Args.Bias)
+                Bias = Args.Bias(Igain).Coadd;
+            else
+                Bias = Args.Bias;
+            end
+            
+            
             Gain = Args.Gain(Igain);
             Obj.Gain = Gain;
-            for Ioffset=1:1:Noffset
+            
+            Ioffset = Igain;
+            
+            %for Ioffset=1:1:Noffset
                 Offset = Args.Offset(Ioffset);
                 Obj.Offset = Offset;
                 
@@ -64,7 +90,7 @@ function Result = testFlats(Obj, Args)
                         SizeIm = size(Obj.LastImage);
                         Cube = zeros(SizeIm(1), SizeIm(2), NexpF);
                     end
-                    Cube(:,:,IexpF) = single(Obj.LastImage) - single(Args.Bias);
+                    Cube(:,:,IexpF) = single(Obj.LastImage) - single(Bias);
                 end
                 Flat = median(Cube,3, 'omitnan');
                 Flat = Flat./median(Flat,'all');
@@ -88,7 +114,7 @@ function Result = testFlats(Obj, Args)
                     Obj.waitFinish;
                     Obj.SaveOnDisk = true;
                     
-                    Image = (single(Obj.LastImage) - single(Args.Bias))./Flat;
+                    Image = (single(Obj.LastImage) - single(Bias))./Flat;
                     Image = Image(Args.CCDSEC(3):Args.CCDSEC(4), Args.CCDSEC(1):Args.CCDSEC(2));
                     
                     Median = nanmedian(Image(:));
@@ -127,7 +153,7 @@ function Result = testFlats(Obj, Args)
                 Par1 = polyfit(Table(I,4)./Table(I(Iet1),4), Table(I,5)./Table(I(Iet1),5),1);
                 Par2 = polyfit(Table(I,4)./Table(I(Iet1),4), Table(I,5)./Table(I(Iet1),5),2);
                 Fit(IndF,:) = [Temp, Gain, Offset, Par1(1), Par1(2), Par2(1), Par2(2), Par2(3)];
-            end
+            %end
         end
     end
     

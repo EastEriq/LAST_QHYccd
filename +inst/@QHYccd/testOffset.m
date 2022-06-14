@@ -120,8 +120,8 @@ function [Result, Dark, DC] = testOffset(Obj, Args)
             Dark(Igain).Offset = Offset;
             Dark(Igain).Coadd  = imUtil.image.stackCube(Cube,'StackMethod','sigmaclip','IndexDim',3);
             Dark(Igain).CoaddRVar = imUtil.image.stackCube(Cube,'StackMethod','rvar','IndexDim',3);
-            Dark(Igain).MedianRNadu = median(sqrt(D(1).CoaddRVar(:)));
-            Dark(Igain).MeanRNadu = mean(sqrt(D(1).CoaddRVar(:)));
+            Dark(Igain).MedianRNadu = median(sqrt(Dark(Igain).CoaddRVar(:)));
+            Dark(Igain).MeanRNadu = mean(sqrt(Dark(Igain).CoaddRVar(:)));
         end
         
         if nargout>2

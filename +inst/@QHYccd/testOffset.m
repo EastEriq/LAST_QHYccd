@@ -119,6 +119,7 @@ function [Result, Dark, DC] = testOffset(Obj, Args)
             Dark(Igain).Gain   = Gain;
             Dark(Igain).Offset = Offset;
             Dark(Igain).Coadd  = imUtil.image.stackCube(Cube,'StackMethod','sigmaclip','IndexDim',3);
+            Dark(Igain).CoaddRVar = mUtil.image.stackCube(Cube,'StackMethod','rvar','IndexDim',3);
         end
         
         if nargout>2

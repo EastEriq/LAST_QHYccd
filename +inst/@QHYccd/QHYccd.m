@@ -72,6 +72,9 @@ classdef QHYccd < obs.camera
         ImageHandler function_handle % function to treat every acquired image, e.g. @simpleshowimage
     end
 
+    
+    
+    
     methods
         % Constructor
         function QC=QHYccd(id)

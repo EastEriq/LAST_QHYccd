@@ -62,15 +62,18 @@ function img=collectLiveExposure(QC,varargin)
     QC.LastImageSaved=false;
 
     if isempty(QC.TimeEnd)
+        % try anyway to stop acquisition. Using the stop method of the
+        %  timer may fail to execute (callback starving? Deadlock?)
+        ret=StopQHYCCDLive(QC.camhandle);
+        QC.reportDebug('  stopped live acquisition with code %d\n',ret)
         % if this function was called back by an image collector timer
         %  (i.e. if acquisition was started by QC.takeLive), and something
         %  went wrong, try to stop that timer. We have not assigned it
         %  to a property, hence try to discover it with timerfind
         collector=timerfind('Name',...
-            sprintf('ImageCollector-%d',QC.CameraNum))
+            sprintf('ImageCollector-%d',QC.CameraNum));
         QC.reportDebug('  attempting to stop live collector\n')
         stop(collector)
-        ret=StopQHYCCDLive(QC.camhandle);
         % the timer deletes itself with its stop function.
     end
 

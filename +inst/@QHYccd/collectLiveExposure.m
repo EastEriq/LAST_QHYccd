@@ -56,7 +56,7 @@ function img=collectLiveExposure(QC,varargin)
         otherwise
             img=[];
             QC.TimeEnd=[];
-            QC.reportError='no image to read because exposure not started';
+            QC.reportError('no image to read because exposure not started');
     end
     QC.LastImage=img;
     QC.LastImageSaved=false;
@@ -67,8 +67,10 @@ function img=collectLiveExposure(QC,varargin)
         %  went wrong, try to stop that timer. We have not assigned it
         %  to a property, hence try to discover it with timerfind
         collector=timerfind('Name',...
-            sprintf('ImageCollector-%d',QC.CameraNum));
+            sprintf('ImageCollector-%d',QC.CameraNum))
+        QC.reportDebug('  attempting to stop live collector\n')
         stop(collector)
+        ret=StopQHYCCDLive(QC.camhandle);
         % the timer deletes itself with its stop function.
     end
 

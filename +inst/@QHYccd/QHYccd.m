@@ -286,8 +286,9 @@ classdef QHYccd < obs.camera
         function set.ReadMode(QC,readMode)
             success=(SetQHYCCDReadMode(QC.camhandle,readMode)==0);
             if ~success
+                [~,Nmodes]=GetQHYCCDNumberOfReadModes(QC.camhandle);
                 QC.report('Invalid read mode! Legal is %d:%d\n',0,...
-                    numel(QC.readModesList)-1);
+                    Nmodes-1);
             end
             QC.setLastError(success,'could not set the read mode')
         end

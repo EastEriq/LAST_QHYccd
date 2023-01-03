@@ -61,6 +61,7 @@ function takeLive(QC,num,expTime,varargin)
     
     function stoplive(QC,mTimer)
         ret=StopQHYCCDLive(QC.camhandle);
+        QC.reportDebug('stopping live at t=%f, ret=%d\n',toc,ret)
         if ret==0
             QC.CamStatus='idle';
         else

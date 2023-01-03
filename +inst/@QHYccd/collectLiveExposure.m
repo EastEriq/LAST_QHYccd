@@ -13,7 +13,6 @@ function img=collectLiveExposure(QC,varargin)
     if exptime==(2^32-1)*1e-6
         QC.reportError('invalid exposure time read -- camera disconnected?')
         timeout=0; % elegant way of saying fuck you
-        error('...aborting live mode')
     elseif QC.ProgressiveFrame==0
         timeout=max(2*exptime+3, 2.6); % in secs
     else
@@ -53,13 +52,11 @@ function img=collectLiveExposure(QC,varargin)
                 img=[];
                 QC.TimeEnd=[];
                 QC.reportError('timed out without reading a Live image, aborting Live!');
-                error('...aborting live mode') % rise error, to stop timer
             end
         otherwise
             img=[];
             QC.TimeEnd=[];
             QC.reportError='no image to read because exposure not started';
-            error('...aborting live mode') % rise error, to stop timer
     end
     QC.LastImage=img;
     QC.LastImageSaved=false;

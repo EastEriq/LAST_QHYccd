@@ -13,9 +13,13 @@ function success=connect(QC,CameraNum)
     QC.LastError='';
     
     if ~exist('CameraNum','var')
-        CameraNum=1; % open the first camera. It would be nice if there
-                        %  was a way to check which other cameras are
-                        %  open, and open the next
+        if ~isempty(QC.PhysicalId)
+            CameraNum=QC.PhysicalId;
+        else
+            CameraNum=1; % open the first camera. It would be nice if there
+                         %  was a way to check which other cameras are
+                         %  open, and open the next
+        end
     else
         QC.CameraNum=CameraNum;
     end

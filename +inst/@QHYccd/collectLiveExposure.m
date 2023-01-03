@@ -14,9 +14,9 @@ function img=collectLiveExposure(QC,varargin)
         QC.reportError('invalid exposure time read -- camera disconnected?')
         timeout=0; % elegant way of saying fuck you
     elseif QC.ProgressiveFrame==0
-        timeout=max(2*exptime+3, 2.6); % in secs
+        timeout=max(2*exptime+4, 2.6); % in secs
     else
-        timeout=4; % not getting an image ontime is anyway suspicious,
+        timeout=5; % not getting an image ontime is anyway suspicious,
                    % don't get stuck forever polling in the called back collector
     end
     

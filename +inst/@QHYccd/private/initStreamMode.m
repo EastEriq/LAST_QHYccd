@@ -15,7 +15,7 @@ function initStreamMode(QC,newmode)
 %  unsafely libusb functions (one of the reports is 
 %  "usbi_transfer_get_os_priv: Assertion `transfer->num_iso_packets >= 0'
 %  failed"
-% After such crashes the cameras are lefi in an uncommunicable state,
+% After such crashes the cameras are left in an uncommunicable state,
 %  restored only by power cycling.
 % A workaround for this problem seems to be to always call InitQHYCCD()
 %  before live sequences with ExpTime<0.5s. This induces of course an

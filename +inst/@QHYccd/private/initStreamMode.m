@@ -5,6 +5,22 @@ function initStreamMode(QC,newmode)
 % Reinitialization is mandatory when changing Stream Mode. Otherwise,
 %  bad things happen: corrupted images, or, ordinarily, all possible
 %  crashes.
+% Further problem observed, Live mode sequences with very short exposure
+%  time are very problematic if run on two cameras on the same computer
+%  simultaneously. In such cases the first acquisition sequence may
+%  succeed, but the second one invariably hangs or crashes Matlab. Errors
+%  reported involve assertions on __pthread_mutex_lock, on __pthread_tpp_change_priority,
+%  and "The futex facility returned an unexpected error code. My
+%  speculation is that the SDK is not really thread safe, or that it calls
+%  unsafely libusb functions (one of the reports is 
+%  "usbi_transfer_get_os_priv: Assertion `transfer->num_iso_packets >= 0'
+%  failed"
+% After such crashes the cameras are lefi in an uncommunicable state,
+%  restored only by power cycling.
+% A workaround for this problem seems to be to always call InitQHYCCD()
+%  before live sequences with ExpTime<0.5s. This induces of course an
+%  additional initial delay.
+
     if isempty(QC.StreamMode)
         QC.StreamMode=-1;
     end
@@ -23,7 +39,9 @@ function initStreamMode(QC,newmode)
             %  guess so far
             QC.report('calling InitQHYCCD twice, to circumvent deadlock\n')
             QC.report(' with two simultaneous short exposure acquisitions\n')
+            expT=QC.ExpTime;
             InitQHYCCD(QC.camhandle);
+            QC.ExpTime=expT;
         end
         if contains(QC.CameraName,'QHY600')
             ret=SetQHYCCDStreamMode(QC.camhandle,newmode);

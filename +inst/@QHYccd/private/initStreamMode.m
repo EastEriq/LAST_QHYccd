@@ -16,8 +16,15 @@ function initStreamMode(QC,newmode)
     if QC.Verbose<=1 % Q&D fix to use toc later on, if tic not called earlier
         tic;
     end
-
-    if newmode ~= QC.StreamMode
+    
+    if newmode ~= QC.StreamMode || newmode==1 && QC.ExpTime<0.5
+        if newmode==1 && QC.ExpTime<0.5
+            % the effectivenes of this is dubious, but is the best
+            %  guess so far
+            QC.report('calling InitQHYCCD twice, to circumvent deadlock\n')
+            QC.report(' with two simultaneous short exposure acquisitions\n')
+            InitQHYCCD(QC.camhandle);
+        end
         if contains(QC.CameraName,'QHY600')
             ret=SetQHYCCDStreamMode(QC.camhandle,newmode);
             QC.reportDebug('t after SetQHYCCDStreamMode: %f\n',toc)
@@ -29,19 +36,21 @@ function initStreamMode(QC,newmode)
             ret=SetQHYCCDStreamMode(QC.camhandle,newmode);
             QC.reportDebug('t after SetQHYCCDStreamMode: %f\n',toc);
         end
-        if newmode==1 && ret==0
-            % The most fantastic call to avoid (??) a queue of two
-            %  exposures in the DDR before a third can be retrieved.
-            %  This BurstModePatch reduces it to one (not zero, unfortunately)
-            % From an email of Qiu Hongyun, 20/4/2021
-            SetQHYCCDBurstModePatchNumber(QC.camhandle,32001);
-            QC.StreamMode=1;
-        elseif newmode==1 && ret==0
-            QC.reportError('Camera cannot be put in Live mode')
-            QC.StreamMode=0;
-            return
+        if newmode==1
+            if ret==0
+                % The most fantastic call to avoid (??) a queue of two
+                %  exposures in the DDR before a third can be retrieved.
+                %  This BurstModePatch reduces it to one (not zero, unfortunately)
+                % From an email of Qiu Hongyun, 20/4/2021
+                SetQHYCCDBurstModePatchNumber(QC.camhandle,32001);
+                QC.StreamMode=1;
+            else
+                QC.reportError('Camera cannot be put in Live mode')
+                QC.StreamMode=0;
+                return
+            end
         else
-            QC.StreamMode=0;            
+            QC.StreamMode=0;
         end
     end
     

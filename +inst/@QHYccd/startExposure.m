@@ -6,6 +6,7 @@ function startExposure(QC,expTime)
         %  Live mode
         tic
         initStreamMode(QC,0)
+        QC.reportDebug('t overhead for initStreamMode: %f\n',toc);
     end
 
     switch QC.CamStatus

@@ -29,7 +29,7 @@ function takeLive(QC,num,expTime,varargin)
         QC.ExpTime=expTime;
     end
     
-    QC.SequenceLength=num;
+    QC.SequenceLength=max(1,num);
 
     startLive(QC)
     deltat=QC.TimeStartDelta*86400; % TimeStartDelta set inside startLive
@@ -39,7 +39,7 @@ function takeLive(QC,num,expTime,varargin)
     
     collector=timer('Name',sprintf('ImageCollector-%d',QC.CameraNum),...
         'ExecutionMode','fixedRate','BusyMode','Queue',...
-        'TasksToExecute',num,...
+        'TasksToExecute',QC.SequenceLength,...
         'TimerFcn',@(~,~)collectLiveExposure(QC,varargin{:}),...
         'StopFcn',@(mTimer,~)stoplive(QC,mTimer));
     

@@ -284,6 +284,8 @@ classdef QHYccd < obs.camera
         end
         
         function set.ReadMode(QC,readMode)
+            % read current Gain, because it has to be reset
+            gain=QC.Gain;
             success=(SetQHYCCDReadMode(QC.camhandle,readMode)==0);
             if ~success
                 [~,Nmodes]=GetQHYCCDNumberOfReadModes(QC.camhandle);
@@ -291,6 +293,7 @@ classdef QHYccd < obs.camera
                     Nmodes-1);
             end
             QC.setLastError(success,'could not set the read mode')
+            QC.Gain=gain;
         end
         
         function currentReadMode=get.ReadMode(QC)

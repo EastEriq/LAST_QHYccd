@@ -173,5 +173,25 @@ Typical situations leading to problems:
   can lead to failure to acquire, but also to freezes or crashes. Mostly they require power cycling
   the camera to restore (which, as said above, may crash Matlab as well).
   _Note -- there is an internal parameter `USBTRAFFIC` whose value could be tuned --
-   the lower the value the faster the live transfer, but also less stable 
+   the lower the value the faster the live transfer, but also less stable
    with multiple cameras/poor cables._
+
+Simultaneous live acquisition from two cameras on the same computer can also lead to wondrous deadlocks
+and matlab crashes, if the exposure time is shorter than maybe 0.6 sec. The crashes happen when sequence
+acquisition is launched _for the second time_, unless a single frame acquisition or a live acquisition
+with longer exposure times is called in between. I'd say that symptoms point to a thread-unsafety of
+the SDK.
+
+To reproduce, sequences have to be really almost simultaneous. A way is to call via `unitCS` code, like
+
+```
+P=obs.unitCS('02')
+P.connect
+P.takeExposure([],1e-4,2)
+P.takeExposure([],1e-4,2)
+```
+
+Slaves fail to poll live images on the second call, and crash in various ways, sometimes reporting
+failed assertions related to futex, pthreads and libusb.
+
+See also the comments in `@QHYccd/private/initStreamMode.m`.

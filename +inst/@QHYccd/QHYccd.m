@@ -1,5 +1,9 @@
 classdef QHYccd < obs.camera
  
+    properties (Description='api')
+        Connected; % untyped, because the setter may receive a logical or a string
+    end
+
     properties
         CameraNum
         % read/write properties, settings of the camera, for which
@@ -10,25 +14,31 @@ classdef QHYccd < obs.camera
         %  Values set here as default won't likely be passed to the camera
         %   when the object is created
         Binning=[1,1]; % beware - SDK does not provide a getter for it, go figure
-        ExpTime=10;
-        Gain=0;
         ROI % beware - SDK does not provide a getter for it, go figure
     end
     
+    properties (Description='api,must-be-connected')
+        ExpTime=10; % must leave them untyped so API passes a string?
+        Gain=0;
+    end
+
     properties(Transient, SetObservable)
         LastImage % the last image acquired is copied here
     end
 
-    properties(Dependent = true)
+    properties(Dependent = true, Description='api,must-be-connected')
         Temperature
         ReadMode
         Offset
     end
     
+    properties(GetAccess = public, SetAccess = private, Description='api,must-be-connected')
+        CamStatus char = 'unknown';
+    end
+
     properties(GetAccess = public, SetAccess = private)
         CameraName char = '';
         CameraModel char = ''
-        CamStatus char = 'unknown';
         CoolingStatus
         CoolingPower
         % Humidity  % probably not always supported, and units unknown
@@ -73,14 +83,18 @@ classdef QHYccd < obs.camera
     end
 
     
-    
-    
     methods
         % Constructor
-        function QC=QHYccd(id)
+        function QC=QHYccd(Locator)
             %  id: the logical Id label of the camera (see parent
             %      constructor)
-            if ~exist('id','var')
+            if exist('Locator','var')
+                if isa(Locator,'obs.api.Locator')
+                    id = Locator.CanonicalLocation;
+                else
+                    id=Locator;
+                end
+            else
                 id='';
             end
             % call the parent constructor
@@ -128,6 +142,22 @@ classdef QHYccd < obs.camera
     
     methods %getters and setters
         
+        function set.Connected(QC,tf)
+            % when called via the API, the argument is received as a string
+            if isa(tf,'string')
+                tf=eval(tf);
+            end
+            if isempty(QC.Connected)
+                QC.Connected=false;
+            end
+            % don't try to connect if already connected, as per API wiki
+            if ~QC.Connected && tf
+                QC.Connected=QC.connect;
+            elseif QC.Connected && ~tf
+                QC.Connected=~QC.disconnect;
+            end
+        end
+
         function model=get.CameraModel(QC)
             [ret,model]=GetQHYCCDModel(QC.CameraName);
             if ret
@@ -371,4 +401,11 @@ classdef QHYccd < obs.camera
         end
     end
     
+        % prototpes of exported methods, which are defined in separate files
+
+    methods(Description='api,must-be-connected')
+        abort(QC)
+    end
+
+
 end

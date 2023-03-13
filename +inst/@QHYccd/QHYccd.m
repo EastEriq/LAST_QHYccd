@@ -101,6 +101,7 @@ classdef QHYccd < obs.camera
             QC=QC@obs.camera(id);
             % load libqhyccd on first time  
             loadQHYlibraryAndOpen(QC);
+            QC.Connected=false;
         end 
         
         % Destructor
@@ -405,6 +406,8 @@ classdef QHYccd < obs.camera
 
     methods(Description='api,must-be-connected')
         abort(QC)
+        takeExposure(QC) % exp time set from property
+        takeLive(QC,num) % ditto
     end
 
 

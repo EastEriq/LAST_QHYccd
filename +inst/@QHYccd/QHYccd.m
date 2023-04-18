@@ -1,8 +1,4 @@
 classdef QHYccd < obs.camera
- 
-    properties (Description='api')
-        Connected; % untyped, because the setter may receive a logical or a string
-    end
 
     properties
         CameraNum
@@ -15,6 +11,10 @@ classdef QHYccd < obs.camera
         %   when the object is created
         Binning=[1,1]; % beware - SDK does not provide a getter for it, go figure
         ROI % beware - SDK does not provide a getter for it, go figure
+    end
+    
+    properties (Description='api')
+        Connected; % untyped, because the setter may receive a logical or a string
     end
     
     properties (Description='api,must-be-connected')

@@ -52,6 +52,9 @@ function success=connect(QC,CameraNum)
     QC.camhandle=OpenQHYCCD(QC.CameraName);
     if ~isNull(QC.camhandle)
         QC.report('Opened camera "%s"\n',QC.CameraName);
+        if isempty(QC.PhysicalId)
+            QC.PhysicalId=QC.CameraName;
+        end
     else
         QC.reportError('could not open the camera named "%s"',QC.CameraName);
         return

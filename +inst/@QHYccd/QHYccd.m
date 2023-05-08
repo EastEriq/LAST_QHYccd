@@ -90,7 +90,7 @@ classdef QHYccd < obs.camera
             %      constructor)
             if exist('Locator','var')
                 if isa(Locator,'obs.api.Locator')
-                    id = Locator.CanonicalLocation;
+                    id = Locator.Canonical;
                 else
                     id=Locator;
                 end

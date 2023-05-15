@@ -18,8 +18,8 @@ classdef QHYccd < obs.camera
     end
     
     properties (Description='api,must-be-connected')
-        ExpTime=10; % must leave them untyped so API passes a string?
-        Gain=0;
+        ExpTime double =10; % must leave them untyped so API passes a string?
+        Gain double =0;
     end
 
     properties(Transient, SetObservable)
@@ -27,9 +27,9 @@ classdef QHYccd < obs.camera
     end
 
     properties(Dependent = true, Description='api,must-be-connected')
-        Temperature
-        ReadMode
-        Offset
+        Temperature double
+        ReadMode double
+        Offset double
     end
     
     properties(GetAccess = public, SetAccess = private, Description='api,must-be-connected')

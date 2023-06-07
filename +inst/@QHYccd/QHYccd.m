@@ -1,7 +1,7 @@
 classdef QHYccd < obs.camera
  
     properties
-        CameraNum
+        CameraNum uint8
         % read/write properties, settings of the camera, for which
         %  hardware query is involved.
         %  We use getters/setters, even though instantiation
@@ -9,7 +9,7 @@ classdef QHYccd < obs.camera
         %   of the camera require that camhandle is obtained first.
         %  Values set here as default won't likely be passed to the camera
         %   when the object is created
-        Binning=[1,1]; % beware - SDK does not provide a getter for it, go figure
+        Binning uint8 =[1,1]; % beware - SDK does not provide a getter for it, go figure
         ExpTime=10;
         Gain=0;
         ROI % beware - SDK does not provide a getter for it, go figure
@@ -46,8 +46,8 @@ classdef QHYccd < obs.camera
         overscan_area=struct('x1Over',[],'y1Over',[],'sxOver',[],'syOver',[]);
         readModesList=struct('name',[],'resx',[],'resy',[]);
         lastExpTime=NaN;
-        ProgressiveFrame double % progressive frame number when a sequence of exposures is requested
-        SequenceLength double % total number of frames requested for the sequence
+        ProgressiveFrame int16 % progressive frame number when a sequence of exposures is requested
+        SequenceLength int16 % total number of frames requested for the sequence
         TimeStartDelta % uncertainty, after-before calling exposure start
         StreamMode % 0=single frame, 1=Live. Keep track as property because sdk doesn't retrieve it
     end

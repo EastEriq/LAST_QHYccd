@@ -88,11 +88,15 @@ classdef QHYccd < obs.camera
         function QC=QHYccd(Locator)
             %  id: the logical Id label of the camera (see parent
             %      constructor)
+            % Now REQUIRES locator. Think at implications
             if exist('Locator','var')
                 if isa(Locator,'obs.api.Locator')
                     id = Locator.Canonical;
+                elseif isa(Locator,'char') || isa(Locator,'string')
+                    L=obs.api.Locator('Location',Locator);
+                    id=L.Canonical;
                 else
-                    id=Locator;
+                    id='';
                 end
             else
                 id='';

@@ -58,8 +58,8 @@ function img=collectLiveExposure(QC,varargin)
             QC.TimeEnd=[];
             QC.reportError('no image to read because exposure not started');
     end
-    QC.LastImage=img;
     QC.LastImageSaved=false;
+    QC.LastImage=img;
 
     if isempty(QC.TimeEnd)
         % try anyway to stop acquisition. Using the stop method of the

@@ -39,10 +39,9 @@ function img=collectExposure(QC,varargin)
             img=[];
     end
 
+    QC.LastImageSaved=false;
     QC.LastImage=img;
     QC.reportDebug('t after copying LastImage: %f\n',toc)
-
-    QC.LastImageSaved=false;
 
     if ~isempty(QC.ImageHandler)
         QC.ImageHandler(QC,varargin{:})

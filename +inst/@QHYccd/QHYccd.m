@@ -412,7 +412,7 @@ classdef QHYccd < obs.camera
         abort(QC)
         takeExposure(QC) % exp time set from property
         takeLive(QC,num) % ditto
-        probe(QC)
+        out = probe(QC)
     end
 
 

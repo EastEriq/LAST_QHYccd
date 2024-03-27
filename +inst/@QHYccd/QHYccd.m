@@ -13,11 +13,11 @@ classdef QHYccd < obs.camera
         ROI % beware - SDK does not provide a getter for it, go figure
     end
     
-    properties (Description='api')
+    properties (Description='api,type_Connected=logical')
         Connected; % untyped, because the setter may receive a logical or a string
     end
     
-    properties (Description='api,must-be-connected')
+    properties (Description='api,must-be-connected, type_ExpTime=double, type_Gain=double')
         ExpTime double =10; % must leave them untyped so API passes a string?
         Gain double =0;
     end
@@ -26,13 +26,13 @@ classdef QHYccd < obs.camera
         LastImage % the last image acquired is copied here
     end
 
-    properties(Dependent = true, Description='api,must-be-connected')
+    properties(Dependent = true, Description='api,must-be-connected, type=double')
         Temperature double
         ReadMode double
         Offset double
     end
     
-    properties(GetAccess = public, SetAccess = private, Description='api,must-be-connected')
+    properties(GetAccess = public, SetAccess = private, Description='api,must-be-connected,type_CamStatus=string')
         CamStatus char = 'unknown';
     end
 

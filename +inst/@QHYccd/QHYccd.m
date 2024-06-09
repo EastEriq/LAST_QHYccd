@@ -85,6 +85,7 @@ classdef QHYccd < obs.camera
             end
             % call the parent constructor
             QC=QC@obs.camera(id);
+            QC.GitVersion=obs.util.tools.getgitversion(mfilename('fullpath'));
             % load libqhyccd on first time  
             loadQHYlibraryAndOpen(QC);
         end 

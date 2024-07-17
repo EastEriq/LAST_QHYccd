@@ -19,6 +19,10 @@ function abort(QC)
 
     deallocate_image_buffer(QC)
     
-    QC.CamStatus='idle';
+    if QC.Gain==2^32-1
+        QC.CamStatus='unknown'; % means usb not talking to it or something the like
+    else
+        QC.CamStatus='idle';
+    end
     
 end

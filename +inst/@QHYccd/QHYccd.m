@@ -145,6 +145,10 @@ classdef QHYccd < obs.camera
                     if (now-QC.TimeStart)*24*3600 > QC.lastExpTime
                        QC.CamStatus='reading'; % means, ready to read
                     end
+                otherwise
+                    if QC.Gain==2^32-1 % means usb not talking to it or something the like
+                        QC.CamStatus='unknown';
+                    end
             end
             status=QC.CamStatus;
         end

@@ -56,7 +56,6 @@ classdef QHYccd < obs.camera
         SequenceLength int16 % total number of frames requested for the sequence
         TimeStartDelta % uncertainty, after-before calling exposure start
         StreamMode % 0=single frame, 1=Live. Keep track as property because sdk doesn't retrieve it
-        LastImageSaved=false; % set true by the abstractor when saving the image, reset to false at new exposure
     end
     
     % settings which have not been prescribed by the API,
@@ -66,6 +65,7 @@ classdef QHYccd < obs.camera
         BitDepth
         DebugOutput=false; % if set true, library blabber is printed on stderr
         DebugLogLevel=10; % the higher, the more verbose; no idea what each number does
+        LastImageSaved=false; % set true by the abstractor when saving the image, reset to false at new exposure
     end
     
     properties (Hidden,Transient)

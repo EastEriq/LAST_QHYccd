@@ -2,6 +2,9 @@ classdef QHYccd < obs.camera
  
     properties
         CameraNum uint8
+    end
+    
+    properties(SetObservable,GetObservable)
         % read/write properties, settings of the camera, for which
         %  hardware query is involved.
         %  We use getters/setters, even though instantiation
@@ -19,7 +22,7 @@ classdef QHYccd < obs.camera
         LastImage % the last image acquired is copied here
     end
 
-    properties(Dependent = true)
+    properties(Dependent = true, SetObservable,GetObservable)
         Temperature
         ReadMode
         Offset
@@ -45,16 +48,20 @@ classdef QHYccd < obs.camera
         effective_area=struct('x1Eff',[],'y1Eff',[],'sxEff',[],'syEff',[]);
         overscan_area=struct('x1Over',[],'y1Over',[],'sxOver',[],'syOver',[]);
         readModesList=struct('name',[],'resx',[],'resy',[]);
+    end
+    
+    properties(GetAccess = public, SetAccess = private, Hidden ,GetObservable)
         lastExpTime=NaN;
         ProgressiveFrame int16 % progressive frame number when a sequence of exposures is requested
         SequenceLength int16 % total number of frames requested for the sequence
         TimeStartDelta % uncertainty, after-before calling exposure start
         StreamMode % 0=single frame, 1=Live. Keep track as property because sdk doesn't retrieve it
+        LastImageSaved=false; % set true by the abstractor when saving the image, reset to false at new exposure
     end
     
     % settings which have not been prescribed by the API,
     % but for which I have already made the code
-    properties(Hidden)
+    properties(Hidden, SetObservable,GetObservable)
         Color
         BitDepth
         DebugOutput=false; % if set true, library blabber is printed on stderr
@@ -68,7 +75,6 @@ classdef QHYccd < obs.camera
               %  to a double buffer model?)
               % Shall we allocate it only once on open(QC), or, like now,
               %  every time we start an acquisition?
-        LastImageSaved=false; % set true by the abstractor when saving the image, reset to false at new exposure
         ImageHandler function_handle % function to treat every acquired image, e.g. @simpleshowimage
     end
 

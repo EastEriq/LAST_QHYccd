@@ -157,6 +157,7 @@ classdef QHYccd < obs.camera
                     end
             end
             status=QC.CamStatus;
+            QC.pushPVvalue(status);
         end
         
         function set.Temperature(QC,Temp)
@@ -180,6 +181,7 @@ classdef QHYccd < obs.camera
             % I guess that error is Temp=FFFFFFFF, check
             success = (Temp>-100 & Temp<100);
             QC.setLastError(success,'could not get temperature')
+            QC.pushPVvalue(Temp);
         end
         
 %         function humidity=get.Humidity(QC)
@@ -206,11 +208,13 @@ classdef QHYccd < obs.camera
             else
                 status='unknown';
             end
+            QC.pushPVvalue(status);
         end
         
         function CoolingPower=get.CoolingPower(QC)
             % Get the current cooling percentage
             CoolingPower=round(GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_CURPWM)./255.*1000)./10;
+            QC.pushPVvalue(CoolingPower);
         end
         
         function set.ExpTime(QC,ExpTime)
@@ -218,6 +222,9 @@ classdef QHYccd < obs.camera
             %QC.report('setting exposure time to %f sec.\n',ExpTime)
             success=...
                 (SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE,ExpTime*1e6)==0);
+            if success
+                QC.pushPVvalue(ExpTime);
+            end
             QC.setLastError(success,'could not set exposure time')
         end
         
@@ -236,6 +243,7 @@ classdef QHYccd < obs.camera
                     PixelPeriod,LinePeriod,FramePeriod,ClocksPerLine,...
                     LinesPerFrame,ActualExposureTime,isLongExposureMode)
             end
+            QC.pushPVvalue(ExpTime);
         end
 
         function set.Gain(QC,Gain)
@@ -243,6 +251,9 @@ classdef QHYccd < obs.camera
             %  https://www.qhyccd.com/bbs/index.php?topic=6281.msg32546#msg32546
             %  https://www.qhyccd.com/bbs/index.php?topic=6309.msg32704#msg32704
             success=(SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_GAIN,Gain)==0);          
+            if success
+                QC.pushPVvalue(Gain);
+            end
             QC.setLastError(success,'could not set gain')
         end
         
@@ -251,6 +262,7 @@ classdef QHYccd < obs.camera
             % check whether err=double(FFFFFFFF)...
             success=(Gain>=0 & Gain<2e6);
             QC.setLastError(success,'could not get gain')
+            QC.pushPVvalue(Gain);
         end
         
         % ROI - assuming that this is what the SDK calls "Resolution"
@@ -380,6 +392,12 @@ classdef QHYccd < obs.camera
             %  behavior of all. There is no getter function.
             SetQHYCCDLogLevel(level)
         end
+
+        % setters which only push data generated elsewhere to PV store
+        function set.ProgressiveFrame(QC,num)
+            QC.pushPVvalue(num);
+        end
+        
     end
     
 end

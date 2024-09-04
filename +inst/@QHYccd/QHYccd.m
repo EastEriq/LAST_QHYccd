@@ -171,6 +171,7 @@ classdef QHYccd < obs.camera
             %  cameras PWM had to be set again and again to keep cooling...
             % Alternatively, this:
             % success=ControlQHYCCDTemp(QC.camhandle,Temp);
+            QC.pushPVvalue(Temp);
             success=SetQHYCCDParam(QC.camhandle,...
                 inst.qhyccdControl.CONTROL_COOLER,Temp)==0;
             QC.setLastError(success,'could not set temperature')
@@ -294,6 +295,7 @@ classdef QHYccd < obs.camera
 %         end
         
         function set.Offset(QC,Offset)
+            QC.pushPVvalue(Offset);
             success=(SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET,Offset)==0);
             QC.setLastError(success,'could not set offset')
         end
@@ -304,10 +306,12 @@ classdef QHYccd < obs.camera
             % check whether err=double(FFFFFFFF)...
             success=(Offset>=0 & Offset<2e6);
             QC.setLastError(success,'could not get offset')
+            QC.pushPVvalue(Offset);
         end
         
         function set.ReadMode(QC,readMode)
             % read current Gain, because it has to be reset
+            QC.pushPVvalue(readMode);
             gain=QC.Gain;
             success=(SetQHYCCDReadMode(QC.camhandle,readMode)==0);
             if ~success
@@ -323,6 +327,7 @@ classdef QHYccd < obs.camera
             [ret,currentReadMode]=GetQHYCCDReadMode(QC.camhandle);
             success= ret==0 & (currentReadMode>0 & currentReadMode<2e6);
             QC.setLastError(success,'could not get the read mode')
+            QC.pushPVvalue(currentReadMode);
         end
         
         function set.Binning(QC,Binning)
@@ -333,7 +338,7 @@ classdef QHYccd < obs.camera
                 Binning=[Binning,Binning];
             end
             success= (SetQHYCCDBinMode(QC.camhandle,Binning(1),Binning(2))==0);
-            QC.setLastError(success,'could not set the read mode')
+            QC.setLastError(success,'could not set binning')
         end
         
         % The SDK doesn't provide a function for getting the current
@@ -395,6 +400,14 @@ classdef QHYccd < obs.camera
 
         % setters which only push data generated elsewhere to PV store
         function set.ProgressiveFrame(QC,num)
+            QC.pushPVvalue(num);
+        end
+        
+        function set.TimeStartLastImage(QC,num)
+            QC.pushPVvalue(num);
+        end
+
+        function set.SequenceLength(QC,num)
             QC.pushPVvalue(num);
         end
         

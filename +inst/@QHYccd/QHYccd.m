@@ -400,14 +400,17 @@ classdef QHYccd < obs.camera
 
         % setters which only push data generated elsewhere to PV store
         function set.ProgressiveFrame(QC,num)
+            QC.ProgressiveFrame=num;
             QC.pushPVvalue(num);
         end
         
         function set.TimeStartLastImage(QC,num)
+            QC.TimeStartLastImage=num;
             QC.pushPVvalue(num);
         end
 
         function set.SequenceLength(QC,num)
+            QC.SequenceLength=num;
             QC.pushPVvalue(num);
         end
         

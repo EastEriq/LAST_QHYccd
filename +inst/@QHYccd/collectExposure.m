@@ -35,7 +35,7 @@ function img=collectExposure(QC,varargin)
                 QC.CamStatus='unknown';
             end
         otherwise
-            QC.reportError='no image to read because exposure not started';
+            QC.reportError('no image to read because exposure not started')
             img=[];
     end
 

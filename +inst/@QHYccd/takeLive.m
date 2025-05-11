@@ -56,7 +56,10 @@ function takeLive(QC,num,expTime,varargin)
     %  patch code for retrieving the first image available is someday
     %  revealed!
     collector.StartDelay=max(round(2*QC.ExpTime-deltat,3),0);
-    
+    %++++++++++++++++++++++++++++++++++++++++++++++++
+    uSender = udpport()
+    write(uSender,"NOW","string","10.23.3.12",5000);
+    %++++++++++++++++++++++++++++++++++++++++++++++++
     start(collector)
     
     function stoplive(QC,mTimer)

@@ -1,3 +1,5 @@
 *~
 *.asv
 *.swp
+testing/*.log
+QHY600M*.log

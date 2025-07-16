@@ -1,5 +1,13 @@
-function startExposure(QC,expTime)
+function startExposure(QC,expTime,slength)
 % set up the scenes for taking a single exposure
+% The third optional argument is only to allow setting QC.SequenceLenght
+%  to a value different that 1 when called in takeExposureSeq
+
+    if exist('slength','var')
+        QC.SequenceLength=slength;
+    else
+        QC.SequenceLength=1;
+    end
 
     if isempty(QC.StreamMode) || QC.StreamMode~=0
         % this is expensive (~5sec), but needed if we were previously in

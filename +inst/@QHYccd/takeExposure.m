@@ -10,7 +10,6 @@ function takeExposure(QC,expTime)
     % one available till a new is there?
     % QC.LastImage=[];
 
-    QC.SequenceLength=1;
     QC.startExposure(QC.ExpTime)
     deltat=QC.TimeStartDelta*86400; % TimeStartDelta set inside startExposure
 

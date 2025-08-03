@@ -10,7 +10,7 @@ function resetCriticalParameters(QC)
     QC.Binning=QC.Binning;
     QC.reportDebug('calling SetQHYCCDResolution\n')
     physical_size=QC.physical_size;
-    if isempty(physical_size)
+    if isempty(physical_size.nx)
         QC.reportError('cannot get camera chip size!')
         return
     end

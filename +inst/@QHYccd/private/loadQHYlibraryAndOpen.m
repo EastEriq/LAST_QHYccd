@@ -53,6 +53,9 @@ function loadQHYlibraryAndOpen(QC)
                     loadlibrary('libqhyccd',...
                         fullfile(classpath,'headers/qhyccd_21-10-12_matlab.h'),...
                         'addheader',fullfile(classpath,'headers/qhyccdstruct_21-10-12_matlab.h'));
+                elseif isfile('/usr/local/lib/libqhyccd.so.25.6.16.15')
+                    loadlibrary('libqhyccd',...
+                        fullfile(classpath,'headers/qhyccd_25-6-16_matlab.h'));
                 else
                     error('these QHY installations change all the time; what shall I do?')
                 end

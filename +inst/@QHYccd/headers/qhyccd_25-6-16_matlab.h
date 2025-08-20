@@ -912,9 +912,9 @@ EXPORTC void STDCALL QHYCCDQuit();
 /* EXPORTC QHYDWORD STDCALL SetQHYCCDCallBack(QHYCCDProcCallBack ProcCallBack,
     int32_t Flag); */
 
-EXPORTFUNC void RegisterPnpEventIn( void (*in_pnp_event_in_func)(char *id));
+// EXPORTFUNC void RegisterPnpEventIn( void (*in_pnp_event_in_func)(char *id));
 
-EXPORTFUNC void RegisterPnpEventOut( void (*in_pnp_event_out_func)(char *id));
+// EXPORTFUNC void RegisterPnpEventOut( void (*in_pnp_event_out_func)(char *id));
 
 
 EXPORTFUNC uint32_t STDCALL resetDev(char *deviceID, uint32_t readModeIndex, uint8_t streamMode,qhyccd_handle* devHandle, uint32_t* imageWidth, uint32_t* imageHigh, uint32_t bitDepth);

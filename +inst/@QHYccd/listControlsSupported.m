@@ -14,18 +14,29 @@ function listControlsSupported(QC)
     for i=1:length(m)
         control=m(i);
         available=IsQHYCCDControlAvailable(QC.camhandle,m(i));
-        [ret,minV,maxV,stepV]=GetQHYCCDParamMinMaxStep(QC.camhandle,control);
-        if available
-            fprintf('AVAIL ');
+        [settable,minV,maxV,stepV]=GetQHYCCDParamMinMaxStep(QC.camhandle,control);
+        if available==0
+            fprintf('AVAIL');
         else
-            fprintf(' xxx  ');
+            fprintf(' --- ');
         end
-        if ret==0
-            fprintf(' OK ')
+            value = GetQHYCCDParam(QC.camhandle,control);
+            if value==2^32-1
+                fprintf('   no value ');
+            else
+                fprintf(' %10g ',value);
+            end
+        if settable==0
+            fprintf(' SET ')
         else
-            fprintf('ERR ')
+            fprintf(' --- ')
         end
         fprintf('[ %g : %g : %g]',minV,stepV,maxV)
-        fprintf(' %s\n',s{i});
+        [ret,name]=GetQHYCCDControlName(QC.camhandle,i);
+        if ret==0
+            fprintf(' %s "%s"\n',s{i},name);
+        else
+            fprintf(' %s\n',s{i});
+        end
     end
 end

@@ -48,6 +48,8 @@ classdef QHYccd < obs.camera
         effective_area=struct('x1Eff',[],'y1Eff',[],'sxEff',[],'syEff',[]);
         overscan_area=struct('x1Over',[],'y1Over',[],'sxOver',[],'syOver',[]);
         readModesList=struct('name',[],'resx',[],'resy',[]);
+        SDKversion;
+        SensorName;
     end
     
     properties(GetAccess = public, SetAccess = private, Hidden ,GetObservable)

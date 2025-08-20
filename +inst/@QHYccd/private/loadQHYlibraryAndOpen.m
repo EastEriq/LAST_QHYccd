@@ -59,6 +59,8 @@ function loadQHYlibraryAndOpen(QC)
                 else
                     error('these QHY installations change all the time; what shall I do?')
                 end
+                [~,version,major,minor,build]=GetQHYCCDSDKVersion();
+                QC.SDKversion=sprintf('%d.%d.%d.%d',version,major,minor,build);
                 % try to enforce the debug logging status before init, maybe
                 % it works
                 QC.DebugOutput=QC.DebugOutput;

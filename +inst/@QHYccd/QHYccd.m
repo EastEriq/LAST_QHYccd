@@ -291,10 +291,16 @@ classdef QHYccd < obs.camera
             end
         end
 
-        % TODO, perhaps, only for recent (>8.2021 versions of the SDK)
-%         function roi=get.ROI(QC)
-%             % perhaps with GetQHYCCDCurrentROI, if that is real
-%         end
+        % only for recent (>8.2021 versions of the SDK)
+         function roi=get.ROI(QC)
+             [ret,aX,aY,sX,sY] = GetQHYCCDCurrentROI(QC.camhandle);
+             if ret==0
+                 roi=[aX,aY,aX+sX-1,aY+sY-1];
+             else
+                 QC.setLastError(true,'could not get ROI size')
+                 roi=[];
+             end
+         end
         
         function set.Offset(QC,Offset)
             QC.pushPVvalue(Offset);

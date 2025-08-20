@@ -15,6 +15,7 @@ function listControlsSupported(QC)
         control=m(i);
         available=IsQHYCCDControlAvailable(QC.camhandle,m(i));
         [settable,minV,maxV,stepV]=GetQHYCCDParamMinMaxStep(QC.camhandle,control);
+        fprintf('#%3d ',control);
         if available==0
             fprintf('AVAIL');
         else

@@ -33,7 +33,14 @@ function listControlsSupported(QC)
             fprintf(' --- ')
         end
         fprintf('[ %g : %g : %g]',minV,stepV,maxV)
-        [ret,name]=GetQHYCCDControlName(QC.camhandle,i);
+        try
+            % this function is supported only in later SDKs, not in 21.7.16
+            %  it gives very little information, though. In 25.6.16, only for
+            %  control_id 79
+            [ret,name]=GetQHYCCDControlName(QC.camhandle,i);
+        catch
+            ret=-1;
+        end
         if ret==0
             fprintf(' %s "%s"\n',s{i},name);
         else

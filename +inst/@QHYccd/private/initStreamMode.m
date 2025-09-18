@@ -33,6 +33,9 @@ function initStreamMode(QC,newmode)
         tic;
     end
     
+    roi = QC.ROI; % save the current value, to pass it to resetCriticalParameters
+    traffic = QC.USBtraffic;
+    
     if newmode ~= QC.StreamMode || newmode==1 && QC.ExpTime<0.5
         if newmode==1 && QC.ExpTime<0.5
             % the effectivenes of this is dubious, but is the best
@@ -77,5 +80,5 @@ function initStreamMode(QC,newmode)
         %  to redo it before each live sequence, even if we had already
         %  done it earlier and we haven't changed StreamMode. Otherwise,
         %  bad things.
-        QC.resetCriticalParameters
+        QC.resetCriticalParameters(roi,traffic)
     end

@@ -65,6 +65,7 @@ classdef QHYccd < obs.camera
     properties(Hidden, SetObservable,GetObservable)
         Color
         BitDepth
+        USBtraffic
         DebugOutput=false; % if set true, library blabber is printed on stderr
         DebugLogLevel=10; % the higher, the more verbose; no idea what each number does
         LastImageSaved=false; % set true by the abstractor when saving the image, reset to false at new exposure
@@ -270,20 +271,29 @@ classdef QHYccd < obs.camera
         
         % ROI - assuming that this is what the SDK calls "Resolution"
         function set.ROI(QC,roi)
+            % ROI is [x1,y1,x2,y2]
             % resolution is [x1,y1,sizex,sizey]
             %  I highly suspect that this setting is very problematic
             %   especially in color mode.
             %  Safe values should be [0,0,physical_size.nx,physical_size.ny]
-            x1=roi(1);
-            y1=roi(2);
-            sx=roi(3)-roi(1)+1;
-            sy=roi(4)-roi(2)+1;
-            
-            % try to clip unreasonable values
-            x1=max(min(x1,QC.physical_size.nx-1),0);
-            y1=max(min(y1,QC.physical_size.ny-1),0);
-            sx=max(min(sx,QC.physical_size.nx-x1),1);
-            sy=max(min(sy,QC.physical_size.ny-y1),1);
+            % NB: according to my experiments with SDK 25.6.16.15, Live mode appears to
+            %     fail with all ROIs which do not end at y2 = physical_size.ny
+            if ~isempty(roi)
+                x1=roi(1);
+                y1=roi(2);
+                sx=roi(3)-roi(1)+1;
+                sy=roi(4)-roi(2)+1;
+                % try to clip unreasonable values
+                x1=max(min(x1,QC.physical_size.nx-1),0);
+                y1=max(min(y1,QC.physical_size.ny-1),0);
+                sx=max(min(sx,QC.physical_size.nx-x1),1);
+                sy=max(min(sy,QC.physical_size.ny-y1),1);
+            else
+                x1=0;
+                y1=0;
+                sx=QC.physical_size.nx;
+                sy=QC.physical_size.ny;
+            end
             
             success=(SetQHYCCDResolution(QC.camhandle,x1,y1,sx,sy)==0);
             if ~success
@@ -293,6 +303,7 @@ classdef QHYccd < obs.camera
 
         % only for recent (>8.2021 versions of the SDK)
          function roi=get.ROI(QC)
+             % ROI is [x1,y1,x2,y2]
              [ret,aX,aY,sX,sY] = GetQHYCCDCurrentROI(QC.camhandle);
              if ret==0
                  roi=[aX,aY,aX+sX-1,aY+sY-1];
@@ -385,6 +396,19 @@ classdef QHYccd < obs.camera
             % check whether err=double(FFFFFFFF)...
             success=(BitDepth==8 | BitDepth==16);
             QC.setLastError(success,'could not get bit depth')
+        end
+
+        function set.USBtraffic(QC,traffic)
+            QC.reportDebug('Setting USB traffic value to %d\n',traffic)
+            success=SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC,traffic);
+            QC.setLastError(success,'could not set USB traffic value')
+        end
+
+        function traffic=get.USBtraffic(QC)
+            traffic=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC);
+            success=(traffic>=0 & traffic<2e6);
+            % check whether err=double(FFFFFFFF)...
+            QC.setLastError(success,'could not get USB traffic value')
         end
 
         function set.DebugOutput(QC,flag)

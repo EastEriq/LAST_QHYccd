@@ -304,7 +304,11 @@ classdef QHYccd < obs.camera
         % only for recent (>8.2021 versions of the SDK)
          function roi=get.ROI(QC)
              % ROI is [x1,y1,x2,y2]
-             [ret,aX,aY,sX,sY] = GetQHYCCDCurrentROI(QC.camhandle);
+             try
+                 [ret,aX,aY,sX,sY] = GetQHYCCDCurrentROI(QC.camhandle);
+             catch
+                 ret=-1;
+             end
              if ret==0
                  roi=[aX,aY,aX+sX-1,aY+sY-1];
              else

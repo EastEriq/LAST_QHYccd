@@ -1,6 +1,8 @@
 function img=collectLiveExposure(QC,varargin)
 % collect a frame from an ongoing live take, but only if we are in Live Mode, if
 %  exposure was started, and time out if waiting for more than X*texp
+% NB: according to my experiments with SDK 25.6.16.15, Live mode appears to
+%     fail with all ROIs which do not end at y2 = physical_size.ny 
  
     % 600msec is for 16bit, USB3, full frame. If there would be a neat
     %  way of understanding ROI, bit mode, color mode, USB speed, without
@@ -8,6 +10,9 @@ function img=collectLiveExposure(QC,varargin)
     % setting up the scenes for the first image requires additional ~2 secs 
     %  plus about two exposures. Thus for long exposures the first image 
     %  may be retrieved only after something like 3*texp!
+    % This is reduced to *one* wasted exposure, thanks to
+    %  SetQHYCCDBurstModePatchNumber(QC.camhandle,32001) (see also comments
+    %  inside .initStreamMode)
     exptime=QC.ExpTime; % read it only once, via GetQHYCCDParam
                         % (beware: could be MAXINT/1e6 if camera went fishing)
     if exptime==(2^32-1)*1e-6

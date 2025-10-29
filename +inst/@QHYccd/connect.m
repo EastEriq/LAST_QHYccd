@@ -156,6 +156,10 @@ function success=connect(QC,CameraNum)
                 QC.effective_area.y1Eff+QC.effective_area.syEff];
     end
     
+    % this adds an overhead, but maybe helps recovering cameras which have
+    %  disconnected
+    initStreamMode(QC,0)
+
     % set default values, perhaps differentiating camera models
     QC.default_values
     

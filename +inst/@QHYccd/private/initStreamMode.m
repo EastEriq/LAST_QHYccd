@@ -75,6 +75,9 @@ function initStreamMode(QC,newmode)
         end
     end
     
+    % reset ProgressiveFrame
+    QC.ProgressiveFrame=0;
+
     if true %newmode==1
         % set again parameters here. It seems that we have
         %  to redo it before each live sequence, even if we had already

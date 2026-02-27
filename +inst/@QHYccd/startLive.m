@@ -24,8 +24,10 @@ function startLive(QC)
 
     if ret==0
         QC.CamStatus='exposing';
+        QC.lastExpTime=QC.ExpTime;
     else
         QC.CamStatus='unknown';
+        QC.lastExpTime=NaN;
         QC.deallocate_image_buffer
         QC.LastError='could not start Live exposure';
     end

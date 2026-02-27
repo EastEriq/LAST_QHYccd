@@ -53,7 +53,7 @@ classdef QHYccd < obs.camera
     end
     
     properties(GetAccess = public, SetAccess = private, Hidden ,GetObservable)
-        lastExpTime=NaN;
+        lastExpTime=NaN; % set to ExpTime on succesful start of exposure
         ProgressiveFrame int16 % progressive frame number when a sequence of exposures is requested
         SequenceLength int16 % total number of frames requested for the sequence
         TimeStartDelta % uncertainty, after-before calling exposure start

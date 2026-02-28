@@ -11,6 +11,8 @@ function success=connect(QC,CameraNum)
 
     success = 0;
     QC.LastError='';
+    % reset an older ProgressiveFrame even if the camera is not found 
+    QC.ProgressiveFrame=0;
     
     if ~exist('CameraNum','var')
         if ~isempty(QC.PhysicalId)

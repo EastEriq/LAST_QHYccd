@@ -60,7 +60,7 @@ are of the order of:
  camera would be capable of ~2.2fps).
 
 Thus acquring N exposures in Single Exposure mode will require about
- *N&times;(Texp+2.2*sec*)*, whereas in Live mode would require *~1*sec *+(N+1)&times;Texp*.
+ *N&times;(Texp+2.2*sec *)*, whereas in Live mode would require *~1*sec *+(N+1)&times;Texp*.
 
 Switching among the two modes adds an overhead of ~4500ms the first time acquisition in a new mode is called.
 
@@ -137,6 +137,21 @@ Simply output on screen the number of the camera and the timestamp when a new im
 ```
 Q.ImageHandler = @(Q) fprintf([sprintf('%d--',Q.CameraNum),datestr(Q.TimeEnd,'HH:MM:SS.FFF\n')]);
 ```
+
+Investigate the effect of USBtraffic, reporting FPS:
+```
+Q.ImageHandler = @Q.reportFPS;
+Q.USBtraffic=50; Q.takeLiveSeq(10,0.75)
+```
+With the aid of this latter, it _seems_ that:
+
+- fps=1/Texp is achieved for Texp>0.76sec, using `takeLive`; it further increases down to Texp>0.4sec with 
+  `takeLiveseq` and `Q.USBtraffic=0`
+- `USBtraffic` has a perceivable effect for larger values; for instance `Q.USBtraffic=100` caps the interframe
+  time to ~1.1 sec, decreasing fps to 0.9 even for short exposure times; `Q.USBtraffic=100`
+  caps it to 1.8sec, and so on.
+- as for the obscure parameter `CONTROL_SPEED`, (set in `QHYccd.connect`, I have not created a 
+specific class wrapper property for it) is faster than 2
 
 ## Example: simultaneous live acquisition from two cameras
 

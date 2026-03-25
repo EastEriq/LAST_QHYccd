@@ -79,6 +79,7 @@ classdef QHYccd < obs.camera
               % Shall we allocate it only once on open(QC), or, like now,
               %  every time we start an acquisition?
         ImageHandler function_handle % function to treat every acquired image, e.g. @simpleshowimage
+        UserData % anything, for service, permanent between exposures
     end
 
     

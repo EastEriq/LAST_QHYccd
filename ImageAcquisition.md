@@ -151,7 +151,7 @@ With the aid of this latter, it _seems_ that:
   time to ~1.1 sec, decreasing fps to 0.9 even for short exposure times; `Q.USBtraffic=200`
   caps it to 1.8sec, and so on.
 - as for the obscure parameter `CONTROL_SPEED`, (set in `QHYccd.connect`, I have not created a 
-specific class wrapper property for it) is faster than 2
+specific class wrapper property for it), 0 is faster than 2
 
 ## Example: simultaneous live acquisition from two cameras
 

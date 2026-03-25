@@ -101,7 +101,7 @@ img=Q.takeExposure(2.5);
 imgs=Q.takeExposureSeq(10,2.5);
 imgs=Q.takeLiveSeq(10,2.5);
 ```
-and return the image array(s) directly or in a struct (_Seq_ methods). The latter can be very memory
+and return the image array(s) directly or in a cell (_Seq_ methods). The latter can be very memory
 consuming for long sequences. (If called with no return assigment, they don't encumber memory).
 
 Additionally and alternatively, _each_ newly acquired image can be treated (e.g. processed, displayed, saved)
@@ -148,7 +148,7 @@ With the aid of this latter, it _seems_ that:
 - fps=1/Texp is achieved for Texp>0.76sec, using `takeLive`; it further increases down to Texp>0.4sec with 
   `takeLiveseq` and `Q.USBtraffic=0`
 - `USBtraffic` has a perceivable effect for larger values; for instance `Q.USBtraffic=100` caps the interframe
-  time to ~1.1 sec, decreasing fps to 0.9 even for short exposure times; `Q.USBtraffic=100`
+  time to ~1.1 sec, decreasing fps to 0.9 even for short exposure times; `Q.USBtraffic=200`
   caps it to 1.8sec, and so on.
 - as for the obscure parameter `CONTROL_SPEED`, (set in `QHYccd.connect`, I have not created a 
 specific class wrapper property for it) is faster than 2

@@ -17,6 +17,8 @@ function allocate_image_buffer(QC)
             end
         catch AE
             QC.reportError('cannot allocate image ringbuffer: %s',AE.message)
+            % the fallback for QC.pImg is "what it was before". To assess
+            %  whether this is the right choice or will cause problems
         end
     else
         QC.pImg=libpointer('uint8Ptr',zeros(imlength,1,'uint8'));

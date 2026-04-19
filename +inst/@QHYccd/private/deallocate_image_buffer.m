@@ -5,6 +5,8 @@ function deallocate_image_buffer(QC)
         delete(QC.pImg) % delete(libpointer just zeroes it, I think, does not eliminate it)
     end
     if isa(QC.pImg,'POSIXipc.shm')
-        delete(QC.pImg); % or do we need to iterate?
+        for i=1:numel(QC.pImg)
+            delete(QC.pImg(i)); % iterate, till I decide to vectorize shm methods
+        end
     end
 end

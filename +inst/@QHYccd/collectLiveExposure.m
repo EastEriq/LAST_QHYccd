@@ -30,8 +30,13 @@ function img=collectLiveExposure(QC,varargin)
             t0=now;
             ret=-1;
             QC.reportDebug('entering GetQHYCCDLiveFrame polling loop\n')
+            if isa(QC.pImg,'POSIXipc.shm')
+                pointer=QC.pImg(mod(QC.ProgressiveFrame,QC.SequenceLength)+1).Pointer;
+            else
+                pointer=QC.pImg;
+            end
             while ret~=0 && (now-t0)*86400<timeout
-                [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
+                [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,pointer);
                 % we have no way at the moment of knowing the real start time
                 %  of each usable exposure. This is an estimate, counting
                 %  on that the expoure started ExpTime before it is ready
@@ -51,7 +56,7 @@ function img=collectLiveExposure(QC,varargin)
                 QC.ProgressiveFrame=QC.ProgressiveFrame+1;
                 QC.reportDebug('got image at time %f\n',toc)
 
-                img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
+                img=unpackImgBuffer(pointer,w,h,channels,bp);
                 QC.reportDebug('t after unpacking: %f\n',toc)
             else
                 img=[];

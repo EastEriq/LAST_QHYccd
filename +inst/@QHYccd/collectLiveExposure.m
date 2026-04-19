@@ -31,7 +31,7 @@ function img=collectLiveExposure(QC,varargin)
             ret=-1;
             QC.reportDebug('entering GetQHYCCDLiveFrame polling loop\n')
             if isa(QC.pImg,'POSIXipc.shm')
-                pointer=QC.pImg(mod(QC.ProgressiveFrame,QC.SequenceLength)+1).Pointer;
+                pointer=QC.pImg(mod(QC.ProgressiveFrame,QC.SharedRingBufferDim)+1).Pointer;
             else
                 pointer=QC.pImg;
             end

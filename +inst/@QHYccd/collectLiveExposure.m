@@ -54,7 +54,6 @@ function img=collectLiveExposure(QC,varargin)
                                                     % even if a subsequent
                                                     % exposure is started
                 QC.ProgressiveFrame = QC.ProgressiveFrame+1;
-                QC.RingBufferIndex = mod(QC.RingBufferIndex,QC.SharedRingBufferDim)+1;
                 QC.reportDebug('got image at time %f\n',toc)
 
                 img=unpackImgBuffer(pointer,w,h,channels,bp);
@@ -71,6 +70,9 @@ function img=collectLiveExposure(QC,varargin)
     end
     QC.LastImageSaved=false;
     QC.LastImage=img;
+    % unitCS.treatNewImage enqueues the current index in the header,
+    %  increase it after that
+    QC.RingBufferIndex = mod(QC.RingBufferIndex,QC.SharedRingBufferDim)+1;
 
     if isempty(QC.TimeEnd)
         % try anyway to stop acquisition. Using the stop method of the

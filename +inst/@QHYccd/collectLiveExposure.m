@@ -31,7 +31,7 @@ function img=collectLiveExposure(QC,varargin)
             ret=-1;
             QC.reportDebug('entering GetQHYCCDLiveFrame polling loop\n')
             if isa(QC.pImg,'POSIXipc.shm')
-                pointer=QC.pImg(mod(QC.ProgressiveFrame,QC.SharedRingBufferDim)+1).Pointer;
+                pointer=QC.pImg(QC.RingBufferIndex).Pointer;
             else
                 pointer=QC.pImg;
             end
@@ -53,7 +53,8 @@ function img=collectLiveExposure(QC,varargin)
                 QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                     % even if a subsequent
                                                     % exposure is started
-                QC.ProgressiveFrame=QC.ProgressiveFrame+1;
+                QC.ProgressiveFrame = QC.ProgressiveFrame+1;
+                QC.RingBufferIndex = mod(QC.RingBufferIndex+1,QC.SharedRingBufferDim)+1;
                 QC.reportDebug('got image at time %f\n',toc)
 
                 img=unpackImgBuffer(pointer,w,h,channels,bp);

@@ -12,7 +12,7 @@ function allocate_image_buffer(QC)
     % alternative computation (unsafe Re: color)
     roi=QC.ROI; % not suported by 2021 SDK
     if isempty(roi)
-        imlength=Q.physical_size.nx * Q.physical_size.ny * QC.BitDepth/2;
+        imlength=QC.physical_size.nx * QC.physical_size.ny * QC.BitDepth/2;
         % consider also QC.effective_area which removes overscans
     else
         imlength=(roi(3)-roi(1)+1) * (roi(4)-roi(2)+1)* QC.BitDepth/8;

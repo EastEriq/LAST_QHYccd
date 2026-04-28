@@ -30,8 +30,13 @@ function img=collectLiveExposure(QC,varargin)
             t0=now;
             ret=-1;
             QC.reportDebug('entering GetQHYCCDLiveFrame polling loop\n')
+            if isa(QC.pImg,'POSIXipc.shm')
+                pointer=QC.pImg(QC.RingBufferIndex).Pointer;
+            else
+                pointer=QC.pImg;
+            end
             while ret~=0 && (now-t0)*86400<timeout
-                [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,QC.pImg);
+                [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,pointer);
                 % we have no way at the moment of knowing the real start time
                 %  of each usable exposure. This is an estimate, counting
                 %  on that the expoure started ExpTime before it is ready
@@ -48,10 +53,10 @@ function img=collectLiveExposure(QC,varargin)
                 QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                     % even if a subsequent
                                                     % exposure is started
-                QC.ProgressiveFrame=QC.ProgressiveFrame+1;
+                QC.ProgressiveFrame = QC.ProgressiveFrame+1;
                 QC.reportDebug('got image at time %f\n',toc)
 
-                img=unpackImgBuffer(QC.pImg,w,h,channels,bp);
+                img=unpackImgBuffer(pointer,w,h,channels,bp);
                 QC.reportDebug('t after unpacking: %f\n',toc)
             else
                 img=[];
@@ -65,6 +70,9 @@ function img=collectLiveExposure(QC,varargin)
     end
     QC.LastImageSaved=false;
     QC.LastImage=img;
+    % unitCS.treatNewImage enqueues the current index in the header,
+    %  increase it after that
+    QC.RingBufferIndex = mod(QC.RingBufferIndex,QC.SharedRingBufferDim)+1;
 
     if isempty(QC.TimeEnd)
         % try anyway to stop acquisition. Using the stop method of the

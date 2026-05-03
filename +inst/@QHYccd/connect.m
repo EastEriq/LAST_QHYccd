@@ -148,10 +148,14 @@ function success=connect(QC,CameraNum)
     SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_SPEED,2);
 
     % set full area as ROI (?) -- wishful
-    if colormode
+    if true || colormode
+        % by default, our acqusitions are always full frame + overscan
         QC.ROI=[0,0,QC.physical_size.nx,QC.physical_size.ny];
     else
-        % this is problematic in color mode
+        % this is problematic in color mode. Besides, SDK 25.6.16.15
+        %  honors this, but SDK 21.7.16.13 sets anyway the full physical
+        %  size, so let's avoid inconsistencies (see
+        %  https://github.com/EastEriq/LAST_QHYccd/issues/7)
         SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CAM_IGNOREOVERSCAN_INTERFACE,1);
         QC.ROI=[QC.effective_area.x1Eff,QC.effective_area.y1Eff,...
                 QC.effective_area.x1Eff+QC.effective_area.sxEff,...

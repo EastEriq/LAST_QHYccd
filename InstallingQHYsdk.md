@@ -1,5 +1,14 @@
 # Installation of QHY SDK
 
+### *TLDR:* 
+
+- Across the years we have tried a huge number of version of the QHY SDK for linux. Most of them were buggy in a way or the other.
+- For this toolbox to work, a customized version of the `.h` files of the SDK chosen has to be created, so that matlab can link it. These files are kept in [LAST_QHYccs/+inst/@QHYccd/headers](https://github.com/EastEriq/LAST_QHYccd/tree/mastrolindo/%2Binst/%40QHYccd/headers)
+- On the LAST nodes we have homed on using `sdk_linux64_21.07.16` as stable, even if old. A few later SDKs have been tested, and `sdk_linux64_25.06.16` is also confirmed to be working fine for our purposes. Newer SDKs have a few new functions for better (?) supporting
+hardware triggers or FPGA functions, but they are not relevant for our setup.
+- many of the `.md` files in this repo are obsolete, but it's a PITA to update them.
+
+
 ### (installing an official release)
 
 Things keep changing without notice from QHY, so take it with a grain of salt.

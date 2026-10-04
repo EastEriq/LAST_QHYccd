@@ -10,13 +10,12 @@ function success=disconnect(QC)
         %
         % check this status, which may fail
         QC.reportDebug('calling CloseQHYCCD\n')
-        success=(CloseQHYCCD(QC.camhandle)==0);
+        ret=CloseQHYCCD(QC.camhandle);
+        QC.setLastError(ret,'could not disconnect camera')
+        success=(ret==0);
     else
         success=true;
     end
     % null the handle so that other methods can't talk anymore to it
     QC.camhandle=[];
-    
-    QC.setLastError(success,'could not disconnect camera')
-
 end

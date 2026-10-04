@@ -238,12 +238,12 @@ classdef QHYccd < obs.camera
         
         function ExpTime=get.ExpTime(QC)
             % ExpTime in seconds
-            ExpTime=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE)/1e6;
+            ret=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE);
             % if QC.Verbose, fprintf('Exposure time is %f sec.\n',ExpTime); end
-            success=(ExpTime~=1e6*hex2dec('FFFFFFFF'));
-            if ~success
-                QC.setLastError(ExpTime,'could not get exposure time')
+            if ret==hex2dec('FFFFFFFF')
+                QC.setLastError(ret,'could not get exposure time')
             end
+            ExpTime=ret/1e6;
             QC.pushPVvalue(ExpTime);
         end
 
@@ -462,7 +462,7 @@ classdef QHYccd < obs.camera
                 'LinesPerFrame', LinesPerFrame,...
                 'ActualExposureTime',ActualExposureTime,...
                 'isLongExposureMode',isLongExposureMode);
-            QC.setLastError(ret,'could not get exposure time')
+            QC.setLastError(ret,'could not get timinginfo')
         end
 
 

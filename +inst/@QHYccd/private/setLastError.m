@@ -4,7 +4,7 @@ function setLastError(QC,success,msg)
         QC.LastError='';
     else
         try
-            QC.reportError('%s: %s',msg,inst.qhyccdError(typecast(success,'int32')));
+            QC.reportError('%s: %s',msg,inst.qhyccdError(typecast(uint32(success),'int32')));
         catch
             QC.reportError('%s',msg)
         end

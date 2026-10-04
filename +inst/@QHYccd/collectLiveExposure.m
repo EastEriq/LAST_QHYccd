@@ -27,7 +27,7 @@ function img=collectLiveExposure(QC,varargin)
     elseif QC.ProgressiveFrame==0
         timeout=max(2*exptime+4, 2.6); % in secs
     else
-        timeout=5; % not getting an image ontime is anyway suspicious,
+        timeout=max(exptime+1, 0.6); % not getting an image ontime is anyway suspicious,
                    % don't get stuck forever polling in the called back collector
     end
     

@@ -303,16 +303,21 @@ classdef QHYccd < obs.camera
         % only for recent (>8.2021 versions of the SDK)
          function roi=get.ROI(QC)
              % ROI is [x1,y1,x2,y2]
-             try
-                 [ret,aX,aY,sX,sY] = GetQHYCCDCurrentROI(QC.camhandle);
-             catch
-                 ret=-1;
-             end
-             if ret==0
-                 roi=[aX,aY,aX+sX-1,aY+sY-1];
+             if eval(QC.SDKversion(1:4))>21.7
+                 try
+                     [ret,aX,aY,sX,sY] = GetQHYCCDCurrentROI(QC.camhandle);
+                 catch
+                     ret=-1;
+                 end
+                 if ret==0
+                     roi=[aX,aY,aX+sX-1,aY+sY-1];
+                 else
+                     QC.setLastError(true,'could not get ROI size')
+                     roi=[];
+                 end
              else
-                 QC.setLastError(true,'could not get ROI size')
                  roi=[];
+                 ret=0;
              end
          end
         
@@ -372,7 +377,7 @@ classdef QHYccd < obs.camera
         function set.Color(QC,ColorMode)
             % default has to be bw. For compatibility, do nothing if the
             %  camera is bw and Color is set to false
-            available=IsQHYCCDControlAvailable(QC.camhandle,inst.qhyccdControl('CAM_COLOR'))==0;
+            available=IsQHYCCDControlAvailable(QC.camhandle,inst.qhyccdControl('CAM_IS_COLOR'))==0;
             if ~available
                 if ColorMode
                     QC.reportError('this camera has no color mode')

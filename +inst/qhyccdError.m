@@ -1,0 +1,46 @@
+classdef qhyccdError < int32
+    % from /usr/local/include/qhyccderr.h, hand compiled
+    enumeration
+        READ_DIRECTLY           (8193),
+        DELAY_200MS             (8192),
+        PCIE					(9),
+        WINPCAP                 (8),
+        QGIGAE                  (7),
+        USBSYNC                 (6),
+        USBASYNC                (5),
+        COLOR                   (4),
+        MONO                    (3),
+        COOL                    (2),
+        NOTCOOL                 (1),
+        SUCCESS                 (0),
+        ERROR                   (-1),
+        ERROR_IMAGESHIFT        (-2),
+        ERROR_DEVICELOSE        (-3),
+        ERROR_NO_DEVICE         (-2),
+        ERROR_NO_FUNCT          (-3),
+        ERROR_SETPARAMS         (-4),
+        ERROR_GETPARAMS         (-5),
+        ERROR_EXPOSING          (-6),
+        ERROR_EXPFAILED         (-7),
+        ERROR_GETTINGDATA       (-8),
+        ERROR_GETTINGFAILED     (-9),
+        ERROR_INITCAMERA        (-10),
+        ERROR_RELEASERESOURCE   (-11),
+        ERROR_INITRESOURCE      (-12),
+        ERROR_NO_MATCH_CAM      (-13),
+        ERROR_OPENCAM           (-14),
+        ERROR_INITCLASS         (-15),
+        ERROR_SET_RES           (-16),
+        ERROR_SET_USBTRAFFIC    (-17),
+        ERROR_SET_USBSPEED      (-18),
+        ERROR_SETEXPOSE         (-19),
+        ERROR_SETGAIN           (-20),
+        ERROR_SETRED            (-21),
+        % the .h says for each of the following 4:
+        %  "Set cam white balance blue failed"
+        ERROR_SETBLUE           (-22),
+        ERROR_EVTCMOS           (-23),
+        ERROR_EVTUSB            (-24),
+        ERROR_BOH               (-25)
+    end
+end

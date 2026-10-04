@@ -113,7 +113,9 @@ function success=connect(QC,CameraNum)
     success = (ret1==0 & ret2==0 & ret3==0);
     
     % TODO perhaps improve granularity of this report
-    QC.setLastError(success,'something went wrong when initializing the camera');
+    if ~success
+        QC.reportError('something went wrong when initializing the camera');
+    end
 
     % put here also some plausible parameter settings which are
     %  not likely to be changed

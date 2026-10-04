@@ -1,8 +1,12 @@
 function setLastError(QC,success,msg)
 % helper to set QC.LastError empty or message
-    if success
+    if success==0
         QC.LastError='';
     else
-        QC.LastError=msg;
+        try
+            QC.reportError('%s: %s',msg,inst.qhyccdError(typecast(success,'int32')));
+        catch
+            QC.reportError('%s',msg)
+        end
     end
 end

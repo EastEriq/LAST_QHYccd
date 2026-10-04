@@ -50,6 +50,7 @@ classdef QHYccd < obs.camera
         readModesList=struct('name',[],'resx',[],'resy',[]);
         SDKversion;
         SensorName;
+        PreciseExposureInfo;
     end
     
     properties(GetAccess = public, SetAccess = private, Hidden ,GetObservable)
@@ -177,7 +178,7 @@ classdef QHYccd < obs.camera
             % success=ControlQHYCCDTemp(QC.camhandle,Temp);
             QC.pushPVvalue(Temp);
             success=SetQHYCCDParam(QC.camhandle,...
-                inst.qhyccdControl.CONTROL_COOLER,Temp)==0;
+                inst.qhyccdControl.CONTROL_COOLER,Temp);
             QC.setLastError(success,'could not set temperature')
         end
         
@@ -185,7 +186,9 @@ classdef QHYccd < obs.camera
             Temp=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CAM_CHIPTEMPERATURESENSOR_INTERFACE);
             % I guess that error is Temp=FFFFFFFF, check
             success = (Temp>-100 & Temp<100);
-            QC.setLastError(success,'could not get temperature')
+            if ~success
+                QC.setLastError(Temp,'could not get temperature')
+            end
             QC.pushPVvalue(Temp);
         end
         
@@ -226,8 +229,8 @@ classdef QHYccd < obs.camera
             % ExpTime in seconds
             %QC.report('setting exposure time to %f sec.\n',ExpTime)
             success=...
-                (SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE,ExpTime*1e6)==0);
-            if success
+                SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE,ExpTime*1e6);
+            if success==0
                 QC.pushPVvalue(ExpTime);
             end
             QC.setLastError(success,'could not set exposure time')
@@ -237,16 +240,9 @@ classdef QHYccd < obs.camera
             % ExpTime in seconds
             ExpTime=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_EXPOSURE)/1e6;
             % if QC.Verbose, fprintf('Exposure time is %f sec.\n',ExpTime); end
-            success=(ExpTime~=1e6*hex2dec('FFFFFFFF'));            
-            QC.setLastError(success,'could not get exposure time')
-            if QC.Verbose>2
-                [~,PixelPeriod,LinePeriod,FramePeriod,ClocksPerLine,...
-              LinesPerFrame,ActualExposureTime,isLongExposureMode]=...
-                                        GetQHYCCDPreciseExposureInfo(QC.camhandle);
-                QC.report(['Periods: pixel %dps, line %dns, frame %dus;\n',...
-                    '%d clocks/line, %d lines/frame; actual Texp=%d (long=%d)\n'],...
-                    PixelPeriod,LinePeriod,FramePeriod,ClocksPerLine,...
-                    LinesPerFrame,ActualExposureTime,isLongExposureMode)
+            success=(ExpTime~=1e6*hex2dec('FFFFFFFF'));
+            if ~success
+                QC.setLastError(ExpTime,'could not get exposure time')
             end
             QC.pushPVvalue(ExpTime);
         end
@@ -255,8 +251,8 @@ classdef QHYccd < obs.camera
             % for an explanation of gain & offset vs. dynamics, see
             %  https://www.qhyccd.com/bbs/index.php?topic=6281.msg32546#msg32546
             %  https://www.qhyccd.com/bbs/index.php?topic=6309.msg32704#msg32704
-            success=(SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_GAIN,Gain)==0);          
-            if success
+            success=SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_GAIN,Gain);          
+            if success==0
                 QC.pushPVvalue(Gain);
             end
             QC.setLastError(success,'could not set gain')
@@ -266,7 +262,9 @@ classdef QHYccd < obs.camera
             Gain=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_GAIN);
             % check whether err=double(FFFFFFFF)...
             success=(Gain>=0 & Gain<2e6);
-            QC.setLastError(success,'could not get gain')
+            if ~success
+                QC.setLastError(Gain,'could not get gain')
+            end
             QC.pushPVvalue(Gain);
         end
         
@@ -320,7 +318,7 @@ classdef QHYccd < obs.camera
         
         function set.Offset(QC,Offset)
             QC.pushPVvalue(Offset);
-            success=(SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET,Offset)==0);
+            success=SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET,Offset);
             QC.setLastError(success,'could not set offset')
         end
         
@@ -329,16 +327,19 @@ classdef QHYccd < obs.camera
             Offset=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_OFFSET);
             % check whether err=double(FFFFFFFF)...
             success=(Offset>=0 & Offset<2e6);
-            QC.setLastError(success,'could not get offset')
-            QC.pushPVvalue(Offset);
+            if ~success
+                QC.setLastError(Offset,'could not get offset')
+            else
+                QC.pushPVvalue(Offset);
+            end
         end
         
         function set.ReadMode(QC,readMode)
             % read current Gain, because it has to be reset
             QC.pushPVvalue(readMode);
             gain=QC.Gain;
-            success=(SetQHYCCDReadMode(QC.camhandle,readMode)==0);
-            if ~success
+            success=SetQHYCCDReadMode(QC.camhandle,readMode);
+            if ~success==0
                 [~,Nmodes]=GetQHYCCDNumberOfReadModes(QC.camhandle);
                 QC.report('Invalid read mode! Legal is %d:%d\n',0,...
                     Nmodes-1);
@@ -350,7 +351,7 @@ classdef QHYccd < obs.camera
         function currentReadMode=get.ReadMode(QC)
             [ret,currentReadMode]=GetQHYCCDReadMode(QC.camhandle);
             success= ret==0 & (currentReadMode>0 & currentReadMode<2e6);
-            QC.setLastError(success,'could not get the read mode')
+            QC.setLastError(ret,'could not get the read mode')
             QC.pushPVvalue(currentReadMode);
         end
         
@@ -361,7 +362,7 @@ classdef QHYccd < obs.camera
             if numel(Binning)==1
                 Binning=[Binning,Binning];
             end
-            success= (SetQHYCCDBinMode(QC.camhandle,Binning(1),Binning(2))==0);
+            success=SetQHYCCDBinMode(QC.camhandle,Binning(1),Binning(2));
             QC.setLastError(success,'could not set binning')
         end
         
@@ -369,12 +370,20 @@ classdef QHYccd < obs.camera
         %  binning, go figure
 
         function set.Color(QC,ColorMode)
-            % default has to be bw
-             success=(SetQHYCCDDebayerOnOff(QC.camhandle,ColorMode)==0);
-             QC.setLastError(success,'could not set color mode')
-             if ColorMode
-                 QC.BitDepth=8; % segfault in buffer -> image otherwise
-             end
+            % default has to be bw. For compatibility, do nothing if the
+            %  camera is bw and Color is set to false
+            available=IsQHYCCDControlAvailable(QC.camhandle,inst.qhyccdControl('CAM_COLOR'))==0;
+            if ~available
+                if ColorMode
+                    QC.reportError('this camera has no color mode')
+                end
+            else
+                success=SetQHYCCDDebayerOnOff(QC.camhandle,ColorMode);
+                QC.setLastError(success,'could not set color mode')
+                if ColorMode
+                    QC.BitDepth=8; % segfault in buffer -> image otherwise
+                end
+            end
         end
 
         function set.BitDepth(QC,BitDepth)
@@ -389,7 +398,7 @@ classdef QHYccd < obs.camera
             SetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_TRANSFERBIT,BitDepth);
             % There is also a second SDK function for setting this. I don't
             %  know if they are *really* equivalent. In doubt call both.
-            success=(SetQHYCCDBitsMode(QC.camhandle,BitDepth)==0);
+            success=SetQHYCCDBitsMode(QC.camhandle,BitDepth);
             QC.setLastError(success,'could not set bit depth')
 
             % ensure that color is set off if 16 bit (otherwise segfault!)
@@ -400,7 +409,9 @@ classdef QHYccd < obs.camera
             BitDepth=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_TRANSFERBIT);
             % check whether err=double(FFFFFFFF)...
             success=(BitDepth==8 | BitDepth==16);
-            QC.setLastError(success,'could not get bit depth')
+            if ~success
+                QC.setLastError(BitDepth,'could not get bit depth')
+            end
         end
 
         function set.USBtraffic(QC,traffic)
@@ -413,7 +424,9 @@ classdef QHYccd < obs.camera
             traffic=GetQHYCCDParam(QC.camhandle,inst.qhyccdControl.CONTROL_USBTRAFFIC);
             success=(traffic>=0 & traffic<2e6);
             % check whether err=double(FFFFFFFF)...
-            QC.setLastError(success,'could not get USB traffic value')
+            if ~success
+                QC.setLastError(success,'could not get USB traffic value')
+            end
         end
 
         function set.DebugOutput(QC,flag)
@@ -435,12 +448,30 @@ classdef QHYccd < obs.camera
             SetQHYCCDLogLevel(level)
         end
 
+        function timingInfo=get.PreciseExposureInfo(QC)
+            % Units:
+            %    PixelPeriod: ps
+            %    LinePeriod: ns
+            %    FramePeriod: us
+            %    ActualExposureTime: us
+            [ret,PixelPeriod,LinePeriod,FramePeriod,ClocksPerLine,...
+                LinesPerFrame,ActualExposureTime,isLongExposureMode]=...
+                GetQHYCCDPreciseExposureInfo(QC.camhandle);
+            timingInfo=struct('PixelPeriod',PixelPeriod,'LinePeriod',LinePeriod,...
+                'FramePeriod',FramePeriod,'ClocksPerLine',ClocksPerLine,...
+                'LinesPerFrame', LinesPerFrame,...
+                'ActualExposureTime',ActualExposureTime,...
+                'isLongExposureMode',isLongExposureMode);
+            QC.setLastError(ret,'could not get exposure time')
+        end
+
+
         % setters which only push data generated elsewhere to PV store
         function set.ProgressiveFrame(QC,num)
             QC.ProgressiveFrame=num;
             QC.pushPVvalue(num);
         end
-        
+
         function set.TimeStartLastImage(QC,num)
             QC.TimeStartLastImage=num;
             QC.pushPVvalue(num);
@@ -450,7 +481,7 @@ classdef QHYccd < obs.camera
             QC.SequenceLength=num;
             QC.pushPVvalue(num);
         end
-        
+
     end
     
 end

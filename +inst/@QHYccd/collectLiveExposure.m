@@ -13,9 +13,15 @@ function img=collectLiveExposure(QC,varargin)
     % This is reduced to *one* wasted exposure, thanks to
     %  SetQHYCCDBurstModePatchNumber(QC.camhandle,32001) (see also comments
     %  inside .initStreamMode)
-    exptime=QC.ExpTime; % read it only once, via GetQHYCCDParam
-                        % (beware: could be MAXINT/1e6 if camera went fishing)
-    if exptime==(2^32-1)*1e-6
+    try
+        exptime=double(Q.PreciseExposureInfo.ActualExposureTime)*1e-6;
+        % can be 0 if the camera disconnected
+    catch
+        % for older SDKs which might miss GetQHCCDPreciseExposureInfo
+        exptime=QC.ExpTime; % read it only once, via GetQHYCCDParam
+            % (beware: could be MAXINT/1e6 if camera went fishing)
+    end
+    if ~isempty(QC.LastError)
         QC.reportError('invalid exposure time read -- camera disconnected?')
         timeout=0; % elegant way of saying fuck you
     elseif QC.ProgressiveFrame==0
@@ -36,20 +42,43 @@ function img=collectLiveExposure(QC,varargin)
                 pointer=QC.pImg;
             end
             while ret~=0 && (now-t0)*86400<timeout
+                lastTimeBeforeFrameReady=now;
                 [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,pointer);
                 % we have no way at the moment of knowing the real start time
                 %  of each usable exposure. This is an estimate, counting
                 %  on that the expoure started ExpTime before it is ready
                 %  for retrieval. The value is updated at each polling
                 %  iteration.
-                QC.TimeStart=now-exptime/86400;
+                % According to Ron, a call to GetQHYCCDLiveFrame takes
+                %  13ms. Surprisingly, this time is the same regardless
+                %  that ret is -1 (no image yet) or 0. That is, it is not
+                %  clear at all when the image download, which may take
+                %  ~200ms for a 16bit 9600*6422px image on USB3, takes
+                %  place. Possibly, the SDK has already transferred it in
+                %  memory by itself into a private buffer, and GetQHYCCDLiveFrame
+                %  copies the data to an user accessible buffer with
+                %  memcopy(), which is considerably faster than the
+                %  transfer
                 QC.reportDebug('%s at t=%f\n',dec2hex(ret), toc)
                 if ret~=0
-                    pause(0.01)
+                    pause(0.001)
                 end
             end
             if ret==0
-                QC.TimeEnd=now;
+                % According to Ron's experimental results, **for the QHY600**:
+                %  * +7ms is added as a median duration of the polling cycle
+                %  * we should subtract 205ms to lastTimeBeforeFrameReady,
+                %    which results from a regression of data measured using
+                %    the internal Pin3 trigger of the QHY600. This might be
+                %    the USB transfer time
+                %  * for the j-th row, we should add j*46us, accounting for
+                %    the rolling shutter offset.
+                % To keep compatibility with all the images recorded before
+                %  October 2026, we *do not* apply the last two corrections
+                %  here. Rather, we will consider them in postprocessing in
+                %  pipeline v1.
+                QC.TimeStart=lastTimeBeforeFrameReady+0.007-exptime/86400;
+                QC.TimeEnd=lastTimeBeforeFrameReady+0.007;
                 QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                     % even if a subsequent
                                                     % exposure is started

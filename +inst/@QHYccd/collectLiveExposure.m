@@ -14,7 +14,7 @@ function img=collectLiveExposure(QC,varargin)
     %  SetQHYCCDBurstModePatchNumber(QC.camhandle,32001) (see also comments
     %  inside .initStreamMode)
     try
-        exptime=double(Q.PreciseExposureInfo.ActualExposureTime)*1e-6;
+        exptime=double(QC.PreciseExposureInfo.ActualExposureTime)*1e-6;
         % can be 0 if the camera disconnected
     catch
         % for older SDKs which might miss GetQHCCDPreciseExposureInfo
@@ -77,8 +77,8 @@ function img=collectLiveExposure(QC,varargin)
                 %  October 2026, we *do not* apply the last two corrections
                 %  here. Rather, we will consider them in postprocessing in
                 %  pipeline v1.
-                QC.TimeStart=lastTimeBeforeFrameReady+0.007-exptime/86400;
-                QC.TimeEnd=lastTimeBeforeFrameReady+0.007;
+                QC.TimeStart=lastTimeBeforeFrameReady+(0.007-exptime)/86400;
+                QC.TimeEnd=lastTimeBeforeFrameReady+0.007/86400;
                 QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                     % even if a subsequent
                                                     % exposure is started

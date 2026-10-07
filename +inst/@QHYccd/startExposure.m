@@ -43,11 +43,9 @@ function startExposure(QC,expTime,slength)
                 pause(0.1)
             end
 
-            success=(ret~=hex2dec('FFFFFFFF'));
+            QC.setLastError(ret,'could not start single exposure');
 
-            QC.setLastError(success,'could not start single exposure');
-
-            if success
+            if ret==0
                 QC.TimeStart=t0;
                 QC.lastExpTime=QC.ExpTime;
                 QC.CamStatus='exposing';

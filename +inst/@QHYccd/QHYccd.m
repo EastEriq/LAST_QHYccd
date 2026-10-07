@@ -113,11 +113,10 @@ classdef QHYccd < obs.camera
                 
                 % make sure we close the communication, if not done already
                 success=disconnect(QC);
-                QC.setLastError(success,'could not close camera')
                 if success
                     QC.report(['Succesfully closed "' QC.CameraName '"\n'])
                 else
-                    QC.report('Failed to close camera\n')
+                    QC.reportError('Failed to close camera')
                 end
                 
                 % if I put this out of the if, i.e. if I try even for an
@@ -430,7 +429,7 @@ classdef QHYccd < obs.camera
             success=(traffic>=0 & traffic<2e6);
             % check whether err=double(FFFFFFFF)...
             if ~success
-                QC.setLastError(success,'could not get USB traffic value')
+                QC.setLastError(traffic,'could not get USB traffic value')
             end
         end
 

@@ -41,8 +41,8 @@ function img=collectLiveExposure(QC,varargin)
             else
                 pointer=QC.pImg;
             end
+            lastTimeBeforeFrameReady=now;
             while ret~=0 && (now-t0)*86400<timeout
-                lastTimeBeforeFrameReady=now;
                 [ret,w,h,bp,channels]=GetQHYCCDLiveFrame(QC.camhandle,pointer);
                 % we have no way at the moment of knowing the real start time
                 %  of each usable exposure. This is an estimate, counting
@@ -50,7 +50,7 @@ function img=collectLiveExposure(QC,varargin)
                 %  for retrieval. The value is updated at each polling
                 %  iteration.
                 % According to Ron, a call to GetQHYCCDLiveFrame takes
-                %  13ms. Surprisingly, this time is the same regardless
+                %  13ms. Surprisingly, this time would be the same regardless
                 %  that ret is -1 (no image yet) or 0. That is, it is not
                 %  clear at all when the image download, which may take
                 %  ~200ms for a 16bit 9600*6422px image on USB3, takes
@@ -58,9 +58,12 @@ function img=collectLiveExposure(QC,varargin)
                 %  memory by itself into a private buffer, and GetQHYCCDLiveFrame
                 %  copies the data to an user accessible buffer with
                 %  memcopy(), which is considerably faster than the
-                %  transfer
-                QC.reportDebug('%s at t=%f\n',dec2hex(ret), toc)
+                %  transfer.
+                % Turning on debug (.Verbose=2), I **do** see ~200ms
+                %  differences between the last ret=FFFFFFF and ret=0
+                QC.reportDebug('%8s at t=%f\n',dec2hex(ret), toc)
                 if ret~=0
+                    lastTimeBeforeFrameReady=now;
                     pause(0.001)
                 end
             end

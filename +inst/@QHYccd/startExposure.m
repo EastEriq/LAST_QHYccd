@@ -37,12 +37,12 @@ function startExposure(QC,expTime,slength)
             t1=now;
             
             QC.TimeStartDelta=t1-t0;
-            
-            QC.setLastError(ret,'could not start single exposure');
 
             if ret==hex2dec('2001') % "QHYCCD_READ_DIRECTLY". No idea but
                                     %   it is like that in the demoes
                 pause(0.1)
+            else
+                QC.setLastError(ret,'could not start single exposure');                
             end
 
             if ret==0

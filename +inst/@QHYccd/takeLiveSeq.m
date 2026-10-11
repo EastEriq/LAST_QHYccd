@@ -55,6 +55,7 @@ function [starttimes,imgs]=takeLiveSeq(QC,num,expTime,varargin)
             collectLiveExposure(QC,varargin{:});
             if nargout>0
                 starttimes(i)=QC.TimeStart;
+%                starttimes(i)=QC.TimeStartLastImage; %debug
             end
         end
         if ~isempty(QC.LastError)

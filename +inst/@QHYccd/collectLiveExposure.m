@@ -61,15 +61,21 @@ function img=collectLiveExposure(QC,varargin)
                 %  transfer.
                 % Turning on debug (.Verbose=2), I **do** see ~200ms
                 %  differences between the last ret=FFFFFFF and ret=0
-                QC.reportDebug('%8s at t=%f\n',dec2hex(ret), toc)
                 if ret~=0
                     lastTimeBeforeFrameReady=now;
                     pause(0.001)
                 end
+                QC.reportDebug('%8s at t=%f\n',dec2hex(ret), toc)
             end
             if ret==0
                 % According to Ron's experimental results, **for the QHY600**:
                 %  * +7ms is added as a median duration of the polling cycle
+                %  * +182 ms which are an estimate of the minimal reading
+                %     times by GetQHYCCDLiveFrame (see
+                %     https://github.com/EastEriq/LAST_QHYccd/issues/9#issuecomment-6107959411).
+                %    Formerly we were directly sampling now() after the
+                %    return of GetQHYCCDLiveFrame, but taking the fixed
+                %    value might be more precise.
                 %  * we should subtract 205ms to lastTimeBeforeFrameReady,
                 %    which results from a regression of data measured using
                 %    the internal Pin3 trigger of the QHY600. This might be
@@ -78,10 +84,14 @@ function img=collectLiveExposure(QC,varargin)
                 %    the rolling shutter offset.
                 % To keep compatibility with all the images recorded before
                 %  October 2026, we *do not* apply the last two corrections
-                %  here. Rather, we will consider them in postprocessing in
+                %  here. Rather, we will consider them for postprocessing in
                 %  pipeline v1.
-                QC.TimeStart=lastTimeBeforeFrameReady+(0.007-exptime)/86400;
-                QC.TimeEnd=lastTimeBeforeFrameReady+0.007/86400;
+%        % temporary, for measurement of the reading times via takeLiveSeq
+%                 QC.TimeStartLastImage=now-lastTimeBeforeFrameReady;
+%        %
+%                QC.TimeStart=lastTimeBeforeFrameReady+(0.007-exptime)/86400;
+                QC.TimeEnd=lastTimeBeforeFrameReady+(0.007+0.182)/86400;
+                QC.TimeStart=QC.TimeEnd-exptime/86400;
                 QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                     % even if a subsequent
                                                     % exposure is started

@@ -51,6 +51,7 @@ classdef QHYccd < obs.camera
         SDKversion;
         SensorName;
         PreciseExposureInfo;
+        TransferTime; % to measure the time of GetQHYCCDSingleFrame and GetQHYCCDLiveFrame
     end
     
     properties(GetAccess = public, SetAccess = private, Hidden ,GetObservable)

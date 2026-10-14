@@ -1,4 +1,4 @@
-function [starttimes,imgs]=takeLiveSeq(QC,num,expTime,varargin)
+function [starttimes,transfertimes,imgs]=takeLiveSeq(QC,num,expTime,varargin)
 % Take a series of num images with the same exposure time,
 %  setting the camera in Live mode. This is a blocking function,
 %  which returns only when the sequence is complete or if acquisition
@@ -46,16 +46,19 @@ function [starttimes,imgs]=takeLiveSeq(QC,num,expTime,varargin)
         starttimes=nan(1,num);
     end
     if nargout>1
+        transfertimes=nan(1,num);
+    end
+    if nargout>2
         imgs=cell(1,num);
     end
     for i=1:num
-        if nargout>1
+        if nargout>2
             imgs{i}=collectLiveExposure(QC,varargin{:});
         else
             collectLiveExposure(QC,varargin{:});
             if nargout>0
                 starttimes(i)=QC.TimeStart;
-%                starttimes(i)=QC.TimeStartLastImage; %debug
+                transfertimes(i)=QC.TransferTime; %debug
             end
         end
         if ~isempty(QC.LastError)

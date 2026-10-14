@@ -87,7 +87,7 @@ function img=collectLiveExposure(QC,varargin)
                 %  here. Rather, we will consider them for postprocessing in
                 %  pipeline v1.
 %        % temporary, for measurement of the reading times via takeLiveSeq
-%                 QC.TimeStartLastImage=now-lastTimeBeforeFrameReady;
+                 QC.TransferTime=now-lastTimeBeforeFrameReady;
 %        %
 %                QC.TimeStart=lastTimeBeforeFrameReady+(0.007-exptime)/86400;
                 QC.TimeEnd=lastTimeBeforeFrameReady+(0.007+0.182)/86400;

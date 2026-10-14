@@ -7,8 +7,8 @@ function img=collectExposure(QC,varargin)
 
     switch QC.CamStatus
         case {'exposing','reading'}
-
             QC.reportDebug('t before calling GetQHYCCDSingleFrame: %f\n',toc);
+            lastTimeBeforeFrameReady=now;
             [ret,w,h,bp,channels]=...
                 GetQHYCCDSingleFrame(QC.camhandle,QC.pImg);
             QC.reportDebug('t after calling GetQHYCCDSingleFrame: %f\n',toc);
@@ -17,6 +17,7 @@ function img=collectExposure(QC,varargin)
                                                 % exposure is started
             if ret==0
                 QC.TimeEnd=now;
+                QC.TransferTime=QC.TimeEnd-lastTimeBeforeFrameReady;
                 QC.ProgressiveFrame=1;
                 % Conversion of an image buffer to a matlab image
                 img=unpackImgBuffer(QC.pImg,w,h,channels,bp);

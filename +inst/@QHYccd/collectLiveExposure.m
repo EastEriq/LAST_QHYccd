@@ -70,12 +70,6 @@ function img=collectLiveExposure(QC,varargin)
             if ret==0
                 % According to Ron's experimental results, **for the QHY600**:
                 %  * +7ms is added as a median duration of the polling cycle
-                %  * +182 ms which are an estimate of the minimal reading
-                %     times by GetQHYCCDLiveFrame (see
-                %     https://github.com/EastEriq/LAST_QHYccd/issues/9#issuecomment-6107959411).
-                %    Formerly we were directly sampling now() after the
-                %    return of GetQHYCCDLiveFrame, but taking the fixed
-                %    value might be more precise.
                 %  * we should subtract 205ms to lastTimeBeforeFrameReady,
                 %    which results from a regression of data measured using
                 %    the internal Pin3 trigger of the QHY600. This might be
@@ -86,11 +80,24 @@ function img=collectLiveExposure(QC,varargin)
                 %  October 2026, we *do not* apply the last two corrections
                 %  here. Rather, we will consider them for postprocessing in
                 %  pipeline v1.
-%        % temporary, for measurement of the reading times via takeLiveSeq
-                 QC.TransferTime=now-lastTimeBeforeFrameReady;
-%        %
+                % However, formerly we were directly sampling .TimeEnd=now()
+                %  after the return of GetQHYCCDLiveFrame, There is a transfer
+                %  time involved, which may depend on computer, USB and load,
+                %  and thus suffers of some jitter. I measured it on two
+                %  different computers getting different results.
+                % My resolution therefore is to base the guess on
+                %  lastTimeBeforeFrameReady, to add fixed offsets according
+                %  to the estimates on LAST computers and on Ron's reports;
+                %  in order to approximate the TimeEnd reported before
+                %  10/2026. That should minimize the software time jitter,
+                %  but may still suffer of an undetermined offset.
+                % See: https://github.com/EastEriq/LAST_QHYccd/issues/9
+
+                QC.TransferTime=now-lastTimeBeforeFrameReady; % for real sampling
+                transferTimeEstimate=0.205; % seconds, as got in average on LAST machines
+                                            % but e.g. 0.182s on CFENRICO-PC1
 %                QC.TimeStart=lastTimeBeforeFrameReady+(0.007-exptime)/86400;
-                QC.TimeEnd=lastTimeBeforeFrameReady+(0.007+0.182)/86400;
+                QC.TimeEnd=lastTimeBeforeFrameReady+(0.007+transferTimeEstimate)/86400;
                 QC.TimeStart=QC.TimeEnd-exptime/86400;
                 QC.TimeStartLastImage=QC.TimeStart; % so we know when QC.LastImage was started,
                                                     % even if a subsequent
